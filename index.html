@@ -49,7 +49,7 @@
             <div class="ultra-glass rounded-full px-6 py-3 flex items-center gap-6 border border-white/10">
                 <a href="index.html" class="text-xs font-black hover:text-pink-400 uppercase">Browse</a>
                 <a href="profile.html" id="profile-link" class="hidden text-xs font-black hover:text-pink-400 uppercase">Profile</a>
-                <button id="signin-btn" class="bg-white text-black px-5 py-1.5 rounded-full text-xs font-black uppercase">Sign In</button>
+                <button onclick="openAuth()" id="signin-btn" class="bg-white text-black px-5 py-1.5 rounded-full text-xs font-black uppercase">Sign In</button>
             </div>
         </nav>
 
@@ -76,6 +76,16 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // At the top of your script tag, inside the module:
+window.openAuth = () => {
+    console.log("Attempting to open modal...");
+    const overlay = document.getElementById('auth-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    } else {
+        console.error("Could not find auth-overlay element!");
+    }
+};
         const firebaseConfig = { 
     apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", 
     authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
