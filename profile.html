@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
+        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
+        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
+        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .hero-gradient { background: linear-gradient(135deg, rgba(255, 121, 198, 0.1) 0%, rgba(189, 147, 249, 0.1) 100%); border: 1px solid rgba(255, 121, 198, 0.2); }
+        #edit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="p-8">
+    <div class="mesh-bg"></div>
+
+    <div id="edit-overlay">
+        <div class="ultra-glass p-10 rounded-[40px] w-full max-w-md">
+            <h2 class="text-3xl font-black mb-6 uppercase tracking-tighter">Edit Profile</h2>
+            <input type="text" id="edit-name" class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 mb-4 text-sm text-white">
+            <textarea id="edit-bio" rows="3" class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 mb-4 text-sm text-white resize-none"></textarea>
+            <button id="save-profile" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase">Save</button>
+            <button onclick="document.getElementById('edit-overlay').style.display='none'" class="w-full text-xs font-bold text-gray-500 mt-4 uppercase">Cancel</button>
+        </div>
+    </div>
+
+    <div class="max-w-[1600px] mx-auto">
+        <nav class="flex justify-between items-center mb-12">
+            <a href="index.html" class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center rotate-3"><img src="https://geode-sdk.org/logo.png" class="w-8 h-8" style="filter: invert(1);"></div>
+                <h1 class="text-3xl font-black tracking-tighter uppercase">Loom</h1>
+            </a>
+            <a href="index.html" class="ultra-glass px-6 py-3 rounded-full text-xs font-bold uppercase hover:text-pink-400 transition">Back to Hub</a>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10">
+            <aside class="space-y-6">
+                <div class="ultra-glass rounded-[32px] p-8 space-y-8 text-center">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 p-4 rounded-2xl"><span id="follower-count" class="block text-xl font-black text-white">0</span><span class="text-[8px] text-gray-500 uppercase tracking-widest">Followers</span></div>
+                        <div class="bg-white/5 p-4 rounded-2xl"><span id="following-count" class="block text-xl font-black text-white">0</span><span class="text-[8px] text-gray-500 uppercase tracking-widest">Following</span></div>
+                    </div>
+                    <button id="edit-btn" onclick="document.getElementById('edit-overlay').style.display='flex'" class="hidden w-full p-4 bg-white text-black rounded-2xl font-black text-[10px] uppercase transition hover:bg-pink-400">Edit Profile</button>
+                </div>
+
+                <div class="ultra-glass rounded-[32px] p-6 space-y-3 border border-white/5">
+                    <label class="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2 block mb-2">Quick Actions</label>
+                    <a href="developers.html" class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-pink-500/10 transition border border-white/5">
+                        <span class="text-xs font-bold uppercase">Browse Creators</span>
+                        <i class="fas fa-users text-gray-600"></i>
+                    </a>
+                    <div id="creator-actions" class="hidden space-y-3">
+                        <a href="upload.html" class="flex items-center justify-between p-4 bg-pink-500 rounded-2xl transition border border-pink-400">
+                            <span class="text-xs font-black uppercase text-black">Upload New Asset</span>
+                            <i class="fas fa-plus text-black"></i>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="space-y-8">
+                <div class="hero-gradient rounded-[40px] p-10 flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
+                    <div class="w-40 h-40 bg-[#1a1625] rounded-[32px] flex items-center justify-center text-6xl text-pink-500 shadow-2xl border border-white/5"><i class="fas fa-user"></i></div>
+                    <div class="text-center md:text-left flex-grow">
+                        <span id="role-pill" class="bg-pink-500 text-black text-[10px] font-black px-3 py-1 rounded-full mb-4 inline-block uppercase tracking-tighter">Loading...</span>
+                        <h2 id="prof-name" class="text-5xl font-black mb-4 tracking-tighter uppercase">...</h2>
+                        <p id="prof-bio" class="text-gray-400 italic">No bio available.</p>
+                    </div>
+                    <div id="follow-container"></div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xs font-black text-pink-500 uppercase tracking-[0.3em] ml-2">Portfolio</h3>
+                    <div id="role-content" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, deleteDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetId = urlParams.get('id');
+
+        onAuthStateChanged(auth, async (user) => {
+            const uid = targetId || user?.uid;
+            if(!uid) return window.location.href="index.html";
+            const isMe = user && (uid === user.uid);
+            
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()) {
+                const data = snap.data();
+                document.getElementById('prof-name').innerText = data.username.toUpperCase();
+                document.getElementById('prof-bio').innerText = data.bio || "No bio available.";
+                document.getElementById('role-pill').innerText = `${data.role.toUpperCase()} ACCOUNT`;
+                
+                if(isMe && data.role === 'Creator') document.getElementById('creator-actions').classList.remove('hidden');
+                if(isMe) document.getElementById('edit-btn').classList.remove('hidden');
+
+                if(!isMe && user) setupFollowBtn(user.uid, uid);
+                loadUserAssets(uid);
+                loadCounts(uid);
+            }
+        });
+
+        async function loadUserAssets(uid) {
+            const container = document.getElementById('role-content');
+            const q = query(collection(db, "assets"), where("creatorId", "==", uid));
+            const snap = await getDocs(q);
+            container.innerHTML = '';
+            
+            if (snap.empty) container.innerHTML = `<p class="text-gray-600 font-bold uppercase text-[10px]">No assets found.</p>`;
+            
+            snap.forEach((doc) => {
+                const a = doc.data();
+                container.innerHTML += `
+                    <div class="ultra-glass p-6 rounded-[32px] border border-white/5 hover:border-pink-500/30 transition cursor-pointer" onclick="location.href='asset.html?id=${doc.id}'">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-black text-pink-500 bg-pink-500/10 px-3 py-1 rounded-full uppercase">${a.tag}</span>
+                            <span class="text-[10px] font-mono text-gray-500">${a.version}</span>
+                        </div>
+                        <h4 class="text-xl font-bold uppercase mb-2">${a.name}</h4>
+                        <p class="text-sm text-gray-400 italic line-clamp-2">${a.description}</p>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+</html>

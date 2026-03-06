@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | View Asset</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
+        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
+        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
+        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .hero-gradient { background: linear-gradient(135deg, rgba(255, 121, 198, 0.1) 0%, rgba(189, 147, 249, 0.1) 100%); border: 1px solid rgba(255, 121, 198, 0.2); }
+    </style>
+</head>
+<body class="p-8">
+    <div class="mesh-bg"></div>
+    <div class="max-w-[1200px] mx-auto">
+        <nav class="flex justify-between items-center mb-12">
+            <h1 class="text-2xl font-black uppercase">Loom</h1>
+            <button onclick="history.back()" class="text-xs font-bold text-gray-500 uppercase">Return</button>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+            <main class="space-y-8">
+                <div class="hero-gradient rounded-[40px] p-10 border border-white/10">
+                    <span id="asset-tag" class="text-[10px] font-black text-pink-500 uppercase tracking-widest">Category</span>
+                    <h2 id="asset-name" class="text-5xl font-black uppercase mt-2">...</h2>
+                    <p id="asset-desc" class="text-xl text-gray-400 mt-6 leading-relaxed italic"></p>
+                </div>
+            </main>
+
+            <aside class="space-y-6">
+                <div class="ultra-glass rounded-[32px] p-8 space-y-6">
+                    <button id="install-btn" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase text-xs">Install Asset</button>
+                    <div class="space-y-4 pt-4 border-t border-white/5">
+                        <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Downloads</span> <span id="asset-downloads" class="text-white">0</span></div>
+                        <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Version</span> <span id="asset-version" class="text-pink-400">...</span></div>
+                        <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Author</span> <a id="asset-author-link" class="text-white hover:text-pink-400 underline">...</a></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const assetId = new URLSearchParams(window.location.search).get('id');
+        if (assetId) {
+            const assetRef = doc(db, "assets", assetId);
+            const snap = await getDoc(assetRef);
+            if (snap.exists()) {
+                const a = snap.data();
+                document.getElementById('asset-name').innerText = a.name.toUpperCase();
+                document.getElementById('asset-desc').innerText = a.description;
+                document.getElementById('asset-version').innerText = a.version;
+                document.getElementById('asset-tag').innerText = a.tag;
+                document.getElementById('asset-downloads').innerText = a.downloads || 0;
+                document.getElementById('asset-author-link').innerText = a.creatorName;
+                document.getElementById('asset-author-link').href = `profile.html?id=${a.creatorId}`;
+
+                document.getElementById('install-btn').onclick = async () => {
+                    await updateDoc(assetRef, { downloads: increment(1) });
+                    location.reload();
+                };
+            }
+        }
+    </script>
+</body>
+</html>

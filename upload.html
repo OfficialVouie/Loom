@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | Publish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
+        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
+        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
+        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
+        input, textarea, select { background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="mesh-bg"></div>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-black uppercase mb-12">New Asset</h1>
+        <div class="ultra-glass p-12 rounded-[40px] space-y-6">
+            <input type="text" id="asset-name" placeholder="Asset Name" class="w-full py-4 px-6 rounded-2xl text-sm">
+            <input type="text" id="asset-version" placeholder="Version (e.g. v1.0.0)" class="w-full py-4 px-6 rounded-2xl text-sm">
+            <textarea id="asset-desc" rows="3" placeholder="Description" class="w-full py-4 px-6 rounded-2xl text-sm resize-none"></textarea>
+            <select id="asset-tag" class="w-full py-4 px-6 rounded-2xl text-sm">
+                <option value="Visuals">Visuals</option>
+                <option value="Utility">Utility</option>
+                <option value="Multiplayer">Multiplayer</option>
+            </select>
+            <button id="submit-asset" class="w-full bg-white text-black font-black py-5 rounded-3xl hover:bg-pink-400 transition uppercase text-xs tracking-widest">Publish</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.getElementById('submit-asset').onclick = async () => {
+            const user = auth.currentUser;
+            const name = document.getElementById('asset-name').value;
+            await addDoc(collection(db, "assets"), {
+                name, version: document.getElementById('asset-version').value,
+                description: document.getElementById('asset-desc').value,
+                tag: document.getElementById('asset-tag').value,
+                creatorId: user.uid, creatorName: user.displayName,
+                downloads: 0, createdAt: Date.now()
+            });
+            alert("Published!");
+            window.location.href = "profile.html";
+        };
+    </script>
+</body>
+</html>

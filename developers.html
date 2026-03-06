@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | Developers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08070b;
+            --surface: #121019;
+            --accent: #ff79c6;
+            --accent-glow: rgba(255, 121, 198, 0.3);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #f8f8f2;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%),
+                        radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .ultra-glass {
+            background: rgba(18, 16, 25, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(255, 121, 198, 0.1) 0%, rgba(189, 147, 249, 0.1) 100%);
+            border: 1px solid rgba(255, 121, 198, 0.2);
+        }
+
+        .dev-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dev-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px currentColor;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="mesh-bg"></div>
+
+    <div class="max-w-[1600px] mx-auto">
+        <nav class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center rotate-3 shadow-xl">
+                    <img src="https://geode-sdk.org/logo.png" class="w-8 h-8" style="filter: invert(1);">
+                </div>
+                <div>
+                    <h1 class="text-3xl font-extrabold tracking-tighter">LOOM</h1>
+                    <div class="flex items-center gap-2 text-[10px] font-bold text-pink-400 uppercase">
+                        <span class="status-dot bg-pink-500"></span> Verified Registry
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ultra-glass rounded-full px-6 py-3 flex items-center gap-8 border border-white/10">
+                <a href="index.html" class="text-sm font-semibold hover:text-pink-400 transition uppercase">Browse</a>
+                <a href="developers.html" class="text-sm font-semibold text-pink-400 transition uppercase">Developers</a>
+                <div class="h-4 w-px bg-white/10"></div>
+                <a href="index.html" class="text-xs font-black text-gray-500 hover:text-white transition uppercase tracking-widest">Back to Hub</a>
+            </div>
+        </nav>
+
+        <div class="hero-gradient rounded-[40px] p-10 mb-10 relative overflow-hidden">
+            <div class="relative z-10">
+                <span class="bg-pink-500 text-black text-[10px] font-black px-3 py-1 rounded-full mb-4 inline-block tracking-tighter uppercase">Community Directory</span>
+                <h2 class="text-5xl font-black mb-4 tracking-tighter uppercase">Verified Developers</h2>
+                <p class="text-gray-400 text-lg max-w-2xl leading-relaxed">The minds behind the most innovative assets in the Loom ecosystem. Explore their portfolios and follow their work.</p>
+            </div>
+            <div class="absolute -right-20 -top-20 w-96 h-96 bg-pink-500/10 blur-[100px]"></div>
+        </div>
+
+        <div id="dev-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="col-span-full py-20 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-pink-500 mb-4"></div>
+                <p class="text-gray-500 font-black uppercase tracking-widest text-xs">Accessing Creator Database...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function fetchCreators() {
+            const grid = document.getElementById('dev-grid');
+            try {
+                const q = query(collection(db, "users"), where("role", "==", "Creator"));
+                const snap = await getDocs(q);
+                
+                grid.innerHTML = ''; // Clear loading state
+
+                if (snap.empty) {
+                    grid.innerHTML = '<p class="col-span-full text-center text-gray-500 uppercase font-bold py-10">No verified creators found.</p>';
+                    return;
+                }
+
+                snap.forEach((doc) => {
+                    const user = doc.data();
+                    const userId = doc.id;
+
+                    grid.innerHTML += `
+                        <div class="dev-card p-8 rounded-[32px] cursor-pointer group" onclick="location.href='profile.html?id=${userId}'">
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-pink-500 text-2xl group-hover:bg-pink-500 group-hover:text-black transition-colors">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest">Loom Verified</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-2xl font-black uppercase tracking-tighter mb-2 group-hover:text-pink-400 transition-colors">
+                                ${user.username}
+                            </h3>
+                            
+                            <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed italic mb-6">
+                                ${user.bio || 'This creator prefers to keep their mystery. Professional Loom developer.'}
+                            </p>
+                            
+                            <div class="pt-6 border-t border-white/5 flex items-center justify-between">
+                                <span class="text-[10px] font-black text-pink-500 uppercase tracking-widest">View Portfolio</span>
+                                <i class="fas fa-arrow-right text-[10px] text-gray-700 group-hover:translate-x-1 group-hover:text-pink-500 transition-all"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error fetching creators:", err);
+                grid.innerHTML = '<p class="col-span-full text-center text-red-500 font-bold">Error connecting to the registry.</p>';
+            }
+        }
+
+        fetchCreators();
+    </script>
+</body>
+</html>
