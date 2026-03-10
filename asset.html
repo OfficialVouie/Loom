@@ -8,71 +8,815 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
-        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
-        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
-        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .hero-gradient { background: linear-gradient(135deg, rgba(255, 121, 198, 0.1) 0%, rgba(189, 147, 249, 0.1) 100%); border: 1px solid rgba(255, 121, 198, 0.2); }
+        :root {
+            --bg: #030305;
+            --surface: #121019;
+            --accent: #ff79c6;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #f8f8f2;
+            font-family: "Outfit", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .site-wrap {
+            width: min(1320px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .glass {
+            background: rgba(18, 16, 25, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(255, 121, 198, 0.12) 0%, rgba(122, 162, 255, 0.08) 100%);
+            border: 1px solid rgba(255, 121, 198, 0.2);
+        }
+
+        .asset-icon {
+            width: 96px;
+            height: 96px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 0.9rem;
+            padding: 0.8rem 1rem;
+            font-size: 0.84rem;
+            outline: none;
+        }
+
+        .field:focus {
+            border-color: var(--accent);
+        }
+
+        .upload-chip {
+            display: inline-flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed rgba(255, 255, 255, 0.22);
+            border-radius: 0.9rem;
+            padding: 0.8rem 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: #ddd;
+            background: rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-chip:hover {
+            border-color: rgba(255, 121, 198, 0.45);
+            color: #fff;
+        }
+
+        .media-grid img {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            border-radius: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .progress-wrap {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff79c6, #7aa2ff);
+            transition: width 0.2s;
+        }
+
+        .site-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: #050507;
+        }
+
+        .footer-bottom {
+            width: min(1320px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 1.1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #777;
+        }
     </style>
 </head>
-<body class="p-8">
+<body>
     <div class="mesh-bg"></div>
-    <div class="max-w-[1200px] mx-auto">
-        <nav class="flex justify-between items-center mb-12">
-            <h1 class="text-2xl font-black uppercase">Loom</h1>
-            <button onclick="history.back()" class="text-xs font-bold text-gray-500 uppercase">Return</button>
-        </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
-            <main class="space-y-8">
-                <div class="hero-gradient rounded-[40px] p-10 border border-white/10">
-                    <span id="asset-tag" class="text-[10px] font-black text-pink-500 uppercase tracking-widest">Category</span>
-                    <h2 id="asset-name" class="text-5xl font-black uppercase mt-2">...</h2>
-                    <p id="asset-desc" class="text-xl text-gray-400 mt-6 leading-relaxed italic"></p>
-                </div>
-            </main>
+    <header class="site-wrap py-6 flex justify-between items-center gap-4">
+        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
+            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
+            <h1 class="text-2xl font-black uppercase italic">LOOM</h1>
+        </a>
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
+            <button id="back-btn" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">Back</button>
+        </div>
+    </header>
+
+    <main class="site-wrap pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+            <section class="space-y-8">
+                <article class="hero-gradient rounded-[34px] p-7 md:p-10">
+                    <div class="flex items-start gap-5">
+                        <img id="asset-icon" class="asset-icon" src="" alt="Asset icon">
+                        <div class="flex-grow">
+                            <div class="flex flex-wrap items-center gap-2 mb-3">
+                                <span id="asset-tag" class="text-[10px] font-black text-pink-500 uppercase tracking-widest">Category</span>
+                                <span id="asset-featured-pill" class="hidden text-[10px] px-2 py-1 rounded-full bg-pink-500/15 border border-pink-500/30 text-pink-400 font-black uppercase">Featured</span>
+                                <span id="asset-dev-pill" class="hidden text-[10px] px-2 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300 font-black uppercase">Dev Choice</span>
+                            </div>
+                            <h2 id="asset-name" class="text-4xl md:text-5xl font-black lowercase">Loading...</h2>
+                            <p id="asset-summary" class="text-sm text-pink-300 mt-2">Loading summary...</p>
+                            <p id="asset-desc" class="text-base md:text-lg text-gray-300 mt-4 leading-relaxed italic">Fetching asset data...</p>
+                        </div>
+                    </div>
+                    <div class="mt-7 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <article class="glass rounded-2xl p-4 border border-white/5">
+                            <h3 class="text-[10px] uppercase tracking-[0.2em] font-black text-gray-500">Release Notes</h3>
+                            <p id="asset-notes" class="text-sm text-gray-300 mt-2">No release notes provided.</p>
+                        </article>
+                        <article class="glass rounded-2xl p-4 border border-white/5">
+                            <h3 class="text-[10px] uppercase tracking-[0.2em] font-black text-gray-500">Social Links</h3>
+                            <div id="asset-socials" class="text-sm mt-2 text-gray-300 space-y-2">No social links provided.</div>
+                        </article>
+                        <article class="glass rounded-2xl p-4 border border-white/5">
+                            <h3 class="text-[10px] uppercase tracking-[0.2em] font-black text-gray-500">Meta</h3>
+                            <div class="text-sm mt-2 text-gray-300 space-y-2">
+                                <p><span class="text-gray-500">Compatibility:</span> <span id="asset-compatibility">n/a</span></p>
+                                <p><span class="text-gray-500">License:</span> <span id="asset-license">Custom</span></p>
+                                <p><span class="text-gray-500">Support:</span> <a id="asset-support-link" class="hover:text-pink-400 underline" href="#" target="_blank" rel="noopener">Not provided</a></p>
+                            </div>
+                        </article>
+                    </div>
+                </article>
+
+                <article class="glass rounded-[28px] p-6">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500 mb-4">Setup</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-[10px] uppercase tracking-[0.16em] font-black text-pink-300">Requirements</h4>
+                            <ul id="asset-requirements" class="mt-2 text-sm text-gray-300 list-disc pl-5 space-y-1">
+                                <li>No requirements listed.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] uppercase tracking-[0.16em] font-black text-blue-300">Install Guide</h4>
+                            <p id="asset-install-guide" class="mt-2 text-sm text-gray-300">No installation guide provided.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article id="video-panel" class="glass rounded-[28px] p-6 hidden">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500 mb-4">Video</h3>
+                    <div id="video-container"></div>
+                </article>
+
+                <article id="gallery-panel" class="glass rounded-[28px] p-6 hidden">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500 mb-4">Gallery</h3>
+                    <div id="gallery-grid" class="media-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                </article>
+
+                <article id="asset-status" class="glass rounded-[28px] p-5 text-sm text-gray-400">
+                    Initializing...
+                </article>
+
+                <article id="owner-editor" class="glass rounded-[28px] p-6 hidden">
+                    <h3 class="text-sm uppercase tracking-[0.2em] font-black text-pink-400 mb-4">Owner Controls</h3>
+                    <form id="owner-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input id="edit-name" class="field" placeholder="Asset name" required>
+                            <input id="edit-version" class="field" placeholder="Version" required>
+                        </div>
+                        <input id="edit-summary" class="field" placeholder="Short summary">
+                        <textarea id="edit-description" rows="3" class="field resize-none" placeholder="Description" required></textarea>
+                        <textarea id="edit-notes" rows="2" class="field resize-none" placeholder="Release notes"></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input id="edit-tag" class="field" placeholder="Tag">
+                            <input id="edit-icon-url" class="field" placeholder="Icon URL">
+                            <input id="edit-compatibility" class="field" placeholder="Compatibility">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input id="edit-video-url" class="field" placeholder="Video URL">
+                            <input id="edit-support-url" class="field" placeholder="Support URL">
+                            <input id="edit-license" class="field" placeholder="License">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <textarea id="edit-gallery-urls" rows="2" class="field resize-none" placeholder="Gallery URLs (line/comma separated)"></textarea>
+                            <textarea id="edit-requirements" rows="2" class="field resize-none" placeholder="Requirements (line/comma separated)"></textarea>
+                        </div>
+                        <textarea id="edit-install-guide" rows="2" class="field resize-none" placeholder="Install guide"></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input id="edit-social-website" class="field" placeholder="Website URL">
+                            <input id="edit-social-github" class="field" placeholder="GitHub URL">
+                            <input id="edit-social-discord" class="field" placeholder="Discord URL">
+                            <input id="edit-social-docs" class="field" placeholder="Docs URL">
+                        </div>
+                        <div id="owner-curation-controls" class="grid grid-cols-1 md:grid-cols-2 gap-3 hidden">
+                            <label class="flex items-center gap-2 text-xs uppercase tracking-[0.13em] text-gray-300"><input id="edit-featured" type="checkbox"> Featured</label>
+                            <label class="flex items-center gap-2 text-xs uppercase tracking-[0.13em] text-gray-300"><input id="edit-dev-choice" type="checkbox"> Dev Choice</label>
+                        </div>
+                        <p id="owner-curation-note" class="text-[11px] text-gray-400">Curation flags are database-controlled. Set users/{uid}.canCurate to true.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="upload-chip">Upload Icon<input id="edit-icon-file" type="file" accept="image/*" class="hidden"></label>
+                            <label class="upload-chip">Upload Gallery<input id="edit-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
+                            <label class="upload-chip">Upload Video<input id="edit-video-file" type="file" accept="video/*" class="hidden"></label>
+                        </div>
+                        <div class="progress-wrap"><div id="owner-progress-bar" class="progress-bar"></div></div>
+                        <p id="owner-status" class="text-xs text-gray-500">No pending changes.</p>
+                        <button id="save-owner-edits" class="w-full bg-white text-black font-black py-3 rounded-xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">Save Asset Changes</button>
+                    </form>
+                </article>
+            </section>
 
             <aside class="space-y-6">
-                <div class="ultra-glass rounded-[32px] p-8 space-y-6">
+                <article class="glass rounded-[28px] p-7 space-y-6">
                     <button id="install-btn" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase text-xs">Install Asset</button>
                     <div class="space-y-4 pt-4 border-t border-white/5">
                         <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Downloads</span> <span id="asset-downloads" class="text-white">0</span></div>
                         <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Version</span> <span id="asset-version" class="text-pink-400">...</span></div>
-                        <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Author</span> <a id="asset-author-link" class="text-white hover:text-pink-400 underline">...</a></div>
+                        <div class="flex justify-between text-xs font-bold uppercase gap-4">
+                            <span class="text-gray-500">Author</span>
+                            <a id="asset-author-link" class="text-white hover:text-pink-400 underline text-right break-all" href="profile.html">...</a>
+                        </div>
                     </div>
-                </div>
+                </article>
             </aside>
         </div>
-    </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Borborizo Development</span>
+            <span>&bull; Loom Network Online</span>
+        </div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        const assetId = new URLSearchParams(window.location.search).get('id');
-        if (assetId) {
-            const assetRef = doc(db, "assets", assetId);
-            const snap = await getDoc(assetRef);
-            if (snap.exists()) {
-                const a = snap.data();
-                document.getElementById('asset-name').innerText = a.name.toUpperCase();
-                document.getElementById('asset-desc').innerText = a.description;
-                document.getElementById('asset-version').innerText = a.version;
-                document.getElementById('asset-tag').innerText = a.tag;
-                document.getElementById('asset-downloads').innerText = a.downloads || 0;
-                document.getElementById('asset-author-link').innerText = a.creatorName;
-                document.getElementById('asset-author-link').href = `profile.html?id=${a.creatorId}`;
+        const installBtn = document.getElementById("install-btn");
+        const statusEl = document.getElementById("asset-status");
+        const ownerEditor = document.getElementById("owner-editor");
+        const ownerForm = document.getElementById("owner-form");
+        const ownerStatus = document.getElementById("owner-status");
+        const ownerProgressBar = document.getElementById("owner-progress-bar");
+        const ownerCurationControls = document.getElementById("owner-curation-controls");
+        const ownerCurationNote = document.getElementById("owner-curation-note");
+        const params = new URLSearchParams(window.location.search);
+        const assetId = params.get("id");
 
-                document.getElementById('install-btn').onclick = async () => {
-                    await updateDoc(assetRef, { downloads: increment(1) });
-                    location.reload();
-                };
+        const assetRef = assetId ? doc(db, "assets", assetId) : null;
+
+        let currentUser = null;
+        let currentAsset = null;
+        let currentCreatorProfile = null;
+        let canCurate = false;
+
+        function normalizeUsername(value, fallback = "unknown") {
+            const clean = String(value || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]/g, "")
+                .slice(0, 24);
+            return clean || fallback;
+        }
+
+        function parseUrlList(rawValue) {
+            return String(rawValue || "")
+                .split(/[\n,]/)
+                .map((item) => item.trim())
+                .filter((item) => /^https?:\/\//i.test(item));
+        }
+
+        function parseLineList(rawValue) {
+            return String(rawValue || "")
+                .split(/[\n,]/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        function validUrl(url = "") {
+            return /^https?:\/\//i.test(String(url || "").trim());
+        }
+
+        function setOwnerProgress(percent = 0) {
+            const safe = Math.max(0, Math.min(100, Number(percent || 0)));
+            ownerProgressBar.style.width = `${safe}%`;
+        }
+
+        function syncCurationUi() {
+            ownerCurationControls.classList.toggle("hidden", !canCurate);
+            ownerCurationNote.innerText = canCurate
+                ? "You have curator access. Featured and Dev Choice can be edited."
+                : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore.";
+        }
+
+        function setStatus(message, tone = "text-gray-400") {
+            statusEl.className = `glass rounded-[28px] p-5 text-sm ${tone}`;
+            statusEl.innerText = message;
+        }
+
+        function setOwnerStatus(message, tone = "text-gray-500") {
+            ownerStatus.className = `text-xs ${tone}`;
+            ownerStatus.innerText = message;
+        }
+
+        function setOwnerSaving(isSaving) {
+            const btn = document.getElementById("save-owner-edits");
+            btn.disabled = isSaving;
+            btn.classList.toggle("opacity-60", isSaving);
+            btn.classList.toggle("cursor-not-allowed", isSaving);
+        }
+
+        function escapeHtml(value = "") {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function pickYouTubeEmbed(url) {
+            try {
+                const parsed = new URL(url);
+                if (parsed.hostname.includes("youtube.com")) {
+                    const id = parsed.searchParams.get("v");
+                    if (id) return `https://www.youtube.com/embed/${id}`;
+                }
+                if (parsed.hostname === "youtu.be") {
+                    const id = parsed.pathname.replace("/", "");
+                    if (id) return `https://www.youtube.com/embed/${id}`;
+                }
+            } catch (_) {
+                return "";
+            }
+            return "";
+        }
+
+        function validateUploadFile(file, mode = "image") {
+            if (!file) return;
+            const maxBytes = mode === "video" ? 120 * 1024 * 1024 : 10 * 1024 * 1024;
+            if (mode === "image" && !file.type.startsWith("image/")) {
+                throw new Error("Only image files are allowed for icon/gallery uploads.");
+            }
+            if (mode === "video" && !file.type.startsWith("video/")) {
+                throw new Error("Only video files are allowed for video uploads.");
+            }
+            if (file.size > maxBytes) {
+                throw new Error(mode === "video" ? "Video must be 120MB or smaller." : "Image must be 10MB or smaller.");
             }
         }
+
+        async function uploadAssetFile(file, suffix, mode = "image") {
+            validateUploadFile(file, mode);
+            const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "") || "bin";
+            const path = `assets/${currentAsset.creatorId}/${assetId}-${suffix}-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            const fileRef = ref(storage, path);
+            return new Promise((resolve, reject) => {
+                const task = uploadBytesResumable(fileRef, file);
+                task.on(
+                    "state_changed",
+                    (snapshot) => {
+                        if (!snapshot.totalBytes) return;
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setOwnerProgress(progress);
+                    },
+                    (err) => reject(err),
+                    async () => {
+                        try {
+                            const url = await getDownloadURL(task.snapshot.ref);
+                            resolve(url);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }
+                );
+            });
+        }
+
+        function normalizeAsset(raw = {}) {
+            return {
+                name: String(raw.name || "Untitled"),
+                version: String(raw.version || "v1.0.0"),
+                description: String(raw.description || ""),
+                summary: String(raw.summary || ""),
+                releaseNotes: String(raw.releaseNotes || ""),
+                tag: String(raw.tag || "General"),
+                compatibility: String(raw.compatibility || ""),
+                license: String(raw.license || "Custom"),
+                supportUrl: String(raw.supportUrl || ""),
+                requirements: Array.isArray(raw.requirements)
+                    ? raw.requirements.filter((item) => typeof item === "string" && item.trim())
+                    : parseLineList(typeof raw.requirements === "string" ? raw.requirements : ""),
+                installGuide: String(raw.installGuide || ""),
+                creatorId: String(raw.creatorId || ""),
+                creatorName: String(raw.creatorName || "unknown"),
+                downloads: Number(raw.downloads || 0),
+                iconUrl: String(raw.iconUrl || ""),
+                videoUrl: String(raw.videoUrl || ""),
+                galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages.filter((item) => typeof item === "string") : [],
+                socials: {
+                    website: String(raw.socials?.website || ""),
+                    github: String(raw.socials?.github || ""),
+                    discord: String(raw.socials?.discord || ""),
+                    docs: String(raw.socials?.docs || "")
+                },
+                featured: Boolean(raw.featured),
+                devChoice: Boolean(raw.devChoice)
+            };
+        }
+
+        function renderMedia(asset) {
+            const videoPanel = document.getElementById("video-panel");
+            const videoContainer = document.getElementById("video-container");
+            const galleryPanel = document.getElementById("gallery-panel");
+            const galleryGrid = document.getElementById("gallery-grid");
+
+            videoContainer.innerHTML = "";
+            if (asset.videoUrl) {
+                const ytEmbed = pickYouTubeEmbed(asset.videoUrl);
+                if (ytEmbed) {
+                    videoContainer.innerHTML = `<iframe class="w-full aspect-video rounded-2xl border border-white/10" src="${ytEmbed}" allowfullscreen></iframe>`;
+                } else {
+                    videoContainer.innerHTML = `<video class="w-full rounded-2xl border border-white/10" controls src="${asset.videoUrl}"></video>`;
+                }
+                videoPanel.classList.remove("hidden");
+            } else {
+                videoPanel.classList.add("hidden");
+            }
+
+            if (asset.galleryImages.length) {
+                galleryGrid.innerHTML = asset.galleryImages
+                    .map((img) => `<img src="${img}" alt="Asset gallery image">`)
+                    .join("");
+                galleryPanel.classList.remove("hidden");
+            } else {
+                galleryGrid.innerHTML = "";
+                galleryPanel.classList.add("hidden");
+            }
+        }
+
+        function renderSocialLinks(asset) {
+            const socials = [
+                { label: "Website", value: asset.socials.website, icon: "fa-globe" },
+                { label: "GitHub", value: asset.socials.github, icon: "fa-brands fa-github" },
+                { label: "Discord", value: asset.socials.discord, icon: "fa-brands fa-discord" },
+                { label: "Docs", value: asset.socials.docs, icon: "fa-book" }
+            ].filter((entry) => /^https?:\/\//i.test(entry.value));
+
+            if (!socials.length) {
+                document.getElementById("asset-socials").innerText = "No social links provided.";
+                return;
+            }
+
+            document.getElementById("asset-socials").innerHTML = socials
+                .map((entry) => `<a class="block hover:text-pink-400" href="${entry.value}" target="_blank" rel="noopener"><i class="fas ${entry.icon} mr-2"></i>${entry.label}</a>`)
+                .join("");
+        }
+
+        function renderAsset(asset, creatorName) {
+            document.getElementById("asset-name").innerText = asset.name;
+            document.getElementById("asset-summary").innerText = asset.summary || "No summary provided.";
+            document.getElementById("asset-desc").innerText = asset.description || "No description.";
+            document.getElementById("asset-version").innerText = asset.version;
+            document.getElementById("asset-tag").innerText = asset.tag;
+            document.getElementById("asset-downloads").innerText = String(asset.downloads || 0);
+            document.getElementById("asset-notes").innerText = asset.releaseNotes || "No release notes provided.";
+            document.getElementById("asset-featured-pill").classList.toggle("hidden", !asset.featured);
+            document.getElementById("asset-dev-pill").classList.toggle("hidden", !asset.devChoice);
+            document.getElementById("asset-compatibility").innerText = asset.compatibility || "n/a";
+            document.getElementById("asset-license").innerText = asset.license || "Custom";
+
+            const supportLink = document.getElementById("asset-support-link");
+            if (validUrl(asset.supportUrl)) {
+                supportLink.href = asset.supportUrl;
+                supportLink.innerText = "Open support";
+                supportLink.classList.remove("pointer-events-none", "text-gray-500", "no-underline");
+            } else {
+                supportLink.href = "#";
+                supportLink.innerText = "Not provided";
+                supportLink.classList.add("pointer-events-none", "text-gray-500", "no-underline");
+            }
+
+            const reqList = document.getElementById("asset-requirements");
+            if (asset.requirements.length) {
+                reqList.innerHTML = asset.requirements.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+            } else {
+                reqList.innerHTML = "<li>No requirements listed.</li>";
+            }
+            document.getElementById("asset-install-guide").innerText = asset.installGuide || "No installation guide provided.";
+
+            const iconEl = document.getElementById("asset-icon");
+            if (asset.iconUrl) {
+                iconEl.src = asset.iconUrl;
+            } else {
+                iconEl.src = "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
+            }
+
+            document.getElementById("asset-author-link").innerText = creatorName;
+            document.getElementById("asset-author-link").href = asset.creatorId ? `profile.html?id=${encodeURIComponent(asset.creatorId)}` : "profile.html";
+
+            renderMedia(asset);
+            renderSocialLinks(asset);
+        }
+
+        async function loadCreatorName(asset) {
+            if (!asset.creatorId) return normalizeUsername(asset.creatorName, "unknown");
+            try {
+                const creatorSnap = await getDoc(doc(db, "users", asset.creatorId));
+                if (creatorSnap.exists()) {
+                    currentCreatorProfile = creatorSnap.data();
+                    return normalizeUsername(creatorSnap.data().username, normalizeUsername(asset.creatorName, "unknown"));
+                }
+            } catch (err) {
+                console.warn("Unable to load creator profile:", err);
+            }
+            return normalizeUsername(asset.creatorName, "unknown");
+        }
+
+        function fillOwnerForm(asset) {
+            document.getElementById("edit-name").value = asset.name;
+            document.getElementById("edit-version").value = asset.version;
+            document.getElementById("edit-summary").value = asset.summary;
+            document.getElementById("edit-description").value = asset.description;
+            document.getElementById("edit-notes").value = asset.releaseNotes;
+            document.getElementById("edit-tag").value = asset.tag;
+            document.getElementById("edit-icon-url").value = asset.iconUrl;
+            document.getElementById("edit-compatibility").value = asset.compatibility;
+            document.getElementById("edit-video-url").value = asset.videoUrl;
+            document.getElementById("edit-support-url").value = asset.supportUrl;
+            document.getElementById("edit-license").value = asset.license;
+            document.getElementById("edit-gallery-urls").value = asset.galleryImages.join("\n");
+            document.getElementById("edit-requirements").value = asset.requirements.join("\n");
+            document.getElementById("edit-install-guide").value = asset.installGuide;
+            document.getElementById("edit-social-website").value = asset.socials.website;
+            document.getElementById("edit-social-github").value = asset.socials.github;
+            document.getElementById("edit-social-discord").value = asset.socials.discord;
+            document.getElementById("edit-social-docs").value = asset.socials.docs;
+            document.getElementById("edit-featured").checked = asset.featured;
+            document.getElementById("edit-dev-choice").checked = asset.devChoice;
+        }
+
+        function syncOwnerVisibility() {
+            const canEdit = Boolean(currentUser && currentAsset && currentUser.uid === currentAsset.creatorId);
+            ownerEditor.classList.toggle("hidden", !canEdit);
+            if (canEdit) {
+                fillOwnerForm(currentAsset);
+                syncCurationUi();
+            }
+        }
+
+        async function loadAsset() {
+            if (!assetRef) {
+                setStatus("Missing asset id in URL.", "text-red-400");
+                installBtn.disabled = true;
+                return;
+            }
+
+            const snap = await getDoc(assetRef);
+            if (!snap.exists()) {
+                document.getElementById("asset-name").innerText = "Asset Not Found";
+                document.getElementById("asset-desc").innerText = "This asset may have been removed.";
+                setStatus("No record exists for the requested asset id.", "text-red-400");
+                installBtn.disabled = true;
+                return;
+            }
+
+            currentAsset = normalizeAsset(snap.data());
+            const creatorName = await loadCreatorName(currentAsset);
+            renderAsset(currentAsset, creatorName);
+            syncOwnerVisibility();
+            setStatus("Asset loaded successfully.", "text-green-400");
+        }
+
+        document.getElementById("back-btn").addEventListener("click", () => {
+            if (window.history.length > 1) {
+                history.back();
+                return;
+            }
+            window.location.href = "index.html";
+        });
+
+        installBtn.addEventListener("click", async () => {
+            if (!assetRef || !currentAsset) return;
+            installBtn.disabled = true;
+            installBtn.classList.add("opacity-60", "cursor-not-allowed");
+            try {
+                await updateDoc(assetRef, { downloads: increment(1), updatedAt: serverTimestamp() });
+                currentAsset.downloads += 1;
+                document.getElementById("asset-downloads").innerText = String(currentAsset.downloads);
+                setStatus("Install recorded. Download count updated.", "text-green-400");
+            } catch (err) {
+                console.error("Failed to record install:", err);
+                setStatus("Failed to record install. Try again.", "text-red-400");
+            } finally {
+                installBtn.disabled = false;
+                installBtn.classList.remove("opacity-60", "cursor-not-allowed");
+            }
+        });
+
+        ownerForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!currentUser || !currentAsset || currentUser.uid !== currentAsset.creatorId) {
+                return;
+            }
+
+            const name = document.getElementById("edit-name").value.trim();
+            const version = document.getElementById("edit-version").value.trim();
+            const summary = document.getElementById("edit-summary").value.trim();
+            const description = document.getElementById("edit-description").value.trim();
+            const releaseNotes = document.getElementById("edit-notes").value.trim();
+            const tag = document.getElementById("edit-tag").value.trim() || "General";
+            const compatibility = document.getElementById("edit-compatibility").value.trim();
+            const supportUrlInput = document.getElementById("edit-support-url").value.trim();
+            const license = document.getElementById("edit-license").value.trim() || "Custom";
+            let iconUrl = document.getElementById("edit-icon-url").value.trim();
+            let videoUrl = document.getElementById("edit-video-url").value.trim();
+            let galleryImages = parseUrlList(document.getElementById("edit-gallery-urls").value);
+            const requirements = parseLineList(document.getElementById("edit-requirements").value).slice(0, 20);
+            const installGuide = document.getElementById("edit-install-guide").value.trim();
+
+            if (!name || !version || !description) {
+                alert("Name, version, and description are required.");
+                return;
+            }
+            if (iconUrl && !validUrl(iconUrl)) {
+                alert("Icon URL must be a valid http/https URL.");
+                return;
+            }
+            if (videoUrl && !validUrl(videoUrl)) {
+                alert("Video URL must be a valid http/https URL.");
+                return;
+            }
+            if (supportUrlInput && !validUrl(supportUrlInput)) {
+                alert("Support URL must be a valid http/https URL.");
+                return;
+            }
+
+            const iconFile = document.getElementById("edit-icon-file").files[0];
+            const videoFile = document.getElementById("edit-video-file").files[0];
+            const galleryFiles = Array.from(document.getElementById("edit-gallery-files").files || []);
+
+            try {
+                setOwnerSaving(true);
+                setOwnerProgress(0);
+                setOwnerStatus("Uploading media and saving...", "text-pink-400");
+
+                if (iconFile) {
+                    setOwnerStatus("Uploading icon...", "text-pink-400");
+                    iconUrl = await uploadAssetFile(iconFile, "icon", "image");
+                }
+                if (videoFile) {
+                    setOwnerStatus("Uploading video...", "text-pink-400");
+                    videoUrl = await uploadAssetFile(videoFile, "video", "video");
+                }
+                if (galleryFiles.length) {
+                    const uploadedGallery = [];
+                    let index = 0;
+                    for (const file of galleryFiles.slice(0, 12)) {
+                        index += 1;
+                        setOwnerStatus(`Uploading gallery ${index}/${Math.min(galleryFiles.length, 12)}...`, "text-pink-400");
+                        const uploaded = await uploadAssetFile(file, "gallery", "image");
+                        uploadedGallery.push(uploaded);
+                    }
+                    galleryImages = [...galleryImages, ...uploadedGallery].slice(0, 12);
+                }
+
+                const creatorProfileSnap = await getDoc(doc(db, "users", currentUser.uid));
+                const creatorName = creatorProfileSnap.exists()
+                    ? normalizeUsername(creatorProfileSnap.data().username, normalizeUsername(currentAsset.creatorName, "unknown"))
+                    : normalizeUsername(currentAsset.creatorName, "unknown");
+
+                const updates = {
+                    name,
+                    version,
+                    summary,
+                    description,
+                    releaseNotes,
+                    tag,
+                    compatibility,
+                    supportUrl: supportUrlInput,
+                    license,
+                    requirements,
+                    installGuide,
+                    iconUrl,
+                    videoUrl,
+                    galleryImages,
+                    socials: {
+                        website: document.getElementById("edit-social-website").value.trim(),
+                        github: document.getElementById("edit-social-github").value.trim(),
+                        discord: document.getElementById("edit-social-discord").value.trim(),
+                        docs: document.getElementById("edit-social-docs").value.trim()
+                    },
+                    featured: canCurate ? document.getElementById("edit-featured").checked : Boolean(currentAsset.featured),
+                    devChoice: canCurate ? document.getElementById("edit-dev-choice").checked : Boolean(currentAsset.devChoice),
+                    creatorName,
+                    updatedAt: serverTimestamp()
+                };
+
+                await setDoc(assetRef, updates, { merge: true });
+
+                currentAsset = normalizeAsset({ ...currentAsset, ...updates });
+                renderAsset(currentAsset, creatorName);
+                fillOwnerForm(currentAsset);
+                document.getElementById("edit-icon-file").value = "";
+                document.getElementById("edit-video-file").value = "";
+                document.getElementById("edit-gallery-files").value = "";
+
+                setOwnerStatus("Asset updated.", "text-green-400");
+                setStatus("Asset details updated by owner.", "text-green-400");
+            } catch (err) {
+                console.error("Failed to save asset edits:", err);
+                setOwnerStatus("Save failed. Check Storage/Firestore rules.", "text-red-400");
+                setStatus("Failed to save owner changes.", "text-red-400");
+            } finally {
+                setOwnerSaving(false);
+                setTimeout(() => setOwnerProgress(0), 600);
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    canCurate = snap.exists() ? Boolean(snap.data().canCurate) : false;
+                } catch (err) {
+                    console.warn("Failed to read curator permission:", err);
+                    canCurate = false;
+                }
+            } else {
+                canCurate = false;
+            }
+            syncCurationUi();
+            syncOwnerVisibility();
+        });
+
+        setOwnerProgress(0);
+        syncCurationUi();
+
+        loadAsset().catch((err) => {
+            console.error("Asset load failed:", err);
+            setStatus("Failed to load asset data.", "text-red-400");
+        });
     </script>
 </body>
 </html>

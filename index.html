@@ -8,134 +8,843 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
-        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
-        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
-        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .hero-gradient { background: linear-gradient(135deg, rgba(255, 121, 198, 0.1) 0%, rgba(189, 147, 249, 0.1) 100%); border: 1px solid rgba(255, 121, 198, 0.2); }
-        .mod-card-ultra { background: var(--surface); border-radius: 24px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .mod-card-ultra:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255, 121, 198, 0.1); }
-        #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        :root { --bg:#030305; --surface:#0a0a0c; --border:rgba(255,255,255,.08); --accent:#ff79c6; }
+        * { box-sizing:border-box; }
+        body { margin:0; background:var(--bg); color:#f8f8f2; font-family:"Outfit",sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+        .mesh-bg { position:fixed; inset:0; background:radial-gradient(circle at 50% -20%, #1a1525 0%, transparent 52%), radial-gradient(circle at 0% 100%, rgba(122,162,255,.08) 0%, transparent 35%); z-index:-1; }
+        .site-wrap { width:min(1600px, calc(100% - 2rem)); margin:0 auto; }
+        .surface { border:1px solid var(--border); border-radius:22px; background:var(--surface); }
+        .chip { border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:4px 8px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.09em; }
+        .asset-card { border:1px solid var(--border); border-radius:20px; background:var(--surface); transition:.25s; }
+        .asset-card:hover { transform:translateY(-4px); border-color:rgba(255,121,198,.35); }
+        .creator-card { border:1px solid var(--border); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.03), rgba(255,121,198,.04)); transition:.2s; }
+        .creator-card:hover { border-color:rgba(255,121,198,.35); }
+        .field { width:100%; background:rgba(255,255,255,.05); border:1px solid var(--border); color:white; padding:.75rem 1rem; border-radius:12px; outline:none; }
+        .field:focus { border-color:var(--accent); }
+        .menu-dropdown { display:block; position:absolute; top:calc(100% + .75rem); right:0; width:320px; background:rgba(10,12,20,.95); backdrop-filter:blur(18px); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.6); transform:translateY(-10px); opacity:0; pointer-events:none; transition:.2s; z-index:50; }
+        .menu-dropdown.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+        .profile-banner { height:90px; background:linear-gradient(135deg, #ff79c6, #7aa2ff); background-size:cover; background-position:center; position:relative; }
+        .profile-avatar { width:70px; height:70px; border-radius:50%; border:4px solid #050507; position:absolute; bottom:-35px; left:20px; object-fit:cover; }
+        #auth-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
+        #auth-modal.open { display:flex; }
+        .auth-card { background:#0a0a0c; border:1px solid var(--border); width:100%; max-width:400px; border-radius:26px; padding:2rem; position:relative; }
+        .site-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.08); background:#050507; }
+        .footer-grid { width:min(1600px, calc(100% - 2rem)); margin:0 auto; padding:2rem 0 1.5rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; }
+        .footer-bottom { width:min(1600px, calc(100% - 2rem)); margin:0 auto; padding:1rem 0; border-top:1px solid rgba(255,255,255,.06); display:flex; gap:.75rem; flex-wrap:wrap; justify-content:space-between; font-size:12px; color:#777; }
+        .footer-link { color:#a7a7b3; text-decoration:none; font-size:13px; }
+        .footer-link:hover { color:#fff; }
     </style>
 </head>
-<body class="p-8">
+<body>
     <div class="mesh-bg"></div>
 
-    <div id="auth-overlay">
-        <div class="ultra-glass p-10 rounded-[40px] w-full max-w-md border border-white/10">
-            <h2 id="auth-title" class="text-3xl font-black mb-6 tracking-tighter uppercase">Loom Sign In</h2>
+    <div id="auth-modal" aria-hidden="true">
+        <div class="auth-card">
+            <button id="auth-close" class="absolute top-6 right-6 text-gray-500 hover:text-white" type="button"><i class="fas fa-times"></i></button>
+            <h2 id="auth-title" class="text-2xl font-black italic mb-2">WELCOME BACK</h2>
+            <p id="auth-subtitle" class="text-gray-400 text-sm mb-8">Enter your details to access Loom.</p>
             <div class="space-y-4">
-                <div id="signup-only-fields" style="display: none;">
-                    <input type="text" id="auth-user" placeholder="Unique Username" class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 text-sm mb-4">
-                    <div class="flex gap-2 mb-4">
-                        <button onclick="window.currentRole='Consumer'" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase border border-white/10">Consumer</button>
-                        <button onclick="window.currentRole='Creator'" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase border border-white/10">Creator</button>
-                    </div>
-                </div>
-                <input type="email" id="auth-email" placeholder="Email" class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 text-sm">
-                <input type="password" id="auth-pass" placeholder="Password" class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-6 text-sm">
-                <button id="auth-submit" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase">Continue</button>
+                <input type="email" id="auth-email" class="field" placeholder="Email Address" autocomplete="email">
+                <div id="auth-username-wrap" class="hidden"><input type="text" id="auth-username" class="field" placeholder="Username (letters, numbers, . _ -)"></div>
+                <input type="password" id="auth-pass" class="field" placeholder="Password" autocomplete="current-password">
+                <button id="auth-submit" class="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-pink-500 hover:text-white transition-all" type="button">Sign In</button>
+                <p class="text-center text-xs text-gray-500 mt-4"><span id="auth-switch-text">Don't have an account?</span> <button id="auth-switch-btn" class="text-pink-500 font-bold ml-1" type="button">Sign Up</button></p>
             </div>
-            <button id="auth-toggle" class="text-[10px] font-black text-pink-500 uppercase mt-4">Create Account</button>
         </div>
     </div>
 
-    <div class="max-w-[1600px] mx-auto">
-        <nav class="flex justify-between items-center mb-12">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center rotate-3"><img src="https://geode-sdk.org/logo.png" class="w-8 h-8" style="filter: invert(1);"></div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase">LOOM</h1>
+    <header class="site-wrap py-6 flex justify-between items-center gap-4 relative">
+        <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
+            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
+            <h1 class="text-xl font-extrabold tracking-tighter uppercase italic">LOOM</h1>
+        </a>
+        <div class="relative">
+            <button id="user-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-3">
+                <span id="nav-user-name" class="text-sm font-bold">Connect</span>
+                <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10 object-cover" alt="User avatar">
+            </button>
+            <div id="user-menu" class="menu-dropdown">
+                <div id="menu-banner" class="profile-banner"><img id="menu-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="profile-avatar" alt="Menu avatar"></div>
+                <div class="pt-10 px-5 pb-4 border-b border-white/5">
+                    <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
+                    <p id="menu-email" class="text-xs text-gray-400">Login Required</p>
+                </div>
+                <div>
+                    <a class="block px-4 py-3 hover:bg-white/5" href="profile.html"><i class="fas fa-user-edit text-blue-400 mr-2"></i>Edit Profile</a>
+                    <a class="block px-4 py-3 hover:bg-white/5" href="upload.html"><i class="fas fa-upload text-pink-400 mr-2"></i>Publish Asset</a>
+                    <button class="block w-full text-left px-4 py-3 hover:bg-white/5" id="logout-btn" type="button"><i class="fas fa-sign-out-alt text-red-500 mr-2"></i><span class="text-red-500">Sign Out</span></button>
+                </div>
             </div>
-            <div class="ultra-glass rounded-full px-6 py-3 flex items-center gap-6 border border-white/10">
-                <a href="index.html" class="text-xs font-black hover:text-pink-400 uppercase">Browse</a>
-                <a href="profile.html" id="profile-link" class="hidden text-xs font-black hover:text-pink-400 uppercase">Profile</a>
-                <button onclick="openAuth()" id="signin-btn" class="bg-white text-black px-5 py-1.5 rounded-full text-xs font-black uppercase">Sign In</button>
-            </div>
-        </nav>
+        </div>
+    </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10">
-            <aside class="space-y-8">
-                <div class="ultra-glass rounded-[32px] p-8">
-                    <label class="text-[10px] font-black text-gray-500 mb-2 block uppercase tracking-widest">Search Registry</label>
-                    <input type="text" id="search-input" placeholder="Mod name..." class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 px-4 text-sm text-white">
+    <main class="site-wrap pb-12 space-y-8">
+        <section class="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-6">
+            <aside class="surface p-4 space-y-4 h-fit">
+                <label for="search-input" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Asset Search</label>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                    <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="surface p-2 text-center"><div id="metric-assets" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Assets</div></div>
+                    <div class="surface p-2 text-center"><div id="metric-creators" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Creators</div></div>
+                    <div class="surface p-2 text-center"><div id="metric-downloads" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Installs</div></div>
                 </div>
             </aside>
-
-            <main class="space-y-8">
-                <div class="hero-gradient rounded-[40px] p-10 border border-white/10">
-                    <h2 class="text-5xl font-black mb-2 tracking-tighter uppercase">Registry</h2>
-                    <p class="text-gray-400">The central hub for Loom framework assets.</p>
+            <article class="surface p-8 border-pink-500/20 bg-gradient-to-br from-pink-500/10 to-transparent rounded-[28px]">
+                <h2 class="text-4xl md:text-6xl font-black italic mb-3">Build. Ship. Spotlight.</h2>
+                <p class="text-gray-300 max-w-3xl">Feature system, most popular, dev choice, new releases, known creators, and featured creators all update from your Firebase data.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="chip">Feature System</span><span class="chip">Most Popular</span><span class="chip">Dev Choice</span><span class="chip">New Releases</span><span class="chip">Creator Discovery</span>
                 </div>
-                <div id="assets-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-6"></div>
-            </main>
+            </article>
+        </section>
+
+        <section id="search-section" class="hidden">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Search Results</h3>
+                <span id="search-count" class="text-xs text-gray-500 uppercase tracking-[0.12em]">0 results</span>
+            </div>
+            <div id="search-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+        </section>
+
+        <div id="curated-wrap" class="space-y-8">
+            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Feature System</h3><span class="text-xs text-gray-500 uppercase">Marked as featured</span></div><div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
+            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Most Popular</h3><span class="text-xs text-gray-500 uppercase">By installs</span></div><div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
+            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Dev Choice</h3><span class="text-xs text-gray-500 uppercase">Marked by creators</span></div><div id="devchoice-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
+            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">New Releases</h3><span class="text-xs text-gray-500 uppercase">Latest updates</span></div><div id="newrelease-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
+            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <article><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Known Creators</h3><span class="text-xs text-gray-500 uppercase">Top and tagged</span></div><div id="known-creators-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></article>
+                <article><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Featured Creators</h3><span class="text-xs text-gray-500 uppercase">Spotlight</span></div><div id="featured-creators-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></article>
+            </section>
         </div>
-    </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Loom</h4><p class="text-sm text-gray-400 mt-3">A creator registry for assets, releases, and discovery.</p></article>
+            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Explore</h4><div class="mt-3 space-y-2"><a class="footer-link" href="#featured-grid">Feature System</a><a class="footer-link" href="#popular-grid">Most Popular</a><a class="footer-link" href="#newrelease-grid">New Releases</a></div></article>
+            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Creator Tools</h4><div class="mt-3 space-y-2"><a class="footer-link" href="upload.html">Publish Asset</a><a class="footer-link" href="profile.html">Edit Profile</a></div></article>
+            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Community</h4><div class="mt-3 flex flex-wrap gap-2"><span class="chip"><i class="fa-brands fa-discord mr-1"></i>Discord</span><span class="chip"><i class="fa-brands fa-github mr-1"></i>GitHub</span><span class="chip"><i class="fa-brands fa-youtube mr-1"></i>YouTube</span></div></article>
+        </div>
+        <div class="footer-bottom"><span>&copy; 2026 Borborizo Development</span><span>&bull; Loom Network Online</span></div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import {
+            createUserWithEmailAndPassword,
+            getAuth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            collection,
+            doc,
+            getFirestore,
+            getDoc,
+            getDocs,
+            limit,
+            onSnapshot,
+            query,
+            serverTimestamp,
+            setDoc,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // At the top of your script tag, inside the module:
-window.openAuth = () => {
-    console.log("Attempting to open modal...");
-    const overlay = document.getElementById('auth-overlay');
-    if (overlay) {
-        overlay.style.display = 'flex';
-    } else {
-        console.error("Could not find auth-overlay element!");
-    }
-};
-        const firebaseConfig = { 
-    apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", 
-    authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // UI Handlers
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('signin-btn').style.display = 'none';
-                document.getElementById('profile-link').classList.remove('hidden');
+        const guestAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=guest";
+        const guestBanner = "";
+
+        const authModal = document.getElementById("auth-modal");
+        const authCloseBtn = document.getElementById("auth-close");
+        const authTitle = document.getElementById("auth-title");
+        const authSubtitle = document.getElementById("auth-subtitle");
+        const authEmail = document.getElementById("auth-email");
+        const authUsernameWrap = document.getElementById("auth-username-wrap");
+        const authUsername = document.getElementById("auth-username");
+        const authPass = document.getElementById("auth-pass");
+        const authSubmit = document.getElementById("auth-submit");
+        const authSwitchText = document.getElementById("auth-switch-text");
+        const authSwitchBtn = document.getElementById("auth-switch-btn");
+
+        const userTrigger = document.getElementById("user-trigger");
+        const userMenu = document.getElementById("user-menu");
+        const navUserName = document.getElementById("nav-user-name");
+        const navAvatar = document.getElementById("nav-avatar");
+        const menuBanner = document.getElementById("menu-banner");
+        const menuAvatar = document.getElementById("menu-avatar");
+        const menuUsername = document.getElementById("menu-username");
+        const menuEmail = document.getElementById("menu-email");
+        const logoutBtn = document.getElementById("logout-btn");
+
+        const searchInput = document.getElementById("search-input");
+        const searchSection = document.getElementById("search-section");
+        const searchGrid = document.getElementById("search-grid");
+        const searchCount = document.getElementById("search-count");
+        const curatedWrap = document.getElementById("curated-wrap");
+
+        const metricAssets = document.getElementById("metric-assets");
+        const metricCreators = document.getElementById("metric-creators");
+        const metricDownloads = document.getElementById("metric-downloads");
+
+        let authMode = "signin";
+        let activeUser = null;
+        let activeProfile = null;
+        let assets = [];
+        let users = [];
+
+        function escapeHtml(value = "") {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function sanitizeUsername(rawValue = "") {
+            return String(rawValue)
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]/g, "")
+                .slice(0, 24);
+        }
+
+        function usernameFromEmail(email = "") {
+            return sanitizeUsername(String(email).split("@")[0]) || "user";
+        }
+
+        function validHttpUrl(url = "") {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === "http:" || parsed.protocol === "https:";
+            } catch (_) {
+                return false;
             }
+        }
+
+        function toMillis(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === "function") return value.toMillis();
+            if (typeof value.seconds === "number") return value.seconds * 1000;
+            if (value instanceof Date) return value.getTime();
+            if (typeof value === "number") return value;
+            return 0;
+        }
+
+        function formatShortDate(millis) {
+            if (!millis) return "n/a";
+            try {
+                return new Date(millis).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                });
+            } catch (_) {
+                return "n/a";
+            }
+        }
+
+        function normalizeAsset(id, raw = {}) {
+            const creatorName = sanitizeUsername(raw.creatorName || "") || "unknown";
+            const name = String(raw.name || "Untitled");
+            const version = String(raw.version || "v1.0.0");
+            const description = String(raw.description || "");
+            const summary = String(raw.summary || "");
+            const tag = String(raw.tag || "General");
+            const downloads = Number.isFinite(raw.downloads) ? raw.downloads : Number(raw.downloads || 0);
+            const createdMs = toMillis(raw.createdAt);
+            const updatedMs = toMillis(raw.updatedAt) || createdMs;
+            return {
+                id,
+                name,
+                version,
+                description,
+                tag,
+                creatorId: String(raw.creatorId || ""),
+                creatorName,
+                downloads: Number.isFinite(downloads) ? downloads : 0,
+                featured: Boolean(raw.featured),
+                devChoice: Boolean(raw.devChoice),
+                iconUrl: validHttpUrl(raw.iconUrl || "") ? raw.iconUrl : "",
+                videoUrl: validHttpUrl(raw.videoUrl || "") ? raw.videoUrl : "",
+                galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages.filter((item) => validHttpUrl(item)) : [],
+                socials: {
+                    website: validHttpUrl(raw.socials?.website || "") ? raw.socials.website : "",
+                    github: validHttpUrl(raw.socials?.github || "") ? raw.socials.github : "",
+                    discord: validHttpUrl(raw.socials?.discord || "") ? raw.socials.discord : "",
+                    docs: validHttpUrl(raw.socials?.docs || "") ? raw.socials.docs : ""
+                },
+                createdMs,
+                updatedMs,
+                searchText: `${name} ${version} ${summary} ${description} ${tag} ${creatorName}`.toLowerCase()
+            };
+        }
+
+        function normalizeUser(id, raw = {}) {
+            const username = sanitizeUsername(raw.username || "") || "user";
+            return {
+                id,
+                username,
+                usernameLower: sanitizeUsername(raw.usernameLower || username) || username,
+                bio: typeof raw.bio === "string" ? raw.bio : "",
+                avatarUrl: validHttpUrl(raw.avatarUrl || "") ? raw.avatarUrl : "",
+                bannerUrl: validHttpUrl(raw.bannerUrl || "") ? raw.bannerUrl : "",
+                role: typeof raw.role === "string" && raw.role.trim() ? raw.role.trim() : "Consumer",
+                isKnownCreator: Boolean(raw.isKnownCreator),
+                isFeaturedCreator: Boolean(raw.isFeaturedCreator),
+                canCurate: Boolean(raw.canCurate),
+                followers: Number.isFinite(raw.followers) ? raw.followers : Number(raw.followers || 0),
+                following: Number.isFinite(raw.following) ? raw.following : Number(raw.following || 0),
+                searchText: `${username} ${raw.bio || ""}`.toLowerCase()
+            };
+        }
+
+        function getUserById(uid = "") {
+            if (!uid) return null;
+            return users.find((user) => user.id === uid) || null;
+        }
+
+        function getCreatorName(asset) {
+            const user = getUserById(asset.creatorId);
+            if (user?.username) return user.username;
+            return asset.creatorName || "unknown";
+        }
+
+        function getCreatorAvatar(asset) {
+            const user = getUserById(asset.creatorId);
+            if (user?.avatarUrl) return user.avatarUrl;
+            const seed = encodeURIComponent(asset.creatorId || getCreatorName(asset));
+            return `https://api.dicebear.com/7.x/identicon/svg?seed=${seed}`;
+        }
+
+        function renderAssetCard(asset) {
+            const icon = asset.iconUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
+            const creator = getCreatorName(asset);
+            const creatorAvatar = getCreatorAvatar(asset);
+            const pills = [
+                asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
+                asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : ""
+            ].filter(Boolean).join("");
+            return `
+                <a class="asset-card p-5 flex flex-col gap-4 no-underline text-inherit" href="asset.html?id=${encodeURIComponent(asset.id)}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img class="w-14 h-14 rounded-xl object-cover border border-white/10 bg-white/5" src="${escapeHtml(icon)}" alt="Asset icon">
+                            <div class="min-w-0">
+                                <h4 class="text-lg font-black lowercase truncate">${escapeHtml(asset.name)}</h4>
+                                <p class="text-[10px] uppercase tracking-[0.14em] text-gray-500 font-bold">${escapeHtml(asset.version)}</p>
+                            </div>
+                        </div>
+                        <span class="chip">${escapeHtml(asset.tag)}</span>
+                    </div>
+                    <p class="text-sm text-gray-300 leading-relaxed min-h-[44px]">${escapeHtml(asset.description || "No description provided.")}</p>
+                    <div class="flex flex-wrap gap-2">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
+                    <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" alt="Creator avatar">
+                            <span class="text-xs text-gray-300 truncate">${escapeHtml(creator)}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-white font-bold">${Number(asset.downloads || 0).toLocaleString()} installs</div>
+                            <div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</div>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        function creatorStats(uid = "") {
+            const owned = assets.filter((asset) => asset.creatorId === uid);
+            const installs = owned.reduce((sum, asset) => sum + Number(asset.downloads || 0), 0);
+            return {
+                assetCount: owned.length,
+                installCount: installs
+            };
+        }
+
+        function renderCreatorCard(user) {
+            const banner = user.bannerUrl;
+            const avatar = user.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.id || user.username)}`;
+            const stats = creatorStats(user.id);
+            const badges = [
+                user.isKnownCreator ? `<span class="chip border-blue-500/40 text-blue-300">Known Creator</span>` : "",
+                user.isFeaturedCreator ? `<span class="chip border-yellow-500/40 text-yellow-300">Featured</span>` : ""
+            ].filter(Boolean).join("");
+
+            return `
+                <a class="creator-card p-4 no-underline text-inherit block" href="profile.html?id=${encodeURIComponent(user.id)}">
+                    <div class="h-20 rounded-xl overflow-hidden border border-white/10 bg-gradient-to-r from-pink-500/20 to-blue-500/15">
+                        ${banner ? `<img class="w-full h-full object-cover" src="${escapeHtml(banner)}" alt="Creator banner">` : ""}
+                    </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatar)}" alt="Creator avatar">
+                        <div class="min-w-0">
+                            <h4 class="text-sm font-black lowercase truncate">${escapeHtml(user.username)}</h4>
+                            <p class="text-[10px] uppercase tracking-[0.13em] text-gray-500 font-bold">${escapeHtml(user.role || "Creator")}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-300 mt-3 min-h-[36px]">${escapeHtml((user.bio || "No bio set.").slice(0, 86))}</p>
+                    <div class="mt-3 flex items-center justify-between gap-2 text-[11px] text-gray-400">
+                        <span>${stats.assetCount} assets</span>
+                        <span>${stats.installCount.toLocaleString()} installs</span>
+                    </div>
+                    <div class="mt-3 flex flex-wrap gap-2">${badges || `<span class="chip border-white/15 text-gray-400">Creator</span>`}</div>
+                </a>
+            `;
+        }
+
+        function renderAssetGrid(containerId, items, emptyLabel) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = `<article class="surface p-5 text-sm text-gray-400 border border-white/10">${escapeHtml(emptyLabel)}</article>`;
+                return;
+            }
+            container.innerHTML = items.map((asset) => renderAssetCard(asset)).join("");
+        }
+
+        function renderCreatorGrid(containerId, items, emptyLabel) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = `<article class="surface p-5 text-sm text-gray-400 border border-white/10">${escapeHtml(emptyLabel)}</article>`;
+                return;
+            }
+            container.innerHTML = items.map((user) => renderCreatorCard(user)).join("");
+        }
+
+        function renderMetrics() {
+            const creatorIds = new Set();
+            for (const asset of assets) {
+                if (asset.creatorId) {
+                    creatorIds.add(asset.creatorId);
+                }
+            }
+            for (const user of users) {
+                if (user.id) {
+                    creatorIds.add(user.id);
+                }
+            }
+
+            const installs = assets.reduce((sum, asset) => sum + Number(asset.downloads || 0), 0);
+            metricAssets.innerText = String(assets.length);
+            metricCreators.innerText = String(creatorIds.size);
+            metricDownloads.innerText = installs.toLocaleString();
+        }
+
+        function rankedCreators() {
+            return [...users]
+                .map((user) => {
+                    const stats = creatorStats(user.id);
+                    return {
+                        ...user,
+                        _score: (user.isFeaturedCreator ? 900000 : 0) + (user.isKnownCreator ? 500000 : 0) + stats.assetCount * 2000 + stats.installCount
+                    };
+                })
+                .sort((a, b) => b._score - a._score);
+        }
+
+        function renderCuratedSections() {
+            const featured = assets.filter((asset) => asset.featured).slice(0, 6);
+            const devChoice = assets.filter((asset) => asset.devChoice).slice(0, 6);
+            const popular = [...assets]
+                .sort((a, b) => (b.downloads - a.downloads) || ((b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs)))
+                .slice(0, 6);
+            const newReleases = [...assets]
+                .sort((a, b) => (b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs))
+                .slice(0, 6);
+
+            renderAssetGrid("featured-grid", featured, "No featured assets yet.");
+            renderAssetGrid("popular-grid", popular, "No assets available yet.");
+            renderAssetGrid("devchoice-grid", devChoice, "No dev choice assets yet.");
+            renderAssetGrid("newrelease-grid", newReleases, "No release activity yet.");
+
+            const ranked = rankedCreators();
+            const known = ranked.filter((user) => user.isKnownCreator).slice(0, 6);
+            const featuredCreators = ranked.filter((user) => user.isFeaturedCreator).slice(0, 6);
+
+            if (!known.length) {
+                known.push(...ranked.slice(0, 4));
+            }
+            if (!featuredCreators.length) {
+                featuredCreators.push(...ranked.slice(0, 4));
+            }
+
+            renderCreatorGrid("known-creators-grid", known.slice(0, 6), "No known creators marked yet.");
+            renderCreatorGrid("featured-creators-grid", featuredCreators.slice(0, 6), "No featured creators marked yet.");
+        }
+
+        function computeSearchScore(asset, queryText, matchedCreatorIds) {
+            let score = 0;
+            if (asset.name.toLowerCase().includes(queryText)) score += 8;
+            if (asset.tag.toLowerCase().includes(queryText)) score += 4;
+            if (asset.description.toLowerCase().includes(queryText)) score += 2;
+            if (asset.creatorName.toLowerCase().includes(queryText)) score += 3;
+            if (matchedCreatorIds.has(asset.creatorId)) score += 6;
+            return score;
+        }
+
+        function renderSearchResults() {
+            const queryText = searchInput.value.trim().toLowerCase();
+            if (!queryText) {
+                searchSection.classList.add("hidden");
+                curatedWrap.classList.remove("hidden");
+                return;
+            }
+
+            const matchedCreatorIds = new Set(
+                users.filter((user) => user.searchText.includes(queryText)).map((user) => user.id)
+            );
+
+            const scored = assets
+                .map((asset) => ({ asset, score: computeSearchScore(asset, queryText, matchedCreatorIds) }))
+                .filter((entry) => entry.score > 0)
+                .sort((a, b) => b.score - a.score || b.asset.downloads - a.asset.downloads)
+                .slice(0, 24)
+                .map((entry) => entry.asset);
+
+            curatedWrap.classList.add("hidden");
+            searchSection.classList.remove("hidden");
+            searchCount.innerText = `${scored.length} result${scored.length === 1 ? "" : "s"}`;
+            searchGrid.innerHTML = scored.length
+                ? scored.map((asset) => renderAssetCard(asset)).join("")
+                : `<article class="surface p-5 text-sm text-gray-400 border border-white/10">No assets matched your search.</article>`;
+        }
+
+        function setMenuBanner(url) {
+            if (validHttpUrl(url)) {
+                menuBanner.style.backgroundImage = `url("${url}")`;
+                menuBanner.style.backgroundSize = "cover";
+                menuBanner.style.backgroundPosition = "center";
+                return;
+            }
+            menuBanner.style.backgroundImage = "";
+            menuBanner.style.backgroundSize = "";
+            menuBanner.style.backgroundPosition = "";
+        }
+
+        function renderGuestNav() {
+            navUserName.innerText = "Connect";
+            navAvatar.src = guestAvatar;
+            menuAvatar.src = guestAvatar;
+            menuUsername.innerText = "guest";
+            menuEmail.innerText = "Login Required";
+            setMenuBanner(guestBanner);
+            logoutBtn.classList.add("hidden");
+        }
+
+        function renderUserNav(user, profile) {
+            const username = profile?.username || usernameFromEmail(user?.email || "");
+            const avatar = profile?.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.uid)}`;
+            navUserName.innerText = username;
+            navAvatar.src = avatar;
+            menuAvatar.src = avatar;
+            menuUsername.innerText = username;
+            menuEmail.innerText = user.email || "";
+            setMenuBanner(profile?.bannerUrl || "");
+            logoutBtn.classList.remove("hidden");
+        }
+
+        function openAuthModal(mode = "signin") {
+            setAuthMode(mode);
+            authModal.classList.add("open");
+            authModal.setAttribute("aria-hidden", "false");
+            authEmail.focus();
+        }
+
+        function closeAuthModal() {
+            authModal.classList.remove("open");
+            authModal.setAttribute("aria-hidden", "true");
+            authPass.value = "";
+            authSubmit.disabled = false;
+            authSubmit.classList.remove("opacity-60", "cursor-not-allowed");
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode === "signup" ? "signup" : "signin";
+            const isSignUp = authMode === "signup";
+            authTitle.innerText = isSignUp ? "CREATE ACCOUNT" : "WELCOME BACK";
+            authSubtitle.innerText = isSignUp
+                ? "Create your Loom account and choose a unique username."
+                : "Enter your details to access Loom.";
+            authSubmit.innerText = isSignUp ? "Create Account" : "Sign In";
+            authSwitchText.innerText = isSignUp ? "Already have an account?" : "Don't have an account?";
+            authSwitchBtn.innerText = isSignUp ? "Sign In" : "Sign Up";
+            authUsernameWrap.classList.toggle("hidden", !isSignUp);
+            authUsername.required = isSignUp;
+        }
+
+        function authMessageForError(code = "") {
+            switch (code) {
+                case "auth/invalid-credential":
+                    return "Email or password is incorrect.";
+                case "auth/invalid-email":
+                    return "Email format is invalid.";
+                case "auth/missing-password":
+                    return "Password is required.";
+                case "auth/user-disabled":
+                    return "This account has been disabled.";
+                case "auth/too-many-requests":
+                    return "Too many attempts. Wait a minute and try again.";
+                case "auth/network-request-failed":
+                    return "Network issue. Check your connection and try again.";
+                case "auth/email-already-in-use":
+                    return "That email is already registered.";
+                case "auth/weak-password":
+                    return "Password must be at least 6 characters.";
+                case "auth/operation-not-allowed":
+                    return "Email/password sign-in is not enabled in Firebase Auth.";
+                case "auth/configuration-not-found":
+                    return "Firebase Auth is not configured correctly for this project.";
+                default:
+                    return "Authentication failed. Please try again.";
+            }
+        }
+
+        async function isUsernameTaken(username, ignoreUid = "") {
+            const usernameLower = sanitizeUsername(username);
+            if (!usernameLower) return false;
+            try {
+                const q = query(collection(db, "users"), where("usernameLower", "==", usernameLower), limit(1));
+                const snap = await getDocs(q);
+                if (snap.empty) return false;
+                return snap.docs[0].id !== ignoreUid;
+            } catch (err) {
+                console.warn("Username availability lookup failed:", err);
+                return false;
+            }
+        }
+
+        async function ensureUserProfile(user, preferredUsername = "") {
+            const profileRef = doc(db, "users", user.uid);
+            const profileSnap = await getDoc(profileRef);
+
+            if (!profileSnap.exists()) {
+                const requested = sanitizeUsername(preferredUsername) || usernameFromEmail(user.email || "");
+                let username = requested;
+                let attempts = 0;
+                while (await isUsernameTaken(username, user.uid)) {
+                    attempts += 1;
+                    username = `${requested}${Math.floor(100 + Math.random() * 900)}`;
+                    if (attempts > 10) {
+                        username = `${requested}${Date.now().toString().slice(-4)}`;
+                        break;
+                    }
+                }
+
+                const profileData = {
+                    username,
+                    usernameLower: username,
+                    bio: "",
+                    role: "Consumer",
+                    avatarUrl: "",
+                    bannerUrl: "",
+                    followers: 0,
+                    following: 0,
+                    socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                    isKnownCreator: false,
+                    isFeaturedCreator: false,
+                    canCurate: false,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                await setDoc(profileRef, profileData, { merge: true });
+                return normalizeUser(user.uid, profileData);
+            }
+
+            const raw = profileSnap.data();
+            const normalized = normalizeUser(user.uid, raw);
+            const patch = {};
+            if (!raw.username) patch.username = normalized.username;
+            if (!raw.usernameLower) patch.usernameLower = normalized.usernameLower;
+            if (typeof raw.bio !== "string") patch.bio = normalized.bio;
+            if (typeof raw.role !== "string") patch.role = normalized.role;
+            if (typeof raw.avatarUrl !== "string") patch.avatarUrl = "";
+            if (typeof raw.bannerUrl !== "string") patch.bannerUrl = "";
+            if (typeof raw.followers !== "number") patch.followers = 0;
+            if (typeof raw.following !== "number") patch.following = 0;
+            if (typeof raw.socials !== "object" || raw.socials === null) patch.socials = { website: "", x: "", github: "", youtube: "", discord: "" };
+            if (typeof raw.isKnownCreator !== "boolean") patch.isKnownCreator = false;
+            if (typeof raw.isFeaturedCreator !== "boolean") patch.isFeaturedCreator = false;
+            if (typeof raw.canCurate !== "boolean") patch.canCurate = false;
+            if (Object.keys(patch).length) {
+                patch.updatedAt = serverTimestamp();
+                await setDoc(profileRef, patch, { merge: true });
+                return normalizeUser(user.uid, { ...raw, ...patch });
+            }
+            return normalized;
+        }
+
+        async function submitAuth() {
+            const email = authEmail.value.trim();
+            const password = authPass.value;
+            const requestedUsername = sanitizeUsername(authUsername.value);
+
+            if (!email || !password) {
+                alert("Email and password are required.");
+                return;
+            }
+            if (authMode === "signup" && requestedUsername.length < 3) {
+                alert("Username must be at least 3 characters.");
+                return;
+            }
+
+            authSubmit.disabled = true;
+            authSubmit.classList.add("opacity-60", "cursor-not-allowed");
+
+            try {
+                if (authMode === "signin") {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    closeAuthModal();
+                    return;
+                }
+
+                const taken = await isUsernameTaken(requestedUsername);
+                if (taken) {
+                    alert("That username is already in use. Try another one.");
+                    return;
+                }
+
+                const credentials = await createUserWithEmailAndPassword(auth, email, password);
+                await ensureUserProfile(credentials.user, requestedUsername);
+                closeAuthModal();
+            } catch (err) {
+                console.error("Auth failed:", err);
+                alert(authMessageForError(err?.code || ""));
+            } finally {
+                authSubmit.disabled = false;
+                authSubmit.classList.remove("opacity-60", "cursor-not-allowed");
+            }
+        }
+
+        function renderEverything() {
+            renderMetrics();
+            renderCuratedSections();
+            renderSearchResults();
+        }
+
+        function subscribeToData() {
+            onSnapshot(
+                collection(db, "assets"),
+                (snapshot) => {
+                    assets = snapshot.docs.map((assetDoc) => normalizeAsset(assetDoc.id, assetDoc.data()));
+                    renderEverything();
+                },
+                (err) => {
+                    console.error("Assets subscription failed:", err);
+                }
+            );
+
+            onSnapshot(
+                collection(db, "users"),
+                (snapshot) => {
+                    users = snapshot.docs.map((userDoc) => normalizeUser(userDoc.id, userDoc.data()));
+                    renderEverything();
+                },
+                (err) => {
+                    console.error("Users subscription failed:", err);
+                }
+            );
+        }
+
+        userTrigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            if (!activeUser) {
+                openAuthModal("signin");
+                return;
+            }
+            userMenu.classList.toggle("active");
         });
 
-        document.getElementById('signin-btn').onclick = () => document.getElementById('auth-overlay').style.display = 'flex';
-
-        // Load Assets
-        const assetsGrid = document.getElementById('assets-grid');
-        onSnapshot(query(collection(db, "assets"), orderBy("createdAt", "desc")), (snap) => {
-            assetsGrid.innerHTML = '';
-            snap.forEach((d) => {
-                const a = d.data();
-                const isOwner = auth.currentUser && (a.creatorId === auth.currentUser.uid);
-                assetsGrid.innerHTML += `
-                    <div class="mod-card-ultra p-6 flex flex-col h-full cursor-pointer" onclick="location.href='asset.html?id=${d.id}'">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-2xl flex items-center justify-center"><i class="fas fa-cube text-2xl text-white"></i></div>
-                            <div class="text-right">
-                                <span class="block text-xs font-mono text-pink-400 font-bold uppercase">${a.version}</span>
-                                <span class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">${a.tag}</span>
-                            </div>
-                        </div>
-                        <h3 class="text-xl font-extrabold mb-2 uppercase">${a.name}</h3>
-                        <p class="text-sm text-gray-400 flex-grow italic line-clamp-2">${a.description}</p>
-                        <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-                            <span class="text-[10px] font-black text-gray-500 hover:text-pink-400 transition uppercase cursor-pointer" 
-                                  onclick="event.stopPropagation(); location.href='profile.html?id=${a.creatorId}'">
-                                By ${a.creatorName}
-                            </span>
-                            <div class="flex items-center gap-3">
-                                <span class="text-[9px] text-gray-700 font-bold"><i class="fas fa-download mr-1"></i>${a.downloads || 0}</span>
-                                ${isOwner ? `<button onclick="event.stopPropagation(); window.deleteAsset('${d.id}')" class="text-red-500 text-xs"><i class="fas fa-trash"></i></button>` : ''}
-                            </div>
-                        </div>
-                    </div>`;
+        authCloseBtn.addEventListener("click", closeAuthModal);
+        authSwitchBtn.addEventListener("click", () => setAuthMode(authMode === "signin" ? "signup" : "signin"));
+        authSubmit.addEventListener("click", () => {
+            submitAuth().catch((err) => {
+                console.error("Auth submit failed:", err);
             });
         });
 
-        window.deleteAsset = async (id) => { if(confirm("Delete asset?")) await deleteDoc(doc(db, "assets", id)); };
+        authPass.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitAuth().catch((err) => {
+                    console.error("Auth enter submit failed:", err);
+                });
+            }
+        });
+
+        searchInput.addEventListener("input", renderSearchResults);
+
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+            } catch (err) {
+                console.error("Sign out failed:", err);
+            } finally {
+                userMenu.classList.remove("active");
+            }
+        });
+
+        for (const link of userMenu.querySelectorAll("a")) {
+            link.addEventListener("click", (event) => {
+                if (!activeUser) {
+                    event.preventDefault();
+                    openAuthModal("signin");
+                    return;
+                }
+                userMenu.classList.remove("active");
+            });
+        }
+
+        window.addEventListener("click", (event) => {
+            if (!userMenu.contains(event.target) && !userTrigger.contains(event.target)) {
+                userMenu.classList.remove("active");
+            }
+            if (event.target === authModal) {
+                closeAuthModal();
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            activeUser = user;
+
+            if (!user) {
+                activeProfile = null;
+                renderGuestNav();
+                return;
+            }
+
+            try {
+                activeProfile = await ensureUserProfile(user);
+                renderUserNav(user, activeProfile);
+            } catch (err) {
+                console.error("Profile sync failed:", err);
+                activeProfile = null;
+                renderUserNav(user, null);
+            }
+
+            closeAuthModal();
+        });
+
+        setAuthMode("signin");
+        renderGuestNav();
+        subscribeToData();
     </script>
 </body>
 </html>

@@ -8,53 +8,643 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #08070b; --surface: #121019; --accent: #ff79c6; }
-        body { background-color: var(--bg); color: #f8f8f2; font-family: 'Outfit', sans-serif; }
-        .mesh-bg { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%), radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%); z-index: -1; }
-        .ultra-glass { background: rgba(18, 16, 25, 0.6); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
-        input, textarea, select { background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        :root {
+            --bg: #030305;
+            --surface: #121019;
+            --accent: #ff79c6;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #f8f8f2;
+            font-family: "Outfit", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .site-wrap {
+            width: min(1200px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .glass {
+            background: rgba(18, 16, 25, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border);
+        }
+
+        .field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .field:focus {
+            border-color: var(--accent);
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #a1a1aa;
+            font-weight: 800;
+            margin: 0 0 0.65rem;
+        }
+
+        .upload-chip {
+            display: inline-flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed rgba(255, 255, 255, 0.22);
+            border-radius: 1rem;
+            padding: 0.9rem 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #ddd;
+            background: rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-chip:hover {
+            border-color: rgba(255, 121, 198, 0.5);
+            color: #fff;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #b4b4c0;
+        }
+
+        .preview-tile {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 0.6rem;
+        }
+
+        .preview-tile img,
+        .preview-tile video {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-wrap {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff79c6, #7aa2ff);
+            transition: width 0.2s;
+        }
+
+        .site-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: #050507;
+        }
+
+        .footer-bottom {
+            width: min(1200px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 1.1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #777;
+        }
     </style>
 </head>
-<body class="p-8">
+<body>
     <div class="mesh-bg"></div>
-    <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-black uppercase mb-12">New Asset</h1>
-        <div class="ultra-glass p-12 rounded-[40px] space-y-6">
-            <input type="text" id="asset-name" placeholder="Asset Name" class="w-full py-4 px-6 rounded-2xl text-sm">
-            <input type="text" id="asset-version" placeholder="Version (e.g. v1.0.0)" class="w-full py-4 px-6 rounded-2xl text-sm">
-            <textarea id="asset-desc" rows="3" placeholder="Description" class="w-full py-4 px-6 rounded-2xl text-sm resize-none"></textarea>
-            <select id="asset-tag" class="w-full py-4 px-6 rounded-2xl text-sm">
-                <option value="Visuals">Visuals</option>
-                <option value="Utility">Utility</option>
-                <option value="Multiplayer">Multiplayer</option>
-            </select>
-            <button id="submit-asset" class="w-full bg-white text-black font-black py-5 rounded-3xl hover:bg-pink-400 transition uppercase text-xs tracking-widest">Publish</button>
+
+    <header class="site-wrap py-6 flex justify-between items-center gap-4">
+        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
+            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
+            <h1 class="text-2xl font-black tracking-tighter uppercase italic">LOOM</h1>
+        </a>
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
+            <a href="profile.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Profile</a>
         </div>
-    </div>
+    </header>
+
+    <main class="site-wrap pb-12">
+        <section class="max-w-4xl mx-auto glass p-8 md:p-12 rounded-[40px]">
+            <h2 class="text-3xl font-black uppercase mb-2 italic tracking-tight">Publish New Asset</h2>
+            <p id="auth-status" class="text-sm text-gray-400 mb-8">Checking authentication...</p>
+
+            <form id="publish-form" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="asset-name" class="field" placeholder="Asset Name" required>
+                    <input type="text" id="asset-version" class="field" placeholder="Version (e.g. v1.0.0)" required>
+                </div>
+                <textarea id="asset-desc" rows="4" class="field resize-none" placeholder="Description" required></textarea>
+                <textarea id="asset-notes" rows="3" class="field resize-none" placeholder="Release Notes (optional)"></textarea>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select id="asset-tag" class="field" required>
+                        <option value="Visuals">Visuals</option>
+                        <option value="Utility">Utility</option>
+                        <option value="Multiplayer">Multiplayer</option>
+                        <option value="Gameplay">Gameplay</option>
+                        <option value="QualityOfLife">QualityOfLife</option>
+                    </select>
+                    <input type="text" id="asset-compatibility" class="field" placeholder="Compatibility (ex: Roblox 2026+, Unity 2022)">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="asset-summary" class="field md:col-span-2" placeholder="Short summary for cards/search">
+                    <select id="asset-license" class="field">
+                        <option value="Custom">License: Custom</option>
+                        <option value="MIT">MIT</option>
+                        <option value="Apache-2.0">Apache-2.0</option>
+                        <option value="GPL-3.0">GPL-3.0</option>
+                        <option value="Proprietary">Proprietary</option>
+                        <option value="CC0">CC0</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="url" id="asset-icon-url" class="field" placeholder="Asset Icon URL (optional)">
+                    <input type="url" id="asset-support-url" class="field" placeholder="Support URL (optional)">
+                </div>
+
+                <div>
+                    <p class="section-title">Media</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="url" id="asset-video-url" class="field" placeholder="Video URL (YouTube, Vimeo, MP4)">
+                        <textarea id="asset-gallery-urls" rows="3" class="field resize-none" placeholder="Gallery image URLs (one per line or comma-separated)"></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <label class="upload-chip">Upload Icon<input id="asset-icon-file" type="file" accept="image/*" class="hidden"></label>
+                        <label class="upload-chip">Upload Gallery<input id="asset-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
+                        <label class="upload-chip">Upload Video<input id="asset-video-file" type="file" accept="video/*" class="hidden"></label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <article class="preview-tile">
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Icon Preview</p>
+                            <img id="preview-icon" class="hidden" alt="Icon preview">
+                            <p id="preview-icon-empty" class="text-xs text-gray-500">No icon selected.</p>
+                        </article>
+                        <article class="preview-tile">
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Video Preview</p>
+                            <video id="preview-video" class="hidden" controls></video>
+                            <p id="preview-video-empty" class="text-xs text-gray-500">No video selected.</p>
+                        </article>
+                        <article class="preview-tile">
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Gallery Count</p>
+                            <p id="preview-gallery-count" class="text-2xl font-black italic">0</p>
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">Images ready</p>
+                        </article>
+                    </div>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-3">Use URL fields, file uploads, or both.</p>
+                </div>
+
+                <div>
+                    <p class="section-title">Documentation</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <textarea id="asset-requirements" rows="3" class="field resize-none" placeholder="Requirements (one per line)"></textarea>
+                        <textarea id="asset-install-guide" rows="3" class="field resize-none" placeholder="Quick install guide"></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="section-title">Social Links</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="url" id="social-website" class="field" placeholder="Website URL">
+                        <input type="url" id="social-github" class="field" placeholder="GitHub URL">
+                        <input type="url" id="social-discord" class="field" placeholder="Discord Invite URL">
+                        <input type="url" id="social-docs" class="field" placeholder="Documentation URL">
+                    </div>
+                </div>
+
+                <div>
+                    <p class="section-title">Curation Flags</p>
+                    <div id="curation-controls" class="grid grid-cols-1 md:grid-cols-2 gap-3 hidden">
+                        <label class="toggle"><input id="asset-featured" type="checkbox"> Feature This Asset</label>
+                        <label class="toggle"><input id="asset-dev-choice" type="checkbox"> Mark As Dev Choice</label>
+                    </div>
+                    <p id="curation-note" class="text-[11px] text-gray-400">Featured and Dev Choice are controlled by database permissions (`users/{uid}.canCurate`).</p>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="progress-wrap"><div id="upload-progress-bar" class="progress-bar"></div></div>
+                    <p id="upload-status" class="text-xs text-gray-500">Ready to publish.</p>
+                </div>
+
+                <button id="submit-asset" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">
+                    Publish
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            <span>&copy; 2026 Borborizo Development</span>
+            <span>&bull; Loom Network Online</span>
+        </div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ", authDomain: "loom-ef2c8.firebaseapp.com", projectId: "loom-ef2c8", storageBucket: "loom-ef2c8.firebasestorage.app", messagingSenderId: "774949013487", appId: "1:774949013487:web:cf464b6b9db7d93cd7981a" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        document.getElementById('submit-asset').onclick = async () => {
-            const user = auth.currentUser;
-            const name = document.getElementById('asset-name').value;
-            await addDoc(collection(db, "assets"), {
-                name, version: document.getElementById('asset-version').value,
-                description: document.getElementById('asset-desc').value,
-                tag: document.getElementById('asset-tag').value,
-                creatorId: user.uid, creatorName: user.displayName,
-                downloads: 0, createdAt: Date.now()
+        const publishForm = document.getElementById("publish-form");
+        const submitBtn = document.getElementById("submit-asset");
+        const statusEl = document.getElementById("auth-status");
+        const uploadStatus = document.getElementById("upload-status");
+        const uploadProgressBar = document.getElementById("upload-progress-bar");
+        const curationControls = document.getElementById("curation-controls");
+        const curationNote = document.getElementById("curation-note");
+        const iconFileInput = document.getElementById("asset-icon-file");
+        const galleryFilesInput = document.getElementById("asset-gallery-files");
+        const videoFileInput = document.getElementById("asset-video-file");
+        const previewIcon = document.getElementById("preview-icon");
+        const previewIconEmpty = document.getElementById("preview-icon-empty");
+        const previewVideo = document.getElementById("preview-video");
+        const previewVideoEmpty = document.getElementById("preview-video-empty");
+        const previewGalleryCount = document.getElementById("preview-gallery-count");
+        let activeUser = null;
+        let creatorProfile = null;
+        let canCurate = false;
+
+        function setSubmitting(isSubmitting) {
+            submitBtn.disabled = isSubmitting;
+            submitBtn.classList.toggle("opacity-60", isSubmitting);
+            submitBtn.classList.toggle("cursor-not-allowed", isSubmitting);
+        }
+
+        function setUploadStatus(message, tone = "text-gray-500") {
+            uploadStatus.className = `text-xs ${tone}`;
+            uploadStatus.innerText = message;
+        }
+
+        function setUploadProgress(percent = 0) {
+            const safe = Math.max(0, Math.min(100, Number(percent || 0)));
+            uploadProgressBar.style.width = `${safe}%`;
+        }
+
+        function validUrl(url = "") {
+            return /^https?:\/\//i.test(String(url || "").trim());
+        }
+
+        function setCurationControls(profile = null) {
+            canCurate = Boolean(profile?.canCurate);
+            curationControls.classList.toggle("hidden", !canCurate);
+            curationNote.innerText = canCurate
+                ? "You have curator access. These flags can be changed."
+                : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore to unlock.";
+        }
+
+        function sanitizeUsername(value, fallbackEmail = "") {
+            const cleaned = String(value || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]/g, "")
+                .slice(0, 24);
+            if (cleaned) {
+                return cleaned;
+            }
+            return String(fallbackEmail || "").split("@")[0].toLowerCase() || "creator";
+        }
+
+        function parseUrlList(rawValue) {
+            return String(rawValue || "")
+                .split(/[\n,]/)
+                .map((item) => item.trim())
+                .filter((item) => validUrl(item));
+        }
+
+        function parseLineList(rawValue) {
+            return String(rawValue || "")
+                .split(/[\n,]/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        function validateFile(file, mode = "image") {
+            if (!file) return;
+            const maxBytes = mode === "video" ? 120 * 1024 * 1024 : 10 * 1024 * 1024;
+            if (mode === "image" && !file.type.startsWith("image/")) {
+                throw new Error("Only image files are allowed for icon/gallery uploads.");
+            }
+            if (mode === "video" && !file.type.startsWith("video/")) {
+                throw new Error("Only video files are allowed for video uploads.");
+            }
+            if (file.size > maxBytes) {
+                throw new Error(mode === "video" ? "Video must be 120MB or smaller." : "Image must be 10MB or smaller.");
+            }
+        }
+
+        async function uploadFile(file, folder, mode = "image") {
+            validateFile(file, mode);
+            const safeExt = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "") || "bin";
+            const safeFolder = String(folder || "misc").replace(/[^a-z0-9_-]/gi, "").toLowerCase() || "misc";
+            const fileRef = ref(storage, `assets/${activeUser.uid}/${safeFolder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${safeExt}`);
+            return new Promise((resolve, reject) => {
+                const task = uploadBytesResumable(fileRef, file);
+                task.on(
+                    "state_changed",
+                    (snapshot) => {
+                        if (!snapshot.totalBytes) return;
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setUploadProgress(progress);
+                    },
+                    (err) => reject(err),
+                    async () => {
+                        try {
+                            const url = await getDownloadURL(task.snapshot.ref);
+                            resolve(url);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }
+                );
             });
-            alert("Published!");
-            window.location.href = "profile.html";
-        };
+        }
+
+        async function ensureUserProfile(user) {
+            const profileRef = doc(db, "users", user.uid);
+            const profileSnap = await getDoc(profileRef);
+
+            if (!profileSnap.exists()) {
+                const username = sanitizeUsername("", user.email || "");
+                const baseProfile = {
+                    username,
+                    usernameLower: username,
+                    bio: "",
+                    role: "Consumer",
+                    avatarUrl: "",
+                    bannerUrl: "",
+                    followers: 0,
+                    following: 0,
+                    socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                    isKnownCreator: false,
+                    isFeaturedCreator: false,
+                    canCurate: false,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                await setDoc(profileRef, baseProfile, { merge: true });
+                return baseProfile;
+            }
+
+            const data = profileSnap.data();
+            if (typeof data.canCurate !== "boolean") {
+                await setDoc(profileRef, { canCurate: false, updatedAt: serverTimestamp() }, { merge: true });
+            }
+            return {
+                ...data,
+                username: sanitizeUsername(data.username, user.email || ""),
+                canCurate: Boolean(data.canCurate)
+            };
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            activeUser = user;
+            if (!user) {
+                statusEl.innerText = "You must sign in before publishing.";
+                statusEl.className = "text-sm text-red-400 mb-8";
+                submitBtn.disabled = true;
+                creatorProfile = null;
+                setCurationControls(null);
+                return;
+            }
+
+            try {
+                creatorProfile = await ensureUserProfile(user);
+            } catch (err) {
+                console.error("Failed to load creator profile:", err);
+                creatorProfile = { username: sanitizeUsername("", user.email || "") };
+            }
+
+            statusEl.innerText = `Signed in as ${creatorProfile.username}`;
+            statusEl.className = "text-sm text-green-400 mb-8";
+            submitBtn.disabled = false;
+            setCurationControls(creatorProfile);
+        });
+
+        function refreshMediaPreviews() {
+            const iconFile = iconFileInput.files[0];
+            const videoFile = videoFileInput.files[0];
+            const galleryFiles = Array.from(galleryFilesInput.files || []);
+
+            if (iconFile) {
+                previewIcon.src = URL.createObjectURL(iconFile);
+                previewIcon.classList.remove("hidden");
+                previewIconEmpty.classList.add("hidden");
+            } else {
+                previewIcon.removeAttribute("src");
+                previewIcon.classList.add("hidden");
+                previewIconEmpty.classList.remove("hidden");
+            }
+
+            if (videoFile) {
+                previewVideo.src = URL.createObjectURL(videoFile);
+                previewVideo.classList.remove("hidden");
+                previewVideoEmpty.classList.add("hidden");
+            } else {
+                previewVideo.removeAttribute("src");
+                previewVideo.classList.add("hidden");
+                previewVideoEmpty.classList.remove("hidden");
+            }
+
+            previewGalleryCount.innerText = String(galleryFiles.length);
+        }
+
+        iconFileInput.addEventListener("change", refreshMediaPreviews);
+        videoFileInput.addEventListener("change", refreshMediaPreviews);
+        galleryFilesInput.addEventListener("change", refreshMediaPreviews);
+
+        publishForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!activeUser) {
+                alert("Please sign in first.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            const name = document.getElementById("asset-name").value.trim();
+            const version = document.getElementById("asset-version").value.trim();
+            const description = document.getElementById("asset-desc").value.trim();
+            const releaseNotes = document.getElementById("asset-notes").value.trim();
+            const tag = document.getElementById("asset-tag").value;
+            const compatibility = document.getElementById("asset-compatibility").value.trim();
+            const summary = document.getElementById("asset-summary").value.trim();
+            const license = document.getElementById("asset-license").value.trim() || "Custom";
+            const supportUrl = document.getElementById("asset-support-url").value.trim();
+            const iconUrlInput = document.getElementById("asset-icon-url").value.trim();
+            const videoUrlInput = document.getElementById("asset-video-url").value.trim();
+            const galleryUrlInput = document.getElementById("asset-gallery-urls").value;
+            const requirements = parseLineList(document.getElementById("asset-requirements").value).slice(0, 20);
+            const installGuide = document.getElementById("asset-install-guide").value.trim();
+
+            const socialWebsite = document.getElementById("social-website").value.trim();
+            const socialGithub = document.getElementById("social-github").value.trim();
+            const socialDiscord = document.getElementById("social-discord").value.trim();
+            const socialDocs = document.getElementById("social-docs").value.trim();
+
+            const isFeatured = canCurate ? document.getElementById("asset-featured").checked : false;
+            const isDevChoice = canCurate ? document.getElementById("asset-dev-choice").checked : false;
+
+            if (!name || !version || !description) {
+                alert("Please complete required fields.");
+                return;
+            }
+            if (iconUrlInput && !validUrl(iconUrlInput)) {
+                alert("Icon URL must be a valid http/https URL.");
+                return;
+            }
+            if (videoUrlInput && !validUrl(videoUrlInput)) {
+                alert("Video URL must be a valid http/https URL.");
+                return;
+            }
+            if (supportUrl && !validUrl(supportUrl)) {
+                alert("Support URL must be a valid http/https URL.");
+                return;
+            }
+
+            const iconFile = document.getElementById("asset-icon-file").files[0];
+            const videoFile = document.getElementById("asset-video-file").files[0];
+            const galleryFiles = Array.from(document.getElementById("asset-gallery-files").files || []);
+
+            let iconUrl = iconUrlInput;
+            let videoUrl = videoUrlInput;
+            let galleryImages = parseUrlList(galleryUrlInput);
+
+            try {
+                setSubmitting(true);
+                setUploadProgress(0);
+                setUploadStatus("Uploading media...", "text-pink-400");
+
+                if (iconFile) {
+                    setUploadStatus("Uploading icon...", "text-pink-400");
+                    iconUrl = await uploadFile(iconFile, "icon", "image");
+                }
+
+                if (videoFile) {
+                    setUploadStatus("Uploading video...", "text-pink-400");
+                    videoUrl = await uploadFile(videoFile, "video", "video");
+                }
+
+                if (galleryFiles.length) {
+                    const uploadedGallery = [];
+                    let index = 0;
+                    for (const file of galleryFiles.slice(0, 12)) {
+                        index += 1;
+                        setUploadStatus(`Uploading gallery image ${index}/${Math.min(galleryFiles.length, 12)}...`, "text-pink-400");
+                        const uploaded = await uploadFile(file, "gallery", "image");
+                        uploadedGallery.push(uploaded);
+                    }
+                    galleryImages = [...galleryImages, ...uploadedGallery].slice(0, 12);
+                }
+
+                setUploadStatus("Publishing asset...", "text-gray-400");
+                setUploadProgress(100);
+
+                const creatorName = sanitizeUsername(creatorProfile?.username, activeUser.email || "");
+                await addDoc(collection(db, "assets"), {
+                    name,
+                    version,
+                    description,
+                    summary,
+                    releaseNotes,
+                    tag,
+                    compatibility,
+                    license,
+                    supportUrl,
+                    requirements,
+                    installGuide,
+                    creatorId: activeUser.uid,
+                    creatorName,
+                    downloads: 0,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    iconUrl,
+                    videoUrl,
+                    galleryImages,
+                    socials: {
+                        website: socialWebsite,
+                        github: socialGithub,
+                        discord: socialDiscord,
+                        docs: socialDocs
+                    },
+                    featured: isFeatured,
+                    devChoice: isDevChoice
+                });
+
+                setUploadStatus("Asset published.", "text-green-400");
+                alert("Asset published.");
+                window.location.href = "profile.html";
+            } catch (err) {
+                console.error("Failed to publish asset:", err);
+                setUploadStatus("Publish failed. Check Firebase Storage/Firestore rules.", "text-red-400");
+                alert(err?.message || "Publish failed. Please try again.");
+            } finally {
+                setSubmitting(false);
+                setTimeout(() => setUploadProgress(0), 600);
+            }
+        });
+
+        setUploadProgress(0);
+        setCurationControls(null);
+        refreshMediaPreviews();
     </script>
 </body>
 </html>
