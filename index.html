@@ -23,6 +23,12 @@
         .field:focus { border-color:var(--accent); }
         .menu-dropdown { display:block; position:absolute; top:calc(100% + .75rem); right:0; width:320px; background:rgba(10,12,20,.95); backdrop-filter:blur(18px); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.6); transform:translateY(-10px); opacity:0; pointer-events:none; transition:.2s; z-index:50; }
         .menu-dropdown.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+        .notif-menu { width:340px; }
+        .notif-badge { background:#ff79c6; color:#0a0a0c; font-size:10px; font-weight:800; padding:2px 6px; border-radius:999px; line-height:1; }
+        .notif-item { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:10px; align-items:flex-start; }
+        .notif-item:last-child { border-bottom:0; }
+        .notif-item strong { display:block; font-size:12px; }
+        .notif-item span { display:block; font-size:11px; color:#9ca3af; }
         .profile-banner { height:90px; background:linear-gradient(135deg, #ff79c6, #7aa2ff); background-size:cover; background-position:center; position:relative; }
         .profile-avatar { width:70px; height:70px; border-radius:50%; border:4px solid #050507; position:absolute; bottom:-35px; left:20px; object-fit:cover; }
         #auth-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
@@ -58,21 +64,39 @@
             <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
             <h1 class="text-xl font-extrabold tracking-tighter uppercase italic">LOOM</h1>
         </a>
-        <div class="relative">
-            <button id="user-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-3">
-                <span id="nav-user-name" class="text-sm font-bold">Connect</span>
-                <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10 object-cover" alt="User avatar">
-            </button>
-            <div id="user-menu" class="menu-dropdown">
-                <div id="menu-banner" class="profile-banner"><img id="menu-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="profile-avatar" alt="Menu avatar"></div>
-                <div class="pt-10 px-5 pb-4 border-b border-white/5">
-                    <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
-                    <p id="menu-email" class="text-xs text-gray-400">Login Required</p>
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <button id="notif-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-2" type="button">
+                    <i class="fas fa-bell"></i>
+                    <span id="notif-count" class="notif-badge hidden">0</span>
+                </button>
+                <div id="notif-menu" class="menu-dropdown notif-menu">
+                    <div class="p-4 border-b border-white/5 flex items-center justify-between">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
+                        <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
+                    </div>
+                    <div id="notif-list" class="max-h-80 overflow-auto"></div>
+                    <div id="notif-empty" class="p-4 text-xs text-gray-500">No notifications yet.</div>
                 </div>
-                <div>
-                    <a class="block px-4 py-3 hover:bg-white/5" href="profile.html"><i class="fas fa-user-edit text-blue-400 mr-2"></i>Edit Profile</a>
-                    <a class="block px-4 py-3 hover:bg-white/5" href="upload.html"><i class="fas fa-upload text-pink-400 mr-2"></i>Publish Asset</a>
-                    <button class="block w-full text-left px-4 py-3 hover:bg-white/5" id="logout-btn" type="button"><i class="fas fa-sign-out-alt text-red-500 mr-2"></i><span class="text-red-500">Sign Out</span></button>
+            </div>
+            <div class="relative">
+                <button id="user-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-3">
+                    <span id="nav-user-name" class="text-sm font-bold">Connect</span>
+                    <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10 object-cover" alt="User avatar">
+                </button>
+                <div id="user-menu" class="menu-dropdown">
+                    <div id="menu-banner" class="profile-banner"><img id="menu-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="profile-avatar" alt="Menu avatar"></div>
+                    <div class="pt-10 px-5 pb-4 border-b border-white/5">
+                        <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
+                        <p id="menu-email" class="text-xs text-gray-400">Login Required</p>
+                    </div>
+                    <div>
+                        <a class="block px-4 py-3 hover:bg-white/5" href="profile.html"><i class="fas fa-user-edit text-blue-400 mr-2"></i>Edit Profile</a>
+                        <a class="block px-4 py-3 hover:bg-white/5" href="upload.html"><i class="fas fa-upload text-pink-400 mr-2"></i>Publish Asset</a>
+                        <a class="block px-4 py-3 hover:bg-white/5" href="friends.html"><i class="fas fa-user-friends text-pink-400 mr-2"></i>Friends</a>
+                        <a id="review-link" class="block px-4 py-3 hover:bg-white/5 hidden" href="review.html"><i class="fas fa-shield-halved text-yellow-300 mr-2"></i>Review Queue</a>
+                        <button class="block w-full text-left px-4 py-3 hover:bg-white/5" id="logout-btn" type="button"><i class="fas fa-sign-out-alt text-red-500 mr-2"></i><span class="text-red-500">Sign Out</span></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -151,6 +175,7 @@
             query,
             serverTimestamp,
             setDoc,
+            updateDoc,
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -190,7 +215,14 @@
         const menuAvatar = document.getElementById("menu-avatar");
         const menuUsername = document.getElementById("menu-username");
         const menuEmail = document.getElementById("menu-email");
+        const reviewLink = document.getElementById("review-link");
         const logoutBtn = document.getElementById("logout-btn");
+        const notifTrigger = document.getElementById("notif-trigger");
+        const notifMenu = document.getElementById("notif-menu");
+        const notifCount = document.getElementById("notif-count");
+        const notifList = document.getElementById("notif-list");
+        const notifEmpty = document.getElementById("notif-empty");
+        const notifMarkRead = document.getElementById("notif-mark-read");
 
         const searchInput = document.getElementById("search-input");
         const searchSection = document.getElementById("search-section");
@@ -207,6 +239,9 @@
         let activeProfile = null;
         let assets = [];
         let users = [];
+        let notifUnsub = null;
+        let presenceTimer = null;
+        const mediaCache = new Map();
 
         function escapeHtml(value = "") {
             return String(value)
@@ -238,6 +273,35 @@
             }
         }
 
+        async function getMediaUrl(mediaId) {
+            if (!mediaId) return "";
+            if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+            try {
+                const snap = await getDoc(doc(db, "media", mediaId));
+                if (snap.exists()) {
+                    const url = snap.data().dataUrl || "";
+                    mediaCache.set(mediaId, url);
+                    return url;
+                }
+            } catch (err) {
+                console.warn("Failed to load media:", err);
+            }
+            return "";
+        }
+
+        async function hydrateMediaImages(root = document) {
+            const items = root.querySelectorAll("[data-media-id]");
+            for (const img of items) {
+                const mediaId = img.dataset.mediaId;
+                if (!mediaId) continue;
+                const url = await getMediaUrl(mediaId);
+                if (url) {
+                    img.src = url;
+                    img.classList.remove("hidden");
+                }
+            }
+        }
+
         function toMillis(value) {
             if (!value) return 0;
             if (typeof value.toMillis === "function") return value.toMillis();
@@ -258,6 +322,12 @@
             } catch (_) {
                 return "n/a";
             }
+        }
+
+        function formatTimestamp(value) {
+            const millis = toMillis(value);
+            if (!millis) return "Just now";
+            return new Date(millis).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
         }
 
         function normalizeAsset(id, raw = {}) {
@@ -281,9 +351,11 @@
                 downloads: Number.isFinite(downloads) ? downloads : 0,
                 featured: Boolean(raw.featured),
                 devChoice: Boolean(raw.devChoice),
-                iconUrl: validHttpUrl(raw.iconUrl || "") ? raw.iconUrl : "",
+                iconUrl: validHttpUrl(raw.iconUrl || "") || /^data:image\//i.test(String(raw.iconUrl || "")) ? raw.iconUrl : "",
+                iconMediaId: typeof raw.iconMediaId === "string" ? raw.iconMediaId : "",
                 videoUrl: validHttpUrl(raw.videoUrl || "") ? raw.videoUrl : "",
-                galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages.filter((item) => validHttpUrl(item)) : [],
+                galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages.filter((item) => validHttpUrl(item) || /^data:image\//i.test(String(item || ""))) : [],
+                galleryMediaIds: Array.isArray(raw.galleryMediaIds) ? raw.galleryMediaIds.filter((item) => typeof item === "string") : [],
                 socials: {
                     website: validHttpUrl(raw.socials?.website || "") ? raw.socials.website : "",
                     github: validHttpUrl(raw.socials?.github || "") ? raw.socials.github : "",
@@ -303,8 +375,10 @@
                 username,
                 usernameLower: sanitizeUsername(raw.usernameLower || username) || username,
                 bio: typeof raw.bio === "string" ? raw.bio : "",
-                avatarUrl: validHttpUrl(raw.avatarUrl || "") ? raw.avatarUrl : "",
-                bannerUrl: validHttpUrl(raw.bannerUrl || "") ? raw.bannerUrl : "",
+                avatarUrl: validHttpUrl(raw.avatarUrl || "") || /^data:image\//i.test(String(raw.avatarUrl || "")) ? raw.avatarUrl : "",
+                bannerUrl: validHttpUrl(raw.bannerUrl || "") || /^data:image\//i.test(String(raw.bannerUrl || "")) ? raw.bannerUrl : "",
+                avatarMediaId: typeof raw.avatarMediaId === "string" ? raw.avatarMediaId : "",
+                bannerMediaId: typeof raw.bannerMediaId === "string" ? raw.bannerMediaId : "",
                 role: typeof raw.role === "string" && raw.role.trim() ? raw.role.trim() : "Consumer",
                 isKnownCreator: Boolean(raw.isKnownCreator),
                 isFeaturedCreator: Boolean(raw.isFeaturedCreator),
@@ -326,17 +400,13 @@
             return asset.creatorName || "unknown";
         }
 
-        function getCreatorAvatar(asset) {
-            const user = getUserById(asset.creatorId);
-            if (user?.avatarUrl) return user.avatarUrl;
-            const seed = encodeURIComponent(asset.creatorId || getCreatorName(asset));
-            return `https://api.dicebear.com/7.x/identicon/svg?seed=${seed}`;
-        }
-
         function renderAssetCard(asset) {
-            const icon = asset.iconUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
+            const creatorUser = getUserById(asset.creatorId);
+            const iconFallback = asset.iconUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
             const creator = getCreatorName(asset);
-            const creatorAvatar = getCreatorAvatar(asset);
+            const creatorAvatar = creatorUser?.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(asset.creatorId || creator)}`;
+            const creatorAvatarMediaId = creatorUser?.avatarMediaId || "";
+            const iconMediaId = asset.iconMediaId || "";
             const pills = [
                 asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
                 asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : ""
@@ -345,7 +415,7 @@
                 <a class="asset-card p-5 flex flex-col gap-4 no-underline text-inherit" href="asset.html?id=${encodeURIComponent(asset.id)}">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex items-center gap-3 min-w-0">
-                            <img class="w-14 h-14 rounded-xl object-cover border border-white/10 bg-white/5" src="${escapeHtml(icon)}" alt="Asset icon">
+                            <img class="w-14 h-14 rounded-xl object-cover border border-white/10 bg-white/5" src="${escapeHtml(iconFallback)}" data-media-id="${escapeHtml(iconMediaId)}" alt="Asset icon">
                             <div class="min-w-0">
                                 <h4 class="text-lg font-black lowercase truncate">${escapeHtml(asset.name)}</h4>
                                 <p class="text-[10px] uppercase tracking-[0.14em] text-gray-500 font-bold">${escapeHtml(asset.version)}</p>
@@ -357,7 +427,7 @@
                     <div class="flex flex-wrap gap-2">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
                     <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2 min-w-0">
-                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" alt="Creator avatar">
+                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
                             <span class="text-xs text-gray-300 truncate">${escapeHtml(creator)}</span>
                         </div>
                         <div class="text-right">
@@ -380,7 +450,10 @@
 
         function renderCreatorCard(user) {
             const banner = user.bannerUrl;
+            const bannerMediaId = user.bannerMediaId || "";
+            const bannerHidden = banner || bannerMediaId ? "" : "hidden";
             const avatar = user.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.id || user.username)}`;
+            const avatarMediaId = user.avatarMediaId || "";
             const stats = creatorStats(user.id);
             const badges = [
                 user.isKnownCreator ? `<span class="chip border-blue-500/40 text-blue-300">Known Creator</span>` : "",
@@ -390,10 +463,10 @@
             return `
                 <a class="creator-card p-4 no-underline text-inherit block" href="profile.html?id=${encodeURIComponent(user.id)}">
                     <div class="h-20 rounded-xl overflow-hidden border border-white/10 bg-gradient-to-r from-pink-500/20 to-blue-500/15">
-                        ${banner ? `<img class="w-full h-full object-cover" src="${escapeHtml(banner)}" alt="Creator banner">` : ""}
+                        <img class="w-full h-full object-cover ${bannerHidden}" src="${escapeHtml(banner || "")}" data-media-id="${escapeHtml(bannerMediaId)}" alt="Creator banner">
                     </div>
                     <div class="flex items-center gap-3 mt-3">
-                        <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatar)}" alt="Creator avatar">
+                        <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatar)}" data-media-id="${escapeHtml(avatarMediaId)}" alt="Creator avatar">
                         <div class="min-w-0">
                             <h4 class="text-sm font-black lowercase truncate">${escapeHtml(user.username)}</h4>
                             <p class="text-[10px] uppercase tracking-[0.13em] text-gray-500 font-bold">${escapeHtml(user.role || "Creator")}</p>
@@ -525,10 +598,11 @@
             searchGrid.innerHTML = scored.length
                 ? scored.map((asset) => renderAssetCard(asset)).join("")
                 : `<article class="surface p-5 text-sm text-gray-400 border border-white/10">No assets matched your search.</article>`;
+            hydrateMediaImages(searchGrid).catch((err) => console.warn("Media hydration failed:", err));
         }
 
         function setMenuBanner(url) {
-            if (validHttpUrl(url)) {
+            if (validHttpUrl(url) || /^data:image\//i.test(String(url || ""))) {
                 menuBanner.style.backgroundImage = `url("${url}")`;
                 menuBanner.style.backgroundSize = "cover";
                 menuBanner.style.backgroundPosition = "center";
@@ -539,6 +613,41 @@
             menuBanner.style.backgroundPosition = "";
         }
 
+        async function applyAvatarImage(imgEl, profile, uid) {
+            if (!imgEl) return;
+            const fallback = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(uid || profile?.username || "guest")}`;
+            imgEl.src = fallback;
+            if (profile?.avatarMediaId) {
+                const mediaUrl = await getMediaUrl(profile.avatarMediaId);
+                if (mediaUrl) {
+                    imgEl.src = mediaUrl;
+                    return;
+                }
+            }
+            if (profile?.avatarUrl) {
+                imgEl.src = profile.avatarUrl;
+            }
+        }
+
+        async function applyMenuBanner(profile) {
+            if (!profile) {
+                setMenuBanner("");
+                return;
+            }
+            if (profile.bannerMediaId) {
+                const mediaUrl = await getMediaUrl(profile.bannerMediaId);
+                if (mediaUrl) {
+                    setMenuBanner(mediaUrl);
+                    return;
+                }
+            }
+            if (profile.bannerUrl) {
+                setMenuBanner(profile.bannerUrl);
+                return;
+            }
+            setMenuBanner("");
+        }
+
         function renderGuestNav() {
             navUserName.innerText = "Connect";
             navAvatar.src = guestAvatar;
@@ -546,18 +655,105 @@
             menuUsername.innerText = "guest";
             menuEmail.innerText = "Login Required";
             setMenuBanner(guestBanner);
+            reviewLink.classList.add("hidden");
             logoutBtn.classList.add("hidden");
         }
 
-        function renderUserNav(user, profile) {
+        function renderNotifications(notifications = []) {
+            if (!activeUser) {
+                notifList.innerHTML = "";
+                notifEmpty.innerText = "Sign in to see notifications.";
+                notifEmpty.classList.remove("hidden");
+                notifCount.classList.add("hidden");
+                return;
+            }
+            if (!notifications.length) {
+                notifList.innerHTML = "";
+                notifEmpty.innerText = "No notifications yet.";
+                notifEmpty.classList.remove("hidden");
+                notifCount.classList.add("hidden");
+                return;
+            }
+
+            notifEmpty.classList.add("hidden");
+            const unreadCount = notifications.filter((note) => !note.read).length;
+            if (unreadCount > 0) {
+                notifCount.innerText = String(unreadCount);
+                notifCount.classList.remove("hidden");
+            } else {
+                notifCount.classList.add("hidden");
+            }
+
+            notifList.innerHTML = notifications.map((note) => {
+                const actorName = escapeHtml(note.actorName || "Someone");
+                const message = note.type === "follow"
+                    ? `${actorName} followed you.`
+                    : note.type === "friend_request"
+                        ? `${actorName} sent a friend request.`
+                        : note.type === "friend_accept"
+                            ? `${actorName} accepted your friend request.`
+                            : `${actorName} sent a notification.`;
+                const link = note.actorId ? `profile.html?id=${encodeURIComponent(note.actorId)}` : "#";
+                return `
+                    <a class="notif-item ${note.read ? "opacity-70" : ""}" href="${link}">
+                        <i class="fas fa-circle text-[6px] mt-2 ${note.read ? "text-gray-600" : "text-pink-400"}"></i>
+                        <div>
+                            <strong>${message}</strong>
+                            <span>${formatTimestamp(note.createdAt)}</span>
+                        </div>
+                    </a>
+                `;
+            }).join("");
+        }
+
+        function startNotifications(uid) {
+            if (notifUnsub) notifUnsub();
+            const q = query(collection(db, "notifications"), where("userId", "==", uid), limit(20));
+            notifUnsub = onSnapshot(q, (snap) => {
+                const items = snap.docs
+                    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+                renderNotifications(items);
+            });
+        }
+
+        function stopNotifications() {
+            if (notifUnsub) {
+                notifUnsub();
+                notifUnsub = null;
+            }
+            renderNotifications([]);
+        }
+
+        function startPresence(uid) {
+            stopPresence();
+            if (!uid) return;
+            const profileRef = doc(db, "users", uid);
+            const pulse = async () => {
+                try {
+                    await updateDoc(profileRef, { lastActiveAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                } catch (err) {
+                    console.warn("Presence update failed:", err);
+                }
+            };
+            pulse();
+            presenceTimer = setInterval(pulse, 60 * 1000);
+        }
+
+        function stopPresence() {
+            if (presenceTimer) clearInterval(presenceTimer);
+            presenceTimer = null;
+        }
+
+        async function renderUserNav(user, profile) {
             const username = profile?.username || usernameFromEmail(user?.email || "");
-            const avatar = profile?.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.uid)}`;
             navUserName.innerText = username;
-            navAvatar.src = avatar;
-            menuAvatar.src = avatar;
             menuUsername.innerText = username;
             menuEmail.innerText = user.email || "";
-            setMenuBanner(profile?.bannerUrl || "");
+            await applyAvatarImage(navAvatar, profile, user.uid);
+            await applyAvatarImage(menuAvatar, profile, user.uid);
+            await applyMenuBanner(profile);
+            reviewLink.classList.toggle("hidden", !profile?.canCurate);
             logoutBtn.classList.remove("hidden");
         }
 
@@ -655,6 +851,8 @@
                     role: "Consumer",
                     avatarUrl: "",
                     bannerUrl: "",
+                    avatarMediaId: "",
+                    bannerMediaId: "",
                     followers: 0,
                     following: 0,
                     socials: { website: "", x: "", github: "", youtube: "", discord: "" },
@@ -677,6 +875,8 @@
             if (typeof raw.role !== "string") patch.role = normalized.role;
             if (typeof raw.avatarUrl !== "string") patch.avatarUrl = "";
             if (typeof raw.bannerUrl !== "string") patch.bannerUrl = "";
+            if (typeof raw.avatarMediaId !== "string") patch.avatarMediaId = "";
+            if (typeof raw.bannerMediaId !== "string") patch.bannerMediaId = "";
             if (typeof raw.followers !== "number") patch.followers = 0;
             if (typeof raw.following !== "number") patch.following = 0;
             if (typeof raw.socials !== "object" || raw.socials === null) patch.socials = { website: "", x: "", github: "", youtube: "", discord: "" };
@@ -737,11 +937,12 @@
             renderMetrics();
             renderCuratedSections();
             renderSearchResults();
+            hydrateMediaImages().catch((err) => console.warn("Media hydration failed:", err));
         }
 
         function subscribeToData() {
             onSnapshot(
-                collection(db, "assets"),
+                query(collection(db, "assets"), where("moderationStatus", "==", "approved")),
                 (snapshot) => {
                     assets = snapshot.docs.map((assetDoc) => normalizeAsset(assetDoc.id, assetDoc.data()));
                     renderEverything();
@@ -770,6 +971,24 @@
                 return;
             }
             userMenu.classList.toggle("active");
+        });
+
+        notifTrigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            if (!activeUser) {
+                openAuthModal("signin");
+                return;
+            }
+            notifMenu.classList.toggle("active");
+        });
+
+        notifMarkRead.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            if (!activeUser) return;
+            const snap = await getDocs(query(collection(db, "notifications"), where("userId", "==", activeUser.uid)));
+            await Promise.all(
+                snap.docs.map((docSnap) => updateDoc(doc(db, "notifications", docSnap.id), { read: true }))
+            );
         });
 
         authCloseBtn.addEventListener("click", closeAuthModal);
@@ -816,6 +1035,9 @@
             if (!userMenu.contains(event.target) && !userTrigger.contains(event.target)) {
                 userMenu.classList.remove("active");
             }
+            if (!notifMenu.contains(event.target) && !notifTrigger.contains(event.target)) {
+                notifMenu.classList.remove("active");
+            }
             if (event.target === authModal) {
                 closeAuthModal();
             }
@@ -827,16 +1049,21 @@
             if (!user) {
                 activeProfile = null;
                 renderGuestNav();
+                stopNotifications();
+                stopPresence();
                 return;
             }
 
             try {
                 activeProfile = await ensureUserProfile(user);
-                renderUserNav(user, activeProfile);
+                await renderUserNav(user, activeProfile);
+                startNotifications(user.uid);
+                startPresence(user.uid);
             } catch (err) {
                 console.error("Profile sync failed:", err);
                 activeProfile = null;
-                renderUserNav(user, null);
+                await renderUserNav(user, null);
+                stopPresence();
             }
 
             closeAuthModal();

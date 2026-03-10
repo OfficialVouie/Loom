@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | Friends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#05060a; --panel:rgba(12,14,22,.82); --panel2:rgba(18,20,30,.72); --border:rgba(255,255,255,.09); --muted:rgba(255,255,255,.65); --muted2:rgba(255,255,255,.45); --accent:#60a5fa; --accent2:#ff79c6; }
+        * { box-sizing:border-box; }
+        body { margin:0; background:var(--bg); color:#f8f8f2; font-family:"Outfit",sans-serif; min-height:100vh; }
+        .mesh-bg {
+            position:fixed; inset:0; z-index:-1;
+            background:
+                radial-gradient(circle at 18% -20%, rgba(96,165,250,.18) 0%, transparent 52%),
+                radial-gradient(circle at 90% 0%, rgba(255,121,198,.14) 0%, transparent 50%),
+                radial-gradient(circle at 20% 95%, rgba(122,162,255,.08) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(255,255,255,.02), transparent 30%);
+        }
+        .scroll-smooth { scroll-behavior:smooth; }
+    </style>
+</head>
+<body class="scroll-smooth">
+    <div class="mesh-bg"></div>
+
+    <div class="min-h-screen grid grid-cols-1 lg:grid-cols-[300px_1fr]">
+        <aside class="hidden lg:flex flex-col border-r border-white/10 bg-black/20">
+            <div class="p-4">
+                <input class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none" placeholder="Find or start a conversation..." disabled>
+            </div>
+
+            <nav class="px-2">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 text-white/90 font-black text-sm" href="friends.html">
+                    <i class="fas fa-user-friends text-white/60"></i>
+                    <span>Friends</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5 font-black text-sm mt-1" href="index.html">
+                    <i class="fas fa-house text-white/60"></i>
+                    <span>Home</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5 font-black text-sm mt-1" href="profile.html">
+                    <i class="fas fa-user text-white/60"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+
+            <div class="mt-6 px-4 flex items-center justify-between text-[11px] font-black uppercase tracking-[0.14em] text-white/60">
+                <span>Direct Messages</span>
+                <button class="w-7 h-7 rounded-lg border border-white/10 bg-white/5 text-white/70 opacity-60 cursor-not-allowed" type="button" title="Coming soon">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="px-4 py-4 text-sm text-white/40">No conversations yet</div>
+
+            <div class="mt-auto p-3 border-t border-white/10 bg-black/30 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img id="me-avatar" class="w-9 h-9 rounded-xl border border-white/10 object-cover bg-white/5" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" alt="Me">
+                    <div class="min-w-0">
+                        <div id="me-name" class="font-black text-sm truncate">Guest</div>
+                        <div id="me-status" class="text-[11px] uppercase tracking-widest text-white/50 font-black">Offline</div>
+                    </div>
+                </div>
+                <button id="signout-btn" class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 text-white/80 hover:border-pink-400/40" type="button" title="Sign out">
+                    <i class="fas fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <main class="min-w-0 flex flex-col">
+            <header class="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-white/10 bg-black/20">
+                <div class="flex items-center gap-3 font-black">
+                    <i class="fas fa-user-friends text-white/70"></i>
+                    <span>Friends</span>
+                </div>
+                <div class="flex items-center gap-2 ml-2">
+                    <button class="tab px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-black border border-white/0 text-white/70 hover:bg-white/5" data-tab="online" type="button">Online</button>
+                    <button class="tab px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-black border border-white/0 text-white/70 hover:bg-white/5" data-tab="all" type="button">All</button>
+                    <button class="tab px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-black border border-white/0 text-white/70 hover:bg-white/5" data-tab="pending" type="button">Pending</button>
+                    <button class="tab px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-black border border-white/0 text-white/70 hover:bg-white/5" data-tab="blocked" type="button">Blocked</button>
+                </div>
+                <div class="flex-1"></div>
+                <button id="add-friend-btn" class="px-4 py-2 rounded-xl border border-blue-400/40 bg-blue-400/20 hover:bg-blue-400/30 text-[11px] uppercase tracking-[0.14em] font-black" type="button">Add Friend</button>
+            </header>
+
+            <section class="px-4 sm:px-6 pt-5 pb-2">
+                <div class="relative max-w-xl">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-xs"></i>
+                    <input id="friend-search" class="w-full px-4 py-3 pl-10 rounded-2xl bg-white/5 border border-white/10 text-white text-sm outline-none" placeholder="Search friends">
+                </div>
+            </section>
+
+            <section id="add-panel" class="hidden px-4 sm:px-6 pt-2">
+                <div class="border border-white/10 bg-white/5 rounded-2xl p-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <input id="add-input" class="flex-1 min-w-[240px] px-4 py-3 rounded-2xl bg-black/30 border border-white/10 text-white text-sm outline-none" placeholder="Enter a username (or user id)">
+                        <button id="add-submit" class="px-4 py-3 rounded-2xl border border-pink-400/40 bg-pink-400/20 hover:bg-pink-400/30 text-[11px] uppercase tracking-[0.14em] font-black" type="button">Send Request</button>
+                    </div>
+                    <div class="mt-3 text-sm text-white/55">Friend requests are private. Accepted friends show up in All and Online.</div>
+                    <div id="add-status" class="mt-2 text-sm text-white/75"></div>
+                </div>
+            </section>
+
+            <section class="flex-1 min-h-0 px-4 sm:px-6 py-4">
+                <div id="list-meta" class="text-[11px] font-black uppercase tracking-[0.14em] text-white/55 mb-3">ONLINE - 0</div>
+
+                <div id="list" class="border border-white/10 bg-white/5 rounded-2xl overflow-hidden"></div>
+
+                <div id="empty" class="hidden h-full min-h-[280px] border border-white/10 bg-black/20 rounded-3xl flex items-center justify-center">
+                    <div class="max-w-md px-6 py-8 text-center">
+                        <i class="fas fa-user-group text-4xl text-white/40"></i>
+                        <div class="mt-4 font-black text-lg">No friends found</div>
+                        <div id="empty-sub" class="mt-2 text-sm text-white/55">Add some friends to start building your network.</div>
+                        <button id="empty-add" class="mt-5 px-4 py-3 rounded-2xl border border-blue-400/40 bg-blue-400/20 hover:bg-blue-400/30 text-[11px] uppercase tracking-[0.14em] font-black" type="button">Add some friends</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            addDoc,
+            collection,
+            deleteDoc,
+            doc,
+            getDoc,
+            getDocs,
+            getFirestore,
+            limit,
+            onSnapshot,
+            query,
+            serverTimestamp,
+            setDoc,
+            updateDoc,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const ONLINE_WINDOW_MS = 2 * 60 * 1000;
+        const PRESENCE_HEARTBEAT_MS = 60 * 1000;
+
+        const meAvatar = document.getElementById("me-avatar");
+        const meName = document.getElementById("me-name");
+        const meStatus = document.getElementById("me-status");
+        const signoutBtn = document.getElementById("signout-btn");
+
+        const tabBtns = Array.from(document.querySelectorAll(".tab"));
+        const listMeta = document.getElementById("list-meta");
+        const listEl = document.getElementById("list");
+        const emptyEl = document.getElementById("empty");
+        const emptySub = document.getElementById("empty-sub");
+        const emptyAdd = document.getElementById("empty-add");
+
+        const addBtn = document.getElementById("add-friend-btn");
+        const addPanel = document.getElementById("add-panel");
+        const addInput = document.getElementById("add-input");
+        const addSubmit = document.getElementById("add-submit");
+        const addStatus = document.getElementById("add-status");
+        const friendSearch = document.getElementById("friend-search");
+
+        const mediaCache = new Map();
+        const profileCache = new Map();
+
+        let currentUser = null;
+        let currentProfile = null;
+        let activeTab = "online";
+        let presenceTimer = null;
+        let unsubscribeFriends = null;
+        let unsubscribeBlocks = null;
+        let blocks = [];
+        let friendDocs = [];
+
+        function escapeHtml(input = "") {
+            return String(input)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function usernameFromEmail(email = "") {
+            const base = String(email || "").split("@")[0] || "user";
+            return base.replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 18) || "user";
+        }
+
+        function sanitizeUsername(rawUsername = "", email = "") {
+            const candidate = (rawUsername || usernameFromEmail(email)).trim();
+            const clean = candidate.replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 18);
+            return clean || `user${Math.floor(Math.random() * 10000)}`;
+        }
+
+        function toMillis(ts) {
+            if (!ts) return 0;
+            if (typeof ts.toMillis === "function") return ts.toMillis();
+            if (typeof ts.seconds === "number") return ts.seconds * 1000;
+            return Number(ts) || 0;
+        }
+
+        function avatarFor(uid = "guest") {
+            return `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(uid)}`;
+        }
+
+        function friendDocId(a, b) {
+            return [a, b].sort().join("_");
+        }
+
+        function followDocId(followerId, followingId) {
+            return `${followerId}_${followingId}`;
+        }
+
+        function blockDocId(blockerId, blockedId) {
+            return `${blockerId}_${blockedId}`;
+        }
+
+        async function ensureUserProfile(user) {
+            const profileRef = doc(db, "users", user.uid);
+            const snap = await getDoc(profileRef);
+            if (snap.exists()) return { id: snap.id, ...snap.data() };
+
+            const username = sanitizeUsername("", user.email || "");
+            const base = {
+                username,
+                usernameLower: String(username).toLowerCase(),
+                bio: "",
+                role: "Consumer",
+                socials: {},
+                avatarUrl: "",
+                bannerUrl: "",
+                avatarMediaId: "",
+                bannerMediaId: "",
+                canCurate: false,
+                isKnownCreator: false,
+                isFeaturedCreator: false,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+            await setDoc(profileRef, base);
+            return { id: user.uid, ...base };
+        }
+
+        async function getMediaUrl(mediaId) {
+            if (!mediaId) return "";
+            if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+            try {
+                const snap = await getDoc(doc(db, "media", mediaId));
+                if (snap.exists()) {
+                    const url = snap.data().dataUrl || "";
+                    mediaCache.set(mediaId, url);
+                    return url;
+                }
+            } catch (err) {
+                console.warn("Media load failed:", err);
+            }
+            return "";
+        }
+
+        async function applyAvatar(imgEl, profile, uid) {
+            if (!imgEl) return;
+            imgEl.src = avatarFor(uid);
+            if (profile?.avatarMediaId) {
+                const url = await getMediaUrl(profile.avatarMediaId);
+                if (url) {
+                    imgEl.src = url;
+                    return;
+                }
+            }
+            if (profile?.avatarUrl && /^https?:\/\//.test(profile.avatarUrl)) {
+                imgEl.src = profile.avatarUrl;
+            }
+        }
+
+        function isOnline(profile) {
+            const last = toMillis(profile?.lastActiveAt);
+            return last ? Date.now() - last <= ONLINE_WINDOW_MS : false;
+        }
+
+        async function getProfilesByIds(ids = []) {
+            const unique = [...new Set(ids.filter(Boolean))];
+            const results = [];
+            for (const uid of unique) {
+                if (profileCache.has(uid)) {
+                    results.push(profileCache.get(uid));
+                    continue;
+                }
+                try {
+                    const snap = await getDoc(doc(db, "users", uid));
+                    if (snap.exists()) {
+                        const profile = { id: snap.id, ...snap.data() };
+                        profileCache.set(uid, profile);
+                        results.push(profile);
+                    }
+                } catch (err) {
+                    console.warn("Profile load failed:", err);
+                }
+            }
+            return results;
+        }
+
+        function setTab(tab) {
+            activeTab = tab;
+            for (const btn of tabBtns) {
+                const isActive = btn.dataset.tab === tab;
+                btn.classList.toggle("bg-white/5", isActive);
+                btn.classList.toggle("border-white/10", isActive);
+                btn.classList.toggle("border-white/0", !isActive);
+                btn.classList.toggle("text-white", isActive);
+                btn.classList.toggle("text-white/70", !isActive);
+            }
+            render().catch(() => {});
+        }
+
+        function setAddOpen(open) {
+            addPanel.classList.toggle("hidden", !open);
+            if (open) {
+                addInput.focus();
+            } else {
+                addStatus.textContent = "";
+            }
+        }
+
+        async function startPresence() {
+            if (!currentUser) return;
+            const profileRef = doc(db, "users", currentUser.uid);
+            const pulse = async () => {
+                try {
+                    await updateDoc(profileRef, { lastActiveAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                } catch (err) {
+                    console.warn("Presence update failed:", err);
+                }
+            };
+            await pulse();
+            presenceTimer = setInterval(pulse, PRESENCE_HEARTBEAT_MS);
+        }
+
+        function stopPresence() {
+            if (presenceTimer) clearInterval(presenceTimer);
+            presenceTimer = null;
+        }
+
+        function blockedIdsSet() {
+            return new Set(blocks.map((b) => b.blockedId).filter(Boolean));
+        }
+
+        function renderEmpty(message) {
+            emptySub.textContent = message;
+            emptyEl.classList.remove("hidden");
+            listEl.classList.add("hidden");
+            listEl.innerHTML = "";
+        }
+
+        function renderList(html) {
+            emptyEl.classList.add("hidden");
+            listEl.classList.remove("hidden");
+            listEl.innerHTML = html || "";
+        }
+
+        function friendData() {
+            if (!currentUser) return { friends: [], incoming: [], outgoing: [] };
+            const uid = currentUser.uid;
+            const accepted = friendDocs.filter((d) => d.status === "accepted");
+            const pending = friendDocs.filter((d) => d.status === "pending");
+            const friends = accepted.map((d) => (d.fromId === uid ? d.toId : d.fromId)).filter(Boolean);
+            const incoming = pending.filter((d) => d.toId === uid).map((d) => d.fromId).filter(Boolean);
+            const outgoing = pending.filter((d) => d.fromId === uid).map((d) => d.toId).filter(Boolean);
+            return { friends, incoming, outgoing };
+        }
+
+        function filterBySearch(profiles) {
+            const q = (friendSearch.value || "").trim().toLowerCase();
+            if (!q) return profiles;
+            return profiles.filter((p) => String(p.username || p.id || "").toLowerCase().includes(q));
+        }
+
+        function rowHeader(label) {
+            return `
+                <div class="px-4 py-3 border-b border-white/10 bg-black/10">
+                    <div class="text-xs uppercase tracking-widest font-black text-white/60">${escapeHtml(label)}</div>
+                </div>
+            `;
+        }
+
+        function renderRow(profile, kind) {
+            const uid = profile?.id || "";
+            const display = profile?.username || uid.slice(0, 10) || "unknown";
+            const online = isOnline(profile);
+            const sub = kind === "blocked"
+                ? "Blocked"
+                : kind === "incoming"
+                    ? "Incoming request"
+                    : kind === "outgoing"
+                        ? "Outgoing request"
+                        : online
+                            ? "Online"
+                            : "Offline";
+
+            const actionBtns = kind === "incoming"
+                ? `
+                    <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-green-400/50" data-action="accept" data-uid="${escapeHtml(uid)}" title="Accept"><i class="fas fa-check"></i></button>
+                    <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="decline" data-uid="${escapeHtml(uid)}" title="Decline"><i class="fas fa-xmark"></i></button>
+                    <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="block" data-uid="${escapeHtml(uid)}" title="Block"><i class="fas fa-ban"></i></button>
+                `
+                : kind === "outgoing"
+                    ? `
+                        <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="cancel" data-uid="${escapeHtml(uid)}" title="Cancel request"><i class="fas fa-xmark"></i></button>
+                        <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="block" data-uid="${escapeHtml(uid)}" title="Block"><i class="fas fa-ban"></i></button>
+                    `
+                    : kind === "blocked"
+                        ? `
+                            <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-green-400/50" data-action="unblock" data-uid="${escapeHtml(uid)}" title="Unblock"><i class="fas fa-unlock"></i></button>
+                        `
+                        : `
+                            <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-white/25" data-action="view" data-uid="${escapeHtml(uid)}" title="View profile"><i class="fas fa-user"></i></button>
+                            <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="remove" data-uid="${escapeHtml(uid)}" title="Remove friend"><i class="fas fa-user-slash"></i></button>
+                            <button class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50" data-action="block" data-uid="${escapeHtml(uid)}" title="Block"><i class="fas fa-ban"></i></button>
+                        `;
+
+            return `
+                <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10 hover:bg-white/5">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img data-avatar-uid="${escapeHtml(uid)}" class="w-10 h-10 rounded-2xl border border-white/10 object-cover bg-white/5" src="${escapeHtml(avatarFor(uid))}" alt="${escapeHtml(display)}">
+                        <div class="min-w-0">
+                            <div class="font-black text-sm truncate">
+                                ${escapeHtml(display)}
+                                ${online && kind === "friend" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-white/10 bg-white/5 text-white/80 uppercase tracking-widest font-black">Online</span>` : ""}
+                            </div>
+                            <div class="text-[11px] uppercase tracking-widest text-white/50 font-black">${escapeHtml(sub)}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">${actionBtns}</div>
+                </div>
+            `;
+        }
+
+        async function hydrateAvatars() {
+            const imgs = Array.from(document.querySelectorAll("[data-avatar-uid]"));
+            const ids = imgs.map((img) => img.dataset.avatarUid).filter(Boolean);
+            const profiles = await getProfilesByIds(ids);
+            const byId = new Map(profiles.map((p) => [p.id, p]));
+            for (const img of imgs) {
+                const uid = img.dataset.avatarUid;
+                const profile = byId.get(uid);
+                if (profile) await applyAvatar(img, profile, uid);
+            }
+        }
+
+        async function createNotification(userId, type, meta = {}) {
+            if (!currentUser || !userId) return;
+            try {
+                await addDoc(collection(db, "notifications"), {
+                    userId,
+                    actorId: currentUser.uid,
+                    actorName: currentProfile?.username || usernameFromEmail(currentUser.email || ""),
+                    type,
+                    read: false,
+                    createdAt: serverTimestamp(),
+                    meta
+                });
+            } catch (err) {
+                console.warn("Notification create failed:", err);
+            }
+        }
+
+        async function findUser(input) {
+            const raw = String(input || "").trim();
+            if (!raw) return null;
+
+            if (raw.length >= 20) {
+                try {
+                    const snap = await getDoc(doc(db, "users", raw));
+                    if (snap.exists()) return { id: snap.id, ...snap.data() };
+                } catch (err) {
+                    console.warn("User lookup by id failed:", err);
+                }
+            }
+
+            const q = raw.toLowerCase();
+            const snap = await getDocs(query(collection(db, "users"), where("usernameLower", "==", q), limit(1)));
+            if (snap.empty) return null;
+            const docSnap = snap.docs[0];
+            return { id: docSnap.id, ...docSnap.data() };
+        }
+
+        async function sendFriendRequest() {
+            if (!currentUser) return;
+            addStatus.textContent = "";
+
+            const user = await findUser(addInput.value);
+            if (!user || !user.id) {
+                addStatus.textContent = "No user found with that username.";
+                return;
+            }
+            if (user.id === currentUser.uid) {
+                addStatus.textContent = "You cannot friend yourself.";
+                return;
+            }
+            if (blockedIdsSet().has(user.id)) {
+                addStatus.textContent = "Unblock this user before sending a request.";
+                return;
+            }
+
+            const docId = friendDocId(currentUser.uid, user.id);
+            try {
+                const snap = await getDoc(doc(db, "friendRequests", docId));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.status === "accepted") {
+                        addStatus.textContent = "You are already friends.";
+                        return;
+                    }
+                    if (data.status === "pending") {
+                        addStatus.textContent = "A request is already pending.";
+                        return;
+                    }
+                }
+
+                await setDoc(doc(db, "friendRequests", docId), {
+                    pairKey: docId,
+                    fromId: currentUser.uid,
+                    toId: user.id,
+                    members: [currentUser.uid, user.id],
+                    status: "pending",
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                await createNotification(user.id, "friend_request");
+                addStatus.textContent = "Friend request sent.";
+                addInput.value = "";
+            } catch (err) {
+                console.error("Friend request failed:", err);
+                addStatus.textContent = "Unable to send request right now.";
+            }
+        }
+
+        async function blockUser(targetUid) {
+            if (!currentUser || !targetUid) return;
+            const id = blockDocId(currentUser.uid, targetUid);
+            try {
+                await setDoc(doc(db, "blocks", id), {
+                    blockerId: currentUser.uid,
+                    blockedId: targetUid,
+                    createdAt: serverTimestamp()
+                });
+            } catch (err) {
+                console.warn("Block failed:", err);
+            }
+            try { await deleteDoc(doc(db, "friendRequests", friendDocId(currentUser.uid, targetUid))); } catch {}
+            try { await deleteDoc(doc(db, "follows", followDocId(currentUser.uid, targetUid))); } catch {}
+            await render();
+        }
+
+        async function unblockUser(targetUid) {
+            if (!currentUser || !targetUid) return;
+            try { await deleteDoc(doc(db, "blocks", blockDocId(currentUser.uid, targetUid))); } catch {}
+            await render();
+        }
+
+        async function acceptRequest(fromUid) {
+            if (!currentUser || !fromUid) return;
+            const rid = friendDocId(currentUser.uid, fromUid);
+            try {
+                await updateDoc(doc(db, "friendRequests", rid), { status: "accepted", updatedAt: serverTimestamp() });
+                await createNotification(fromUid, "friend_accept");
+            } catch (err) {
+                console.warn("Accept failed:", err);
+            }
+            await render();
+        }
+
+        async function declineRequest(fromUid) {
+            if (!currentUser || !fromUid) return;
+            try { await deleteDoc(doc(db, "friendRequests", friendDocId(currentUser.uid, fromUid))); } catch {}
+            await render();
+        }
+
+        async function cancelRequest(toUid) {
+            if (!currentUser || !toUid) return;
+            try { await deleteDoc(doc(db, "friendRequests", friendDocId(currentUser.uid, toUid))); } catch {}
+            await render();
+        }
+
+        async function removeFriend(friendUid) {
+            if (!currentUser || !friendUid) return;
+            try { await deleteDoc(doc(db, "friendRequests", friendDocId(currentUser.uid, friendUid))); } catch {}
+            await render();
+        }
+
+        async function render() {
+            if (!currentUser) {
+                listMeta.textContent = "FRIENDS";
+                renderEmpty("Sign in from Home to manage friends.");
+                return;
+            }
+
+            const blockedSet = blockedIdsSet();
+            const { friends, incoming, outgoing } = friendData();
+
+            if (activeTab === "blocked") {
+                const ids = blocks.map((b) => b.blockedId).filter(Boolean);
+                const profiles = filterBySearch(await getProfilesByIds(ids));
+                listMeta.textContent = `BLOCKED - ${profiles.length}`;
+                if (!profiles.length) return renderEmpty("No blocked users.");
+                renderList(profiles.map((p) => renderRow(p, "blocked")).join(""));
+                await hydrateAvatars();
+                return;
+            }
+
+            if (activeTab === "pending") {
+                const incomingProfiles = filterBySearch(await getProfilesByIds(incoming.filter((id) => !blockedSet.has(id))));
+                const outgoingProfiles = filterBySearch(await getProfilesByIds(outgoing.filter((id) => !blockedSet.has(id))));
+                const total = incomingProfiles.length + outgoingProfiles.length;
+                listMeta.textContent = `PENDING - ${total}`;
+                if (!total) return renderEmpty("No pending friend requests.");
+
+                const htmlParts = [];
+                if (incomingProfiles.length) {
+                    htmlParts.push(rowHeader("Incoming Requests"));
+                    htmlParts.push(incomingProfiles.map((p) => renderRow(p, "incoming")).join(""));
+                }
+                if (outgoingProfiles.length) {
+                    htmlParts.push(rowHeader("Outgoing Requests"));
+                    htmlParts.push(outgoingProfiles.map((p) => renderRow(p, "outgoing")).join(""));
+                }
+                renderList(htmlParts.join(""));
+                await hydrateAvatars();
+                return;
+            }
+
+            const friendProfiles = await getProfilesByIds(friends.filter((id) => !blockedSet.has(id)));
+            let profiles = friendProfiles;
+
+            if (activeTab === "online") {
+                profiles = friendProfiles.filter(isOnline);
+                listMeta.textContent = `ONLINE - ${profiles.length}`;
+            } else {
+                listMeta.textContent = `ALL - ${profiles.length}`;
+            }
+
+            profiles = filterBySearch(profiles);
+            if (!profiles.length) {
+                const msg = activeTab === "online" ? "No friends online right now." : "No friends found.";
+                return renderEmpty(msg);
+            }
+            renderList(profiles.map((p) => renderRow(p, "friend")).join(""));
+            await hydrateAvatars();
+        }
+
+        function wireEvents() {
+            tabBtns.forEach((btn) => btn.addEventListener("click", () => setTab(btn.dataset.tab)));
+            addBtn.addEventListener("click", () => setAddOpen(addPanel.classList.contains("hidden")));
+            emptyAdd.addEventListener("click", () => setAddOpen(true));
+            friendSearch.addEventListener("input", () => render().catch(() => {}));
+
+            addInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") sendFriendRequest().catch(() => {});
+            });
+            addSubmit.addEventListener("click", () => sendFriendRequest().catch(() => {}));
+
+            signoutBtn.addEventListener("click", async () => {
+                try { await signOut(auth); } catch {}
+            });
+
+            listEl.addEventListener("click", async (event) => {
+                const btn = event.target.closest("[data-action]");
+                if (!btn) return;
+                const action = btn.dataset.action;
+                const uid = btn.dataset.uid;
+                if (!uid) return;
+
+                if (action === "view") window.location.href = `profile.html?id=${encodeURIComponent(uid)}`;
+                if (action === "block") await blockUser(uid);
+                if (action === "unblock") await unblockUser(uid);
+                if (action === "accept") await acceptRequest(uid);
+                if (action === "decline") await declineRequest(uid);
+                if (action === "cancel") await cancelRequest(uid);
+                if (action === "remove") await removeFriend(uid);
+            });
+        }
+
+        function watchFriends(uid) {
+            if (unsubscribeFriends) unsubscribeFriends();
+            unsubscribeFriends = onSnapshot(
+                query(collection(db, "friendRequests"), where("members", "array-contains", uid)),
+                (snap) => {
+                    friendDocs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    render().catch(() => {});
+                },
+                (err) => console.warn("friendRequests watch failed:", err)
+            );
+        }
+
+        function watchBlocks(uid) {
+            if (unsubscribeBlocks) unsubscribeBlocks();
+            unsubscribeBlocks = onSnapshot(
+                query(collection(db, "blocks"), where("blockerId", "==", uid)),
+                (snap) => {
+                    blocks = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    render().catch(() => {});
+                },
+                (err) => console.warn("blocks watch failed:", err)
+            );
+        }
+
+        wireEvents();
+        setTab("online");
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user || null;
+            stopPresence();
+            if (!user) {
+                currentProfile = null;
+                meName.textContent = "Guest";
+                meStatus.textContent = "Offline";
+                meAvatar.src = avatarFor("guest");
+
+                if (unsubscribeFriends) unsubscribeFriends();
+                if (unsubscribeBlocks) unsubscribeBlocks();
+                unsubscribeFriends = null;
+                unsubscribeBlocks = null;
+                blocks = [];
+                friendDocs = [];
+                render().catch(() => {});
+                return;
+            }
+
+            currentProfile = await ensureUserProfile(user);
+            meName.textContent = currentProfile.username || "Me";
+            meStatus.textContent = "Online";
+            await applyAvatar(meAvatar, currentProfile, user.uid);
+
+            await startPresence();
+            watchFriends(user.uid);
+            watchBlocks(user.uid);
+            render().catch(() => {});
+        });
+    </script>
+</body>
+</html>

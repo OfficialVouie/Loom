@@ -150,6 +150,8 @@
         <div class="flex items-center gap-3">
             <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
             <button id="back-btn" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">Back</button>
+            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
+            <a id="review-link" href="review.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-yellow-200 hover:text-white hidden">Review</a>
         </div>
     </header>
 
@@ -259,7 +261,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <label class="upload-chip">Upload Icon<input id="edit-icon-file" type="file" accept="image/*" class="hidden"></label>
                             <label class="upload-chip">Upload Gallery<input id="edit-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
-                            <label class="upload-chip">Upload Video<input id="edit-video-file" type="file" accept="video/*" class="hidden"></label>
+                            <label class="upload-chip">Upload Asset File<input id="edit-asset-file" type="file" class="hidden"></label>
                         </div>
                         <div class="progress-wrap"><div id="owner-progress-bar" class="progress-bar"></div></div>
                         <p id="owner-status" class="text-xs text-gray-500">No pending changes.</p>
@@ -280,6 +282,10 @@
                         </div>
                     </div>
                 </article>
+                <article class="glass rounded-[28px] p-6">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500 mb-3">Asset Files</h3>
+                    <div id="asset-files-list" class="space-y-3 text-sm text-gray-300">Loading files...</div>
+                </article>
             </aside>
         </div>
     </main>
@@ -294,8 +300,20 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, increment, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import {
+            addDoc,
+            collection,
+            doc,
+            getDoc,
+            getDocs,
+            getFirestore,
+            increment,
+            query,
+            serverTimestamp,
+            setDoc,
+            updateDoc,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
@@ -309,8 +327,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
-
         const installBtn = document.getElementById("install-btn");
         const statusEl = document.getElementById("asset-status");
         const ownerEditor = document.getElementById("owner-editor");
@@ -319,6 +335,9 @@
         const ownerProgressBar = document.getElementById("owner-progress-bar");
         const ownerCurationControls = document.getElementById("owner-curation-controls");
         const ownerCurationNote = document.getElementById("owner-curation-note");
+        const assetFilesList = document.getElementById("asset-files-list");
+        const reviewLink = document.getElementById("review-link");
+        const editAssetFile = document.getElementById("edit-asset-file");
         const params = new URLSearchParams(window.location.search);
         const assetId = params.get("id");
 
@@ -328,6 +347,13 @@
         let currentAsset = null;
         let currentCreatorProfile = null;
         let canCurate = false;
+        let presenceTimer = null;
+        let assetFiles = [];
+        const mediaCache = new Map();
+        const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
+        const MAX_MEDIA_DATAURL_CHARS = 900000;
+        const MAX_ASSET_FILE_BYTES = 100 * 1024 * 1024;
+        const ASSET_CHUNK_SIZE = 600 * 1024;
 
         function normalizeUsername(value, fallback = "unknown") {
             const clean = String(value || "")
@@ -336,6 +362,15 @@
                 .replace(/[^a-z0-9._-]/g, "")
                 .slice(0, 24);
             return clean || fallback;
+        }
+
+        function toMillis(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === "function") return value.toMillis();
+            if (typeof value.seconds === "number") return value.seconds * 1000;
+            if (value instanceof Date) return value.getTime();
+            if (typeof value === "number") return value;
+            return 0;
         }
 
         function parseUrlList(rawValue) {
@@ -356,6 +391,211 @@
             return /^https?:\/\//i.test(String(url || "").trim());
         }
 
+        function validMediaUrl(url = "") {
+            const value = String(url || "").trim();
+            return /^https?:\/\//i.test(value) || /^data:image\//i.test(value);
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error || new Error("Failed to read file."));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function validateImageFile(file) {
+            if (!file) throw new Error("No file selected.");
+            if (!file.type.startsWith("image/")) throw new Error("Only image files are allowed.");
+            if (file.size > MAX_IMAGE_UPLOAD_BYTES) throw new Error("Images must be 8MB or smaller.");
+        }
+
+        function dataUrlByteSize(dataUrl = "") {
+            const base64 = String(dataUrl).split(",")[1] || "";
+            const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+            return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+        }
+
+        function imageConstraintsFor(meta = {}) {
+            const type = String(meta.type || "");
+            if (type.includes("gallery")) return { maxW: 1600, maxH: 1600 };
+            if (type.includes("icon")) return { maxW: 512, maxH: 512 };
+            return { maxW: 1200, maxH: 1200 };
+        }
+
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.decoding = "async";
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Failed to load image."));
+                };
+                img.src = url;
+            });
+        }
+
+        async function compressImageToDataUrl(file, constraints = {}) {
+            const img = await loadImageFromFile(file);
+            const srcW = img.naturalWidth || img.width || 1;
+            const srcH = img.naturalHeight || img.height || 1;
+            const maxW = Number(constraints.maxW || 1024);
+            const maxH = Number(constraints.maxH || 1024);
+            const scale = Math.min(1, maxW / srcW, maxH / srcH);
+            let w = Math.max(1, Math.round(srcW * scale));
+            let h = Math.max(1, Math.round(srcH * scale));
+            let quality = 0.92;
+            let mime = "image/webp";
+            let best = { dataUrl: "", mime: "image/jpeg", bytes: 0 };
+
+            for (let attempt = 0; attempt < 8; attempt += 1) {
+                const canvas = document.createElement("canvas");
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d", { alpha: true });
+                if (!ctx) throw new Error("Canvas not supported.");
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
+                ctx.drawImage(img, 0, 0, w, h);
+
+                let dataUrl = "";
+                try {
+                    dataUrl = canvas.toDataURL(mime, quality);
+                } catch {
+                    mime = "image/jpeg";
+                    dataUrl = canvas.toDataURL(mime, quality);
+                }
+                if (!dataUrl.startsWith(`data:${mime}`)) {
+                    mime = "image/jpeg";
+                    dataUrl = canvas.toDataURL(mime, quality);
+                }
+
+                const bytes = dataUrlByteSize(dataUrl);
+                if (!best.dataUrl || dataUrl.length < best.dataUrl.length) {
+                    best = { dataUrl, mime, bytes };
+                }
+                if (dataUrl.length <= MAX_MEDIA_DATAURL_CHARS) {
+                    return { dataUrl, mime, bytes };
+                }
+
+                quality -= 0.1;
+                if (quality < 0.55) {
+                    quality = 0.85;
+                    w = Math.max(1, Math.round(w * 0.9));
+                    h = Math.max(1, Math.round(h * 0.9));
+                }
+            }
+
+            if (best.dataUrl && best.dataUrl.length <= MAX_MEDIA_DATAURL_CHARS) {
+                return best;
+            }
+            throw new Error("Image too large to store in Firestore. Try a smaller image.");
+        }
+
+        async function uploadImageToMedia(file, meta = {}) {
+            validateImageFile(file);
+            const constraints = imageConstraintsFor(meta);
+            const compressed = await compressImageToDataUrl(file, constraints);
+            const dataUrl = compressed.dataUrl;
+            const moderation = canCurate
+                ? {
+                    moderationStatus: "approved",
+                    moderationReviewedAt: serverTimestamp(),
+                    moderationReviewedBy: currentUser.uid,
+                    moderationReason: ""
+                }
+                : { moderationStatus: "pending" };
+            const ref = await addDoc(collection(db, "media"), {
+                ownerId: currentUser.uid,
+                dataUrl,
+                size: compressed.bytes,
+                mime: compressed.mime,
+                name: file.name || "image",
+                createdAt: serverTimestamp(),
+                ...moderation,
+                ...meta
+            });
+            return ref.id;
+        }
+
+        async function getMediaUrl(mediaId) {
+            if (!mediaId) return "";
+            if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+            try {
+                const snap = await getDoc(doc(db, "media", mediaId));
+                if (snap.exists()) {
+                    const url = snap.data().dataUrl || "";
+                    mediaCache.set(mediaId, url);
+                    return url;
+                }
+            } catch (err) {
+                console.warn("Media load failed:", err);
+            }
+            return "";
+        }
+
+        function bytesToBase64(bytes) {
+            let binary = "";
+            const chunkSize = 0x8000;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+            }
+            return btoa(binary);
+        }
+
+        function formatFileSize(bytes) {
+            if (!Number.isFinite(bytes)) return "";
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+            return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+        }
+
+        async function uploadAssetPackage(file, assetId) {
+            if (!file) return "";
+            if (file.size > MAX_ASSET_FILE_BYTES) {
+                throw new Error("Asset file must be 100MB or smaller.");
+            }
+            const fileRef = doc(collection(db, "assetFiles"));
+            const totalChunks = Math.ceil(file.size / ASSET_CHUNK_SIZE) || 1;
+            await setDoc(fileRef, {
+                assetId,
+                ownerId: currentUser.uid,
+                name: file.name || "asset-package",
+                size: file.size,
+                mime: file.type || "application/octet-stream",
+                status: "uploading",
+                chunkCount: totalChunks,
+                createdAt: serverTimestamp()
+            });
+
+            const buffer = await file.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            let index = 0;
+            for (let offset = 0; offset < bytes.length; offset += ASSET_CHUNK_SIZE) {
+                const chunkBytes = bytes.slice(offset, offset + ASSET_CHUNK_SIZE);
+                const data = bytesToBase64(chunkBytes);
+                await addDoc(collection(db, "assetFileChunks"), {
+                    fileId: fileRef.id,
+                    ownerId: currentUser.uid,
+                    index,
+                    data,
+                    createdAt: serverTimestamp()
+                });
+                index += 1;
+                const progress = Math.round((index / totalChunks) * 100);
+                setOwnerProgress(progress);
+            }
+
+            await updateDoc(fileRef, { status: canCurate ? "ready" : "pending_review" });
+            return fileRef.id;
+        }
+
         function setOwnerProgress(percent = 0) {
             const safe = Math.max(0, Math.min(100, Number(percent || 0)));
             ownerProgressBar.style.width = `${safe}%`;
@@ -366,6 +606,26 @@
             ownerCurationNote.innerText = canCurate
                 ? "You have curator access. Featured and Dev Choice can be edited."
                 : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore.";
+        }
+
+        function startPresence(uid) {
+            stopPresence();
+            if (!uid) return;
+            const profileRef = doc(db, "users", uid);
+            const pulse = async () => {
+                try {
+                    await updateDoc(profileRef, { lastActiveAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                } catch (err) {
+                    console.warn("Presence update failed:", err);
+                }
+            };
+            pulse();
+            presenceTimer = setInterval(pulse, 60 * 1000);
+        }
+
+        function stopPresence() {
+            if (presenceTimer) clearInterval(presenceTimer);
+            presenceTimer = null;
         }
 
         function setStatus(message, tone = "text-gray-400") {
@@ -411,47 +671,6 @@
             return "";
         }
 
-        function validateUploadFile(file, mode = "image") {
-            if (!file) return;
-            const maxBytes = mode === "video" ? 120 * 1024 * 1024 : 10 * 1024 * 1024;
-            if (mode === "image" && !file.type.startsWith("image/")) {
-                throw new Error("Only image files are allowed for icon/gallery uploads.");
-            }
-            if (mode === "video" && !file.type.startsWith("video/")) {
-                throw new Error("Only video files are allowed for video uploads.");
-            }
-            if (file.size > maxBytes) {
-                throw new Error(mode === "video" ? "Video must be 120MB or smaller." : "Image must be 10MB or smaller.");
-            }
-        }
-
-        async function uploadAssetFile(file, suffix, mode = "image") {
-            validateUploadFile(file, mode);
-            const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "") || "bin";
-            const path = `assets/${currentAsset.creatorId}/${assetId}-${suffix}-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-            const fileRef = ref(storage, path);
-            return new Promise((resolve, reject) => {
-                const task = uploadBytesResumable(fileRef, file);
-                task.on(
-                    "state_changed",
-                    (snapshot) => {
-                        if (!snapshot.totalBytes) return;
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        setOwnerProgress(progress);
-                    },
-                    (err) => reject(err),
-                    async () => {
-                        try {
-                            const url = await getDownloadURL(task.snapshot.ref);
-                            resolve(url);
-                        } catch (err) {
-                            reject(err);
-                        }
-                    }
-                );
-            });
-        }
-
         function normalizeAsset(raw = {}) {
             return {
                 name: String(raw.name || "Untitled"),
@@ -471,20 +690,23 @@
                 creatorName: String(raw.creatorName || "unknown"),
                 downloads: Number(raw.downloads || 0),
                 iconUrl: String(raw.iconUrl || ""),
+                iconMediaId: String(raw.iconMediaId || ""),
                 videoUrl: String(raw.videoUrl || ""),
                 galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages.filter((item) => typeof item === "string") : [],
+                galleryMediaIds: Array.isArray(raw.galleryMediaIds) ? raw.galleryMediaIds.filter((item) => typeof item === "string") : [],
                 socials: {
                     website: String(raw.socials?.website || ""),
                     github: String(raw.socials?.github || ""),
                     discord: String(raw.socials?.discord || ""),
                     docs: String(raw.socials?.docs || "")
                 },
+                moderationStatus: String(raw.moderationStatus || "approved"),
                 featured: Boolean(raw.featured),
                 devChoice: Boolean(raw.devChoice)
             };
         }
 
-        function renderMedia(asset) {
+        async function renderMedia(asset) {
             const videoPanel = document.getElementById("video-panel");
             const videoContainer = document.getElementById("video-container");
             const galleryPanel = document.getElementById("gallery-panel");
@@ -503,8 +725,14 @@
                 videoPanel.classList.add("hidden");
             }
 
-            if (asset.galleryImages.length) {
-                galleryGrid.innerHTML = asset.galleryImages
+            const gallerySources = [...asset.galleryImages];
+            for (const mediaId of asset.galleryMediaIds || []) {
+                const url = await getMediaUrl(mediaId);
+                if (url) gallerySources.push(url);
+            }
+
+            if (gallerySources.length) {
+                galleryGrid.innerHTML = gallerySources
                     .map((img) => `<img src="${img}" alt="Asset gallery image">`)
                     .join("");
                 galleryPanel.classList.remove("hidden");
@@ -532,7 +760,7 @@
                 .join("");
         }
 
-        function renderAsset(asset, creatorName) {
+        async function renderAsset(asset, creatorName) {
             document.getElementById("asset-name").innerText = asset.name;
             document.getElementById("asset-summary").innerText = asset.summary || "No summary provided.";
             document.getElementById("asset-desc").innerText = asset.description || "No description.";
@@ -565,16 +793,20 @@
             document.getElementById("asset-install-guide").innerText = asset.installGuide || "No installation guide provided.";
 
             const iconEl = document.getElementById("asset-icon");
-            if (asset.iconUrl) {
+            iconEl.src = "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
+            if (asset.iconMediaId) {
+                const mediaUrl = await getMediaUrl(asset.iconMediaId);
+                if (mediaUrl) {
+                    iconEl.src = mediaUrl;
+                }
+            } else if (validMediaUrl(asset.iconUrl)) {
                 iconEl.src = asset.iconUrl;
-            } else {
-                iconEl.src = "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
             }
 
             document.getElementById("asset-author-link").innerText = creatorName;
             document.getElementById("asset-author-link").href = asset.creatorId ? `profile.html?id=${encodeURIComponent(asset.creatorId)}` : "profile.html";
 
-            renderMedia(asset);
+            await renderMedia(asset);
             renderSocialLinks(asset);
         }
 
@@ -637,14 +869,143 @@
                 document.getElementById("asset-desc").innerText = "This asset may have been removed.";
                 setStatus("No record exists for the requested asset id.", "text-red-400");
                 installBtn.disabled = true;
+                assetFilesList.innerHTML = `<p class="text-sm text-gray-500">No files available.</p>`;
                 return;
             }
 
             currentAsset = normalizeAsset(snap.data());
             const creatorName = await loadCreatorName(currentAsset);
-            renderAsset(currentAsset, creatorName);
+            await renderAsset(currentAsset, creatorName);
             syncOwnerVisibility();
-            setStatus("Asset loaded successfully.", "text-green-400");
+            await loadAssetFiles();
+            if (currentAsset.moderationStatus === "pending") {
+                setStatus("This asset is pending review. Only the creator and curators can see it.", "text-yellow-300");
+            } else if (currentAsset.moderationStatus === "rejected") {
+                setStatus("This asset was rejected by moderation.", "text-red-400");
+            } else {
+                setStatus("Asset loaded successfully.", "text-green-400");
+            }
+        }
+
+        async function loadAssetFiles() {
+            if (!assetId) return;
+            if (!currentUser) {
+                assetFiles = [];
+                assetFilesList.innerHTML = `<p class="text-sm text-gray-500">Sign in to download asset files.</p>`;
+                installBtn.innerText = "Sign In To Download";
+                installBtn.disabled = true;
+                return;
+            }
+            try {
+                const canSeeAll = Boolean(currentUser && currentAsset && (currentUser.uid === currentAsset.creatorId || canCurate));
+                const baseQuery = canSeeAll
+                    ? query(collection(db, "assetFiles"), where("assetId", "==", assetId))
+                    : query(collection(db, "assetFiles"), where("assetId", "==", assetId), where("status", "==", "ready"));
+                const snap = await getDocs(baseQuery);
+                const allowedStatuses = canSeeAll
+                    ? new Set(["ready", "pending_review", "uploading", "rejected"])
+                    : new Set(["ready"]);
+                assetFiles = snap.docs
+                    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .filter((file) => allowedStatuses.has(String(file.status || "")));
+                assetFiles.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+                renderAssetFiles();
+            } catch (err) {
+                console.error("Failed to load asset files:", err);
+                assetFilesList.innerHTML = `<p class="text-sm text-red-400">Unable to load files.</p>`;
+            }
+        }
+
+        function renderAssetFiles() {
+            if (!assetFilesList) return;
+            const canSeeAll = Boolean(currentUser && currentAsset && (currentUser.uid === currentAsset.creatorId || canCurate));
+            const readyFiles = assetFiles.filter((file) => file.status === "ready");
+            if (!assetFiles.length) {
+                assetFilesList.innerHTML = `<p class="text-sm text-gray-500">No downloadable files available yet.</p>`;
+                installBtn.innerText = "No Files Available";
+                installBtn.disabled = true;
+                return;
+            }
+
+            if (readyFiles.length) {
+                installBtn.innerText = "Download Asset";
+                installBtn.disabled = false;
+            } else {
+                installBtn.innerText = canSeeAll ? "Awaiting Review" : "No Files Available";
+                installBtn.disabled = true;
+            }
+            assetFilesList.innerHTML = assetFiles.map((file) => `
+                <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-2">
+                    <div>
+                        <div class="font-bold text-sm">
+                            ${escapeHtml(file.name || "Asset File")}
+                            ${file.status === "pending_review" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-yellow-500/30 text-yellow-300 uppercase tracking-widest font-black">Pending</span>` : ""}
+                            ${file.status === "uploading" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-blue-400/30 text-blue-200 uppercase tracking-widest font-black">Uploading</span>` : ""}
+                            ${file.status === "rejected" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-red-500/30 text-red-200 uppercase tracking-widest font-black">Rejected</span>` : ""}
+                        </div>
+                        <div class="text-[11px] text-gray-500">${formatFileSize(Number(file.size || 0))}</div>
+                    </div>
+                    ${file.status === "ready" || canSeeAll
+                        ? `<button class="text-xs uppercase tracking-widest font-black text-pink-400" data-file-id="${file.id}">Download</button>`
+                        : `<button class="text-xs uppercase tracking-widest font-black text-gray-500 cursor-not-allowed" type="button" disabled>Pending</button>`
+                    }
+                </div>
+            `).join("");
+        }
+
+        function base64ToBlob(base64, mime) {
+            const binary = atob(base64);
+            const len = binary.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i += 1) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return new Blob([bytes], { type: mime || "application/octet-stream" });
+        }
+
+        async function downloadAssetFile(fileMeta) {
+            if (!fileMeta || !fileMeta.id) return;
+            try {
+                if (!currentUser) {
+                    setStatus("Sign in to download this asset.", "text-yellow-300");
+                    return;
+                }
+                const canSeeAll = Boolean(currentUser && currentAsset && (currentUser.uid === currentAsset.creatorId || canCurate));
+                if (fileMeta.status !== "ready" && !canSeeAll) {
+                    setStatus("This file is pending review.", "text-yellow-300");
+                    return;
+                }
+                setStatus("Preparing download...", "text-gray-400");
+                const snap = await getDocs(query(collection(db, "assetFileChunks"), where("fileId", "==", fileMeta.id)));
+                const chunks = snap.docs.map((docSnap) => docSnap.data()).sort((a, b) => (a.index || 0) - (b.index || 0));
+                if (!chunks.length) {
+                    setStatus("No file data found for this asset.", "text-red-400");
+                    return;
+                }
+                const base64 = chunks.map((chunk) => chunk.data || "").join("");
+                const blob = base64ToBlob(base64, fileMeta.mime || "application/octet-stream");
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = fileMeta.name || "asset-package";
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+
+                try {
+                    await updateDoc(assetRef, { downloads: increment(1), updatedAt: serverTimestamp() });
+                    currentAsset.downloads += 1;
+                    document.getElementById("asset-downloads").innerText = String(currentAsset.downloads);
+                    setStatus("Download started. Download count updated.", "text-green-400");
+                } catch (err) {
+                    console.warn("Download count update failed:", err);
+                    setStatus("Download started. Sign in to track downloads.", "text-green-400");
+                }
+            } catch (err) {
+                console.error("Download failed:", err);
+                setStatus("Failed to download asset file.", "text-red-400");
+            }
         }
 
         document.getElementById("back-btn").addEventListener("click", () => {
@@ -656,21 +1017,28 @@
         });
 
         installBtn.addEventListener("click", async () => {
-            if (!assetRef || !currentAsset) return;
+            if (!assetFiles.length) {
+                setStatus("No downloadable files available for this asset.", "text-red-400");
+                return;
+            }
             installBtn.disabled = true;
             installBtn.classList.add("opacity-60", "cursor-not-allowed");
             try {
-                await updateDoc(assetRef, { downloads: increment(1), updatedAt: serverTimestamp() });
-                currentAsset.downloads += 1;
-                document.getElementById("asset-downloads").innerText = String(currentAsset.downloads);
-                setStatus("Install recorded. Download count updated.", "text-green-400");
-            } catch (err) {
-                console.error("Failed to record install:", err);
-                setStatus("Failed to record install. Try again.", "text-red-400");
+                const preferred = assetFiles.find((file) => file.status === "ready") || assetFiles[0];
+                await downloadAssetFile(preferred);
             } finally {
                 installBtn.disabled = false;
                 installBtn.classList.remove("opacity-60", "cursor-not-allowed");
             }
+        });
+
+        assetFilesList.addEventListener("click", async (event) => {
+            const target = event.target.closest("[data-file-id]");
+            if (!target) return;
+            const fileId = target.dataset.fileId;
+            const fileMeta = assetFiles.find((file) => file.id === fileId);
+            if (!fileMeta) return;
+            await downloadAssetFile(fileMeta);
         });
 
         ownerForm.addEventListener("submit", async (event) => {
@@ -691,6 +1059,8 @@
             let iconUrl = document.getElementById("edit-icon-url").value.trim();
             let videoUrl = document.getElementById("edit-video-url").value.trim();
             let galleryImages = parseUrlList(document.getElementById("edit-gallery-urls").value);
+            let iconMediaId = currentAsset?.iconMediaId || "";
+            let galleryMediaIds = Array.isArray(currentAsset?.galleryMediaIds) ? [...currentAsset.galleryMediaIds] : [];
             const requirements = parseLineList(document.getElementById("edit-requirements").value).slice(0, 20);
             const installGuide = document.getElementById("edit-install-guide").value.trim();
 
@@ -712,8 +1082,8 @@
             }
 
             const iconFile = document.getElementById("edit-icon-file").files[0];
-            const videoFile = document.getElementById("edit-video-file").files[0];
             const galleryFiles = Array.from(document.getElementById("edit-gallery-files").files || []);
+            const packageFile = editAssetFile.files[0];
 
             try {
                 setOwnerSaving(true);
@@ -722,22 +1092,19 @@
 
                 if (iconFile) {
                     setOwnerStatus("Uploading icon...", "text-pink-400");
-                    iconUrl = await uploadAssetFile(iconFile, "icon", "image");
-                }
-                if (videoFile) {
-                    setOwnerStatus("Uploading video...", "text-pink-400");
-                    videoUrl = await uploadAssetFile(videoFile, "video", "video");
+                    iconMediaId = await uploadImageToMedia(iconFile, { type: "asset-icon" });
+                    iconUrl = "";
+                } else if (iconUrl) {
+                    iconMediaId = "";
                 }
                 if (galleryFiles.length) {
-                    const uploadedGallery = [];
                     let index = 0;
                     for (const file of galleryFiles.slice(0, 12)) {
                         index += 1;
                         setOwnerStatus(`Uploading gallery ${index}/${Math.min(galleryFiles.length, 12)}...`, "text-pink-400");
-                        const uploaded = await uploadAssetFile(file, "gallery", "image");
-                        uploadedGallery.push(uploaded);
+                        const mediaId = await uploadImageToMedia(file, { type: "asset-gallery" });
+                        galleryMediaIds.push(mediaId);
                     }
-                    galleryImages = [...galleryImages, ...uploadedGallery].slice(0, 12);
                 }
 
                 const creatorProfileSnap = await getDoc(doc(db, "users", currentUser.uid));
@@ -758,8 +1125,10 @@
                     requirements,
                     installGuide,
                     iconUrl,
+                    iconMediaId,
                     videoUrl,
                     galleryImages,
+                    galleryMediaIds,
                     socials: {
                         website: document.getElementById("edit-social-website").value.trim(),
                         github: document.getElementById("edit-social-github").value.trim(),
@@ -769,23 +1138,30 @@
                     featured: canCurate ? document.getElementById("edit-featured").checked : Boolean(currentAsset.featured),
                     devChoice: canCurate ? document.getElementById("edit-dev-choice").checked : Boolean(currentAsset.devChoice),
                     creatorName,
-                    updatedAt: serverTimestamp()
+                    updatedAt: serverTimestamp(),
+                    ...(canCurate ? {} : { moderationStatus: "pending" })
                 };
 
                 await setDoc(assetRef, updates, { merge: true });
 
+                if (packageFile) {
+                    setOwnerStatus("Uploading asset package...", "text-pink-400");
+                    await uploadAssetPackage(packageFile, assetId);
+                    await loadAssetFiles();
+                }
+
                 currentAsset = normalizeAsset({ ...currentAsset, ...updates });
-                renderAsset(currentAsset, creatorName);
+                await renderAsset(currentAsset, creatorName);
                 fillOwnerForm(currentAsset);
                 document.getElementById("edit-icon-file").value = "";
-                document.getElementById("edit-video-file").value = "";
+                document.getElementById("edit-asset-file").value = "";
                 document.getElementById("edit-gallery-files").value = "";
 
                 setOwnerStatus("Asset updated.", "text-green-400");
                 setStatus("Asset details updated by owner.", "text-green-400");
             } catch (err) {
                 console.error("Failed to save asset edits:", err);
-                setOwnerStatus("Save failed. Check Storage/Firestore rules.", "text-red-400");
+                setOwnerStatus("Save failed. Check Firestore rules.", "text-red-400");
                 setStatus("Failed to save owner changes.", "text-red-400");
             } finally {
                 setOwnerSaving(false);
@@ -803,11 +1179,17 @@
                     console.warn("Failed to read curator permission:", err);
                     canCurate = false;
                 }
+                startPresence(user.uid);
             } else {
                 canCurate = false;
+                stopPresence();
             }
             syncCurationUi();
             syncOwnerVisibility();
+            reviewLink.classList.toggle("hidden", !canCurate);
+            if (currentAsset) {
+                loadAssetFiles().catch((err) => console.warn("Reload asset files failed:", err));
+            }
         });
 
         setOwnerProgress(0);
@@ -815,7 +1197,13 @@
 
         loadAsset().catch((err) => {
             console.error("Asset load failed:", err);
-            setStatus("Failed to load asset data.", "text-red-400");
+            const code = String(err?.code || "");
+            setStatus(
+                code === "permission-denied"
+                    ? "This asset is pending review or you do not have access."
+                    : "Failed to load asset data.",
+                "text-red-400"
+            );
         });
     </script>
 </body>

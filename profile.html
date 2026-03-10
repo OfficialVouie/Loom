@@ -18,6 +18,12 @@
         .dropdown-menu.active { display:block; }
         .menu-item { display:flex; align-items:center; gap:12px; padding:14px 18px; color:inherit; text-decoration:none; border:0; width:100%; background:transparent; cursor:pointer; }
         .menu-item:hover { background:rgba(255,255,255,.05); }
+        .notif-menu { width:320px; }
+        .notif-badge { background:#ff79c6; color:#0a0a0c; font-size:10px; font-weight:800; padding:2px 6px; border-radius:999px; line-height:1; }
+        .notif-item { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:10px; align-items:flex-start; }
+        .notif-item:last-child { border-bottom:0; }
+        .notif-item strong { display:block; font-size:12px; }
+        .notif-item span { display:block; font-size:11px; color:#9ca3af; }
         .profile-banner { height:170px; background:linear-gradient(135deg, rgba(255,121,198,.35), rgba(122,162,255,.25)); background-size:cover; background-position:center; border-bottom:1px solid rgba(255,255,255,.05); }
         .tab-btn { color:#a1a1aa; border-bottom:2px solid transparent; transition:.2s; }
         .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
@@ -82,20 +88,39 @@
             <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
             <h1 class="text-2xl font-black tracking-tighter uppercase italic">LOOM</h1>
         </a>
-        <div class="flex items-center gap-3 relative">
+        <div class="flex items-center gap-3">
             <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Home</a>
             <a href="upload.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Upload</a>
-            <button id="profile-trigger" class="glass h-12 px-3 rounded-full flex items-center gap-3" type="button">
-                <span id="nav-user-name" class="text-sm font-bold">Guest</span>
-                <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10" alt="Profile avatar">
-            </button>
-            <div id="account-menu" class="dropdown-menu">
-                <div class="p-6 border-b border-white/5 text-center">
-                    <img id="dropdown-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-16 h-16 rounded-full border border-white/10 mx-auto mb-3" alt="Dropdown avatar">
-                    <div id="dropdown-name" class="font-black lowercase">guest</div>
+            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
+            <div class="relative">
+                <button id="notif-trigger" class="glass h-12 px-4 rounded-full flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">
+                    <i class="fas fa-bell"></i>
+                    <span id="notif-count" class="notif-badge hidden">0</span>
+                </button>
+                <div id="notif-menu" class="dropdown-menu notif-menu">
+                    <div class="p-4 border-b border-white/5 flex items-center justify-between">
+                        <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
+                        <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
+                    </div>
+                    <div id="notif-list" class="max-h-80 overflow-auto"></div>
+                    <div id="notif-empty" class="p-4 text-xs text-gray-500">No notifications yet.</div>
                 </div>
-                <a id="my-profile-link" class="menu-item" href="profile.html"><i class="fas fa-user text-pink-400"></i><span>My Profile</span></a>
-                <button id="logout-btn" class="menu-item" type="button"><i class="fas fa-sign-out-alt text-red-500"></i><span class="text-red-500">Sign Out</span></button>
+            </div>
+            <div class="relative">
+                <button id="profile-trigger" class="glass h-12 px-3 rounded-full flex items-center gap-3" type="button">
+                    <span id="nav-user-name" class="text-sm font-bold">Guest</span>
+                    <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10" alt="Profile avatar">
+                </button>
+                <div id="account-menu" class="dropdown-menu">
+                    <div class="p-6 border-b border-white/5 text-center">
+                        <img id="dropdown-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-16 h-16 rounded-full border border-white/10 mx-auto mb-3" alt="Dropdown avatar">
+                        <div id="dropdown-name" class="font-black lowercase">guest</div>
+                    </div>
+                    <a id="my-profile-link" class="menu-item" href="profile.html"><i class="fas fa-user text-pink-400"></i><span>My Profile</span></a>
+                    <a class="menu-item" href="friends.html"><i class="fas fa-user-friends text-pink-400"></i><span>Friends</span></a>
+                    <a id="review-link" class="menu-item hidden" href="review.html"><i class="fas fa-shield-halved text-yellow-300"></i><span>Review Queue</span></a>
+                    <button id="logout-btn" class="menu-item" type="button"><i class="fas fa-sign-out-alt text-red-500"></i><span class="text-red-500">Sign Out</span></button>
+                </div>
             </div>
         </div>
     </header>
@@ -126,8 +151,9 @@
                         <button id="open-edit" class="w-full p-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-pink-400 transition">Edit Profile</button>
                         <a href="upload.html" class="block w-full p-3 bg-pink-500 text-black rounded-xl font-black text-[10px] uppercase tracking-widest border border-pink-400">Upload Asset</a>
                     </div>
-                    <div id="other-actions" class="hidden">
+                    <div id="other-actions" class="hidden space-y-3">
                         <button id="follow-btn" class="w-full p-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest">Follow User</button>
+                        <button id="friend-btn" class="w-full p-3 border border-white/10 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-pink-400/60">Add Friend</button>
                     </div>
                 </div>
             </aside>
@@ -173,8 +199,22 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import {
+            addDoc,
+            collection,
+            deleteDoc,
+            doc,
+            getDoc,
+            getDocs,
+            getFirestore,
+            limit,
+            onSnapshot,
+            query,
+            serverTimestamp,
+            setDoc,
+            updateDoc,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
@@ -188,10 +228,10 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
-
         const targetId = new URLSearchParams(window.location.search).get("id");
         const guestAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=guest";
+        const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
+        const MAX_MEDIA_DATAURL_CHARS = 900000;
 
         const accountMenu = document.getElementById("account-menu");
         const profileTrigger = document.getElementById("profile-trigger");
@@ -207,12 +247,25 @@
         const curationNote = document.getElementById("edit-curation-note");
         const saveProfileBtn = document.getElementById("save-profile");
         const myProfileLink = document.getElementById("my-profile-link");
+        const followBtn = document.getElementById("follow-btn");
+        const friendBtn = document.getElementById("friend-btn");
+        const notifTrigger = document.getElementById("notif-trigger");
+        const notifMenu = document.getElementById("notif-menu");
+        const notifCount = document.getElementById("notif-count");
+        const notifList = document.getElementById("notif-list");
+        const notifEmpty = document.getElementById("notif-empty");
+        const notifMarkRead = document.getElementById("notif-mark-read");
 
         let activeProfileUid = null;
         let signedInUser = null;
         let signedInProfile = null;
         let viewedProfile = null;
         let viewingOwnProfile = false;
+        let notifUnsub = null;
+        let presenceTimer = null;
+        let followState = { following: false };
+        let friendState = { status: "none", docId: null, fromId: "", toId: "" };
+        const mediaCache = new Map();
 
         function escapeHtml(value = "") {
             return String(value)
@@ -236,9 +289,29 @@
             return sanitizeUsername(base) || "user";
         }
 
+        function validMediaUrl(url = "") {
+            const value = String(url || "").trim();
+            return /^https?:\/\//i.test(value) || /^data:image\//i.test(value);
+        }
+
+        function toMillis(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === "function") return value.toMillis();
+            if (typeof value.seconds === "number") return value.seconds * 1000;
+            if (value instanceof Date) return value.getTime();
+            if (typeof value === "number") return value;
+            return 0;
+        }
+
+        function formatTimestamp(value) {
+            const millis = toMillis(value);
+            if (!millis) return "Just now";
+            return new Date(millis).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+        }
+
         function avatarForProfile(uid, profile = null) {
-            if (profile?.avatarUrl) return profile.avatarUrl;
-            return `https://api.dicebear.com/7.x/identicon/svg?seed=${uid}`;
+            const seed = encodeURIComponent(uid || profile?.username || "guest");
+            return `https://api.dicebear.com/7.x/identicon/svg?seed=${seed}`;
         }
 
         function normalizeProfile(rawData = {}, fallbackEmail = "") {
@@ -251,6 +324,8 @@
                 role: typeof rawData.role === "string" && rawData.role.trim() ? rawData.role : "Consumer",
                 avatarUrl: typeof rawData.avatarUrl === "string" ? rawData.avatarUrl : "",
                 bannerUrl: typeof rawData.bannerUrl === "string" ? rawData.bannerUrl : "",
+                avatarMediaId: typeof rawData.avatarMediaId === "string" ? rawData.avatarMediaId : "",
+                bannerMediaId: typeof rawData.bannerMediaId === "string" ? rawData.bannerMediaId : "",
                 followers: Number.isFinite(rawData.followers) ? rawData.followers : 0,
                 following: Number.isFinite(rawData.following) ? rawData.following : 0,
                 socials: {
@@ -295,15 +370,201 @@
                 : "Creator spotlight flags are database-controlled. Set users/{uid}.canCurate to true.";
         }
 
-        function refreshOverlayPreviews(profile = viewedProfile || {}) {
-            avatarPreview.src = profile?.avatarUrl || avatarForProfile(activeProfileUid || "guest", profile);
-            bannerPreview.src = profile?.bannerUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=banner";
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error || new Error("Failed to read file."));
+                reader.readAsDataURL(file);
+            });
         }
 
-        function applyBanner(url = "") {
+        function validateImageFile(file) {
+            if (!file) throw new Error("No file selected.");
+            if (!file.type.startsWith("image/")) throw new Error("Only image files are allowed.");
+            if (file.size > MAX_IMAGE_UPLOAD_BYTES) throw new Error("Images must be 8MB or smaller.");
+        }
+
+        function dataUrlByteSize(dataUrl = "") {
+            const base64 = String(dataUrl).split(",")[1] || "";
+            const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+            return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+        }
+
+        function imageConstraintsFor(meta = {}) {
+            const type = String(meta.type || "");
+            if (type === "banner") return { maxW: 1800, maxH: 700 };
+            return { maxW: 512, maxH: 512 };
+        }
+
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.decoding = "async";
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Failed to load image."));
+                };
+                img.src = url;
+            });
+        }
+
+        async function compressImageToDataUrl(file, constraints = {}) {
+            const img = await loadImageFromFile(file);
+            const srcW = img.naturalWidth || img.width || 1;
+            const srcH = img.naturalHeight || img.height || 1;
+            const maxW = Number(constraints.maxW || 1024);
+            const maxH = Number(constraints.maxH || 1024);
+            const scale = Math.min(1, maxW / srcW, maxH / srcH);
+            let w = Math.max(1, Math.round(srcW * scale));
+            let h = Math.max(1, Math.round(srcH * scale));
+            let quality = 0.92;
+            let mime = "image/webp";
+            let best = { dataUrl: "", mime: "image/jpeg", bytes: 0 };
+
+            for (let attempt = 0; attempt < 8; attempt += 1) {
+                const canvas = document.createElement("canvas");
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d", { alpha: true });
+                if (!ctx) throw new Error("Canvas not supported.");
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
+                ctx.drawImage(img, 0, 0, w, h);
+
+                let dataUrl = "";
+                try {
+                    dataUrl = canvas.toDataURL(mime, quality);
+                } catch {
+                    mime = "image/jpeg";
+                    dataUrl = canvas.toDataURL(mime, quality);
+                }
+                if (!dataUrl.startsWith(`data:${mime}`)) {
+                    mime = "image/jpeg";
+                    dataUrl = canvas.toDataURL(mime, quality);
+                }
+
+                const bytes = dataUrlByteSize(dataUrl);
+                if (!best.dataUrl || dataUrl.length < best.dataUrl.length) {
+                    best = { dataUrl, mime, bytes };
+                }
+                if (dataUrl.length <= MAX_MEDIA_DATAURL_CHARS) {
+                    return { dataUrl, mime, bytes };
+                }
+
+                quality -= 0.1;
+                if (quality < 0.55) {
+                    quality = 0.85;
+                    w = Math.max(1, Math.round(w * 0.9));
+                    h = Math.max(1, Math.round(h * 0.9));
+                }
+            }
+
+            if (best.dataUrl && best.dataUrl.length <= MAX_MEDIA_DATAURL_CHARS) {
+                return best;
+            }
+            throw new Error("Image too large to store in Firestore. Try a smaller image.");
+        }
+
+        async function uploadImageToMedia(file, meta = {}) {
+            validateImageFile(file);
+            const constraints = imageConstraintsFor(meta);
+            const compressed = await compressImageToDataUrl(file, constraints);
+            const dataUrl = compressed.dataUrl;
+            const isCurator = Boolean(signedInProfile?.canCurate);
+            const moderation = isCurator
+                ? {
+                    moderationStatus: "approved",
+                    moderationReviewedAt: serverTimestamp(),
+                    moderationReviewedBy: signedInUser.uid,
+                    moderationReason: ""
+                }
+                : { moderationStatus: "pending" };
+            const ref = await addDoc(collection(db, "media"), {
+                ownerId: signedInUser.uid,
+                dataUrl,
+                size: compressed.bytes,
+                mime: compressed.mime,
+                name: file.name || "image",
+                createdAt: serverTimestamp(),
+                ...moderation,
+                ...meta
+            });
+            return ref.id;
+        }
+
+        async function getMediaUrl(mediaId) {
+            if (!mediaId) return "";
+            if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+            try {
+                const snap = await getDoc(doc(db, "media", mediaId));
+                if (snap.exists()) {
+                    const url = snap.data().dataUrl || "";
+                    mediaCache.set(mediaId, url);
+                    return url;
+                }
+            } catch (err) {
+                console.warn("Media load failed:", err);
+            }
+            return "";
+        }
+
+        async function applyAvatarImage(imgEl, profile, uid) {
+            if (!imgEl) return;
+            imgEl.src = avatarForProfile(uid, profile);
+            if (profile?.avatarMediaId) {
+                const mediaUrl = await getMediaUrl(profile.avatarMediaId);
+                if (mediaUrl) {
+                    imgEl.src = mediaUrl;
+                    return;
+                }
+            }
+            if (validMediaUrl(profile?.avatarUrl)) {
+                imgEl.src = profile.avatarUrl;
+            }
+        }
+
+        async function refreshOverlayPreviews(profile = viewedProfile || {}) {
+            avatarPreview.src = avatarForProfile(activeProfileUid || "guest", profile);
+            if (profile?.avatarMediaId) {
+                const mediaUrl = await getMediaUrl(profile.avatarMediaId);
+                if (mediaUrl) {
+                    avatarPreview.src = mediaUrl;
+                }
+            } else if (validMediaUrl(profile?.avatarUrl)) {
+                avatarPreview.src = profile.avatarUrl;
+            }
+
+            bannerPreview.src = "https://api.dicebear.com/7.x/shapes/svg?seed=banner";
+            if (profile?.bannerMediaId) {
+                const mediaUrl = await getMediaUrl(profile.bannerMediaId);
+                if (mediaUrl) {
+                    bannerPreview.src = mediaUrl;
+                }
+            } else if (validMediaUrl(profile?.bannerUrl)) {
+                bannerPreview.src = profile.bannerUrl;
+            }
+        }
+
+        async function applyBanner(profile = {}) {
             const banner = document.getElementById("profile-banner");
-            if (url) {
-                banner.style.backgroundImage = `url("${url}")`;
+            if (!banner) return;
+            if (profile?.bannerMediaId) {
+                const mediaUrl = await getMediaUrl(profile.bannerMediaId);
+                if (mediaUrl) {
+                    banner.style.backgroundImage = `url("${mediaUrl}")`;
+                    banner.style.backgroundSize = "cover";
+                    banner.style.backgroundPosition = "center";
+                    return;
+                }
+            }
+            if (validMediaUrl(profile?.bannerUrl)) {
+                banner.style.backgroundImage = `url("${profile.bannerUrl}")`;
                 banner.style.backgroundSize = "cover";
                 banner.style.backgroundPosition = "center";
                 return;
@@ -337,15 +598,15 @@
                 .join("");
         }
 
-        function renderTopNav(profile, uid, email = "") {
+        async function renderTopNav(profile, uid, email = "") {
             const username = profile?.username || usernameFromEmail(email);
-            const avatar = avatarForProfile(uid, profile);
             document.getElementById("nav-user-name").innerText = username;
-            document.getElementById("nav-avatar").src = avatar;
-            document.getElementById("dropdown-avatar").src = avatar;
             document.getElementById("dropdown-name").innerText = username;
             document.getElementById("logout-btn").classList.remove("hidden");
+            document.getElementById("review-link").classList.toggle("hidden", !profile?.canCurate);
             myProfileLink.href = "profile.html";
+            await applyAvatarImage(document.getElementById("nav-avatar"), profile, uid);
+            await applyAvatarImage(document.getElementById("dropdown-avatar"), profile, uid);
         }
 
         function renderGuestTopNav() {
@@ -354,6 +615,7 @@
             document.getElementById("dropdown-avatar").src = guestAvatar;
             document.getElementById("dropdown-name").innerText = "guest";
             document.getElementById("logout-btn").classList.add("hidden");
+            document.getElementById("review-link").classList.add("hidden");
             myProfileLink.href = "index.html";
         }
 
@@ -395,6 +657,8 @@
                     role: "Consumer",
                     avatarUrl: "",
                     bannerUrl: "",
+                    avatarMediaId: "",
+                    bannerMediaId: "",
                     followers: 0,
                     following: 0,
                     socials: { website: "", x: "", github: "", youtube: "", discord: "" },
@@ -417,6 +681,8 @@
             if (typeof raw.role !== "string") patch.role = normalized.role;
             if (typeof raw.avatarUrl !== "string") patch.avatarUrl = "";
             if (typeof raw.bannerUrl !== "string") patch.bannerUrl = "";
+            if (typeof raw.avatarMediaId !== "string") patch.avatarMediaId = "";
+            if (typeof raw.bannerMediaId !== "string") patch.bannerMediaId = "";
             if (typeof raw.followers !== "number") patch.followers = 0;
             if (typeof raw.following !== "number") patch.following = 0;
             if (typeof raw.socials !== "object" || raw.socials === null) patch.socials = normalized.socials;
@@ -440,33 +706,31 @@
             editOverlay.style.display = "none";
         }
 
-        function refreshPendingPreview() {
+        async function refreshPendingPreview() {
             const avatarFile = document.getElementById("edit-avatar-file").files[0];
             const bannerFile = document.getElementById("edit-banner-file").files[0];
             if (avatarFile) {
                 avatarPreview.src = URL.createObjectURL(avatarFile);
             } else {
-                avatarPreview.src = viewedProfile?.avatarUrl || avatarForProfile(activeProfileUid || "guest", viewedProfile);
+                await refreshOverlayPreviews(viewedProfile);
             }
             if (bannerFile) {
                 bannerPreview.src = URL.createObjectURL(bannerFile);
             } else {
-                bannerPreview.src = viewedProfile?.bannerUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=banner";
+                await refreshOverlayPreviews(viewedProfile);
             }
         }
 
-        function renderViewedProfile(uid, profileData) {
+        async function renderViewedProfile(uid, profileData) {
             viewedProfile = profileData;
-            const avatar = avatarForProfile(uid, profileData);
             document.getElementById("prof-name").innerText = profileData.username || "unknown";
             document.getElementById("prof-bio").innerText = profileData.bio || "No bio set.";
             document.getElementById("role-pill").innerText = `${(profileData.role || "Consumer").toUpperCase()} UNIT`;
             document.getElementById("known-pill").classList.toggle("hidden", !profileData.isKnownCreator);
             document.getElementById("featured-pill").classList.toggle("hidden", !profileData.isFeaturedCreator);
-            document.getElementById("main-avatar").src = avatar;
-            document.getElementById("follower-count").innerText = String(profileData.followers || 0);
-            document.getElementById("following-count").innerText = String(profileData.following || 0);
-            applyBanner(profileData.bannerUrl || "");
+            await applyAvatarImage(document.getElementById("main-avatar"), profileData, uid);
+            await applyBanner(profileData);
+            await refreshFollowCounts(uid);
             renderProfileSocials(profileData.socials || {});
 
             document.getElementById("edit-name").value = profileData.username || "";
@@ -480,37 +744,151 @@
             document.getElementById("edit-social-discord").value = profileData.socials?.discord || "";
             document.getElementById("edit-known-creator").checked = Boolean(profileData.isKnownCreator);
             document.getElementById("edit-featured-creator").checked = Boolean(profileData.isFeaturedCreator);
-            refreshOverlayPreviews(profileData);
+            await refreshOverlayPreviews(profileData);
             syncCurationAccess(viewingOwnProfile ? signedInProfile : null);
         }
 
-        async function uploadProfileImage(file, type) {
-            if (!file.type.startsWith("image/")) throw new Error("Only image files are allowed.");
-            if (file.size > 10 * 1024 * 1024) throw new Error("Images must be 10MB or smaller.");
+        async function refreshFollowCounts(uid) {
+            if (!uid) return;
+            const followerSnap = await getDocs(query(collection(db, "follows"), where("followingId", "==", uid)));
+            const followingSnap = await getDocs(query(collection(db, "follows"), where("followerId", "==", uid)));
+            document.getElementById("follower-count").innerText = String(followerSnap.size);
+            document.getElementById("following-count").innerText = String(followingSnap.size);
+        }
 
-            const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
-            const path = `users/${activeProfileUid}/${type}-${Date.now()}.${ext}`;
-            const fileRef = ref(storage, path);
-            return new Promise((resolve, reject) => {
-                const task = uploadBytesResumable(fileRef, file);
-                task.on(
-                    "state_changed",
-                    (snapshot) => {
-                        if (!snapshot.totalBytes) return;
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        setUploadProgress(progress);
-                    },
-                    (err) => reject(err),
-                    async () => {
-                        try {
-                            const url = await getDownloadURL(task.snapshot.ref);
-                            resolve(url);
-                        } catch (err) {
-                            reject(err);
-                        }
-                    }
-                );
-            });
+        function followDocId(followerId, followingId) {
+            return `${followerId}_${followingId}`;
+        }
+
+        function friendDocId(a, b) {
+            return [a, b].sort().join("_");
+        }
+
+        async function refreshFollowState() {
+            if (!signedInUser || !activeProfileUid || viewingOwnProfile) {
+                followBtn.disabled = true;
+                followBtn.classList.add("opacity-60");
+                return;
+            }
+            followBtn.disabled = false;
+            followBtn.classList.remove("opacity-60");
+            const followId = followDocId(signedInUser.uid, activeProfileUid);
+            const snap = await getDoc(doc(db, "follows", followId));
+            followState.following = snap.exists();
+            followBtn.innerText = followState.following ? "Following" : "Follow User";
+            followBtn.classList.toggle("bg-white", !followState.following);
+            followBtn.classList.toggle("text-black", !followState.following);
+            followBtn.classList.toggle("bg-pink-500", followState.following);
+        }
+
+        async function refreshFriendState() {
+            if (!signedInUser || !activeProfileUid || viewingOwnProfile) {
+                friendBtn.disabled = true;
+                friendBtn.classList.add("opacity-60");
+                return;
+            }
+            friendBtn.disabled = false;
+            friendBtn.classList.remove("opacity-60");
+            const docId = friendDocId(signedInUser.uid, activeProfileUid);
+            const snap = await getDoc(doc(db, "friendRequests", docId));
+            if (!snap.exists()) {
+                friendState = { status: "none", docId, fromId: "", toId: "" };
+                friendBtn.innerText = "Add Friend";
+                return;
+            }
+            const data = snap.data();
+            if (data.status === "accepted") {
+                friendState = { status: "friends", docId, fromId: data.fromId, toId: data.toId };
+                friendBtn.innerText = "Friends";
+                return;
+            }
+            if (data.status === "pending" && data.fromId === signedInUser.uid) {
+                friendState = { status: "pending_outgoing", docId, fromId: data.fromId, toId: data.toId };
+                friendBtn.innerText = "Request Sent";
+                return;
+            }
+            if (data.status === "pending" && data.toId === signedInUser.uid) {
+                friendState = { status: "pending_incoming", docId, fromId: data.fromId, toId: data.toId };
+                friendBtn.innerText = "Accept Friend";
+                return;
+            }
+            friendState = { status: "none", docId, fromId: data.fromId, toId: data.toId };
+            friendBtn.innerText = "Add Friend";
+        }
+
+        async function createNotification(userId, type, meta = {}) {
+            if (!signedInUser || !userId) return;
+            try {
+                await addDoc(collection(db, "notifications"), {
+                    userId,
+                    actorId: signedInUser.uid,
+                    actorName: signedInProfile?.username || usernameFromEmail(signedInUser.email || ""),
+                    type,
+                    read: false,
+                    createdAt: serverTimestamp(),
+                    meta
+                });
+            } catch (err) {
+                console.warn("Notification create failed:", err);
+            }
+        }
+
+        async function toggleFollow() {
+            if (!signedInUser || !activeProfileUid || viewingOwnProfile) return;
+            const followId = followDocId(signedInUser.uid, activeProfileUid);
+            try {
+                if (followState.following) {
+                    await deleteDoc(doc(db, "follows", followId));
+                } else {
+                    await setDoc(doc(db, "follows", followId), {
+                        followerId: signedInUser.uid,
+                        followingId: activeProfileUid,
+                        createdAt: serverTimestamp()
+                    });
+                    await createNotification(activeProfileUid, "follow");
+                }
+                await refreshFollowState();
+                await refreshFollowCounts(activeProfileUid);
+            } catch (err) {
+                console.error("Follow toggle failed:", err);
+                alert("Unable to update follow right now.");
+            }
+        }
+
+        async function handleFriendAction() {
+            if (!signedInUser || !activeProfileUid || viewingOwnProfile) return;
+            const docId = friendDocId(signedInUser.uid, activeProfileUid);
+            try {
+                if (friendState.status === "none") {
+                    await setDoc(doc(db, "friendRequests", docId), {
+                        pairKey: docId,
+                        fromId: signedInUser.uid,
+                        toId: activeProfileUid,
+                        members: [signedInUser.uid, activeProfileUid],
+                        status: "pending",
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                    await createNotification(activeProfileUid, "friend_request");
+                } else if (friendState.status === "pending_outgoing") {
+                    await deleteDoc(doc(db, "friendRequests", docId));
+                } else if (friendState.status === "pending_incoming") {
+                    await updateDoc(doc(db, "friendRequests", docId), {
+                        status: "accepted",
+                        updatedAt: serverTimestamp()
+                    });
+                    await createNotification(friendState.fromId, "friend_accept");
+                } else if (friendState.status === "friends") {
+                    await deleteDoc(doc(db, "friendRequests", docId));
+                }
+                await refreshFriendState();
+                if (tabNetwork.classList.contains("active")) {
+                    await loadNetwork();
+                }
+            } catch (err) {
+                console.error("Friend action failed:", err);
+                alert("Unable to update friend status right now.");
+            }
         }
 
         async function loadUserAssets(uid = activeProfileUid) {
@@ -522,7 +900,11 @@
                 return;
             }
 
-            const snap = await getDocs(query(collection(db, "assets"), where("creatorId", "==", uid)));
+            const showAllAssets = viewingOwnProfile || Boolean(signedInProfile?.canCurate);
+            const assetQuery = showAllAssets
+                ? query(collection(db, "assets"), where("creatorId", "==", uid))
+                : query(collection(db, "assets"), where("creatorId", "==", uid), where("moderationStatus", "==", "approved"));
+            const snap = await getDocs(assetQuery);
             const installCount = snap.docs.reduce((sum, assetDoc) => sum + Number(assetDoc.data().downloads || 0), 0);
             document.getElementById("asset-count").innerText = String(snap.size);
             document.getElementById("install-count").innerText = String(installCount);
@@ -533,9 +915,16 @@
 
             roleContent.innerHTML = snap.docs.map((assetDoc) => {
                 const asset = assetDoc.data();
+                const moderation = String(asset.moderationStatus || "approved");
+                const moderationChip = moderation === "approved"
+                    ? ""
+                    : moderation === "pending"
+                        ? `<span class="chip border-yellow-500/40 text-yellow-300">Pending Review</span>`
+                        : `<span class="chip border-red-500/40 text-red-300">Rejected</span>`;
                 return `
                     <a class="asset-card" href="asset.html?id=${encodeURIComponent(assetDoc.id)}">
                         <span class="text-[9px] font-black text-pink-500 uppercase italic">${escapeHtml(asset.version || "v1.0.0")}</span>
+                        ${moderationChip}
                         <h4 class="text-xl font-black lowercase mt-2">${escapeHtml(asset.name || "untitled")}</h4>
                         <p class="text-xs text-gray-500 mt-2">${escapeHtml(asset.description || "No description")}</p>
                     </a>
@@ -543,14 +932,211 @@
             }).join("");
         }
 
-        function loadNetwork() {
-            setActiveTab("network");
-            roleContent.innerHTML = `
-                <article class="glass rounded-[24px] p-6 md:col-span-2">
-                    <h3 class="text-sm font-black uppercase tracking-[0.25em] text-pink-400">Network</h3>
-                    <p class="text-sm text-gray-400 mt-4">Follow relationships can be wired next. Profile identity fields are live now.</p>
-                </article>
+        function renderMiniProfile(user, actionHtml = "") {
+            const avatarFallback = avatarForProfile(user.id, user);
+            const badge = user.isFeaturedCreator ? `<span class="chip border-yellow-500/40 text-yellow-300">Featured</span>` : "";
+            return `
+                <div class="glass rounded-[20px] p-4 flex items-center gap-3">
+                    <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatarFallback)}" data-media-id="${escapeHtml(user.avatarMediaId || "")}" alt="Avatar">
+                    <div class="flex-1 min-w-0">
+                        <a class="font-black lowercase truncate block" href="profile.html?id=${encodeURIComponent(user.id)}">${escapeHtml(user.username)}</a>
+                        <div class="text-[10px] uppercase tracking-[0.2em] text-gray-500">${escapeHtml(user.role || "Creator")}</div>
+                        <div class="mt-2">${badge}</div>
+                    </div>
+                    ${actionHtml}
+                </div>
             `;
+        }
+
+        async function hydrateMediaIn(container) {
+            const items = container.querySelectorAll("[data-media-id]");
+            for (const img of items) {
+                const mediaId = img.dataset.mediaId;
+                if (!mediaId) continue;
+                const url = await getMediaUrl(mediaId);
+                if (url) img.src = url;
+            }
+        }
+
+        async function getProfilesByIds(ids = []) {
+            const unique = [...new Set(ids.filter(Boolean))];
+            const results = await Promise.all(unique.map((uid) => getDoc(doc(db, "users", uid))));
+            return results
+                .filter((snap) => snap.exists())
+                .map((snap) => ({ id: snap.id, ...normalizeProfile(snap.data()) }));
+        }
+
+        async function loadNetwork() {
+            setActiveTab("network");
+            if (!activeProfileUid) {
+                roleContent.innerHTML = `<p class="text-sm text-gray-400 md:col-span-2">No profile selected.</p>`;
+                return;
+            }
+
+            const sections = [];
+            if (!viewingOwnProfile) {
+                sections.push(`
+                    <article class="glass rounded-[24px] p-6 md:col-span-2">
+                        <h3 class="text-sm font-black uppercase tracking-[0.25em] text-pink-400">Network</h3>
+                        <p class="text-sm text-gray-400 mt-4">Friend requests are private. Follow data is visible below.</p>
+                    </article>
+                `);
+            }
+
+            if (viewingOwnProfile && signedInUser) {
+                const incomingSnap = await getDocs(query(collection(db, "friendRequests"), where("toId", "==", activeProfileUid)));
+                const outgoingSnap = await getDocs(query(collection(db, "friendRequests"), where("fromId", "==", activeProfileUid)));
+                const incoming = incomingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .filter((req) => req.status === "pending");
+                const outgoing = outgoingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .filter((req) => req.status === "pending");
+                const friendsSnap = await getDocs(query(collection(db, "friendRequests"), where("members", "array-contains", activeProfileUid)));
+                const friends = friendsSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .filter((req) => req.status === "accepted");
+
+                const incomingProfiles = await getProfilesByIds(incoming.map((req) => req.fromId));
+                const outgoingProfiles = await getProfilesByIds(outgoing.map((req) => req.toId));
+                const friendProfiles = await getProfilesByIds(friends.map((req) => (req.fromId === activeProfileUid ? req.toId : req.fromId)));
+
+                sections.push(`
+                    <article class="glass rounded-[24px] p-6 md:col-span-2">
+                        <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Incoming Friend Requests</h3>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${incomingProfiles.length ? incomingProfiles.map((user) => renderMiniProfile(user, `
+                                <div class="flex flex-col gap-2">
+                                    <button class="text-xs font-black uppercase tracking-widest text-green-400" data-action="accept-request" data-request-id="${friendDocId(activeProfileUid, user.id)}">Accept</button>
+                                    <button class="text-xs font-black uppercase tracking-widest text-red-400" data-action="decline-request" data-request-id="${friendDocId(activeProfileUid, user.id)}">Decline</button>
+                                </div>
+                            `)).join("") : `<p class="text-sm text-gray-500 md:col-span-2">No incoming requests.</p>`}
+                        </div>
+                    </article>
+                    <article class="glass rounded-[24px] p-6 md:col-span-2">
+                        <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Outgoing Friend Requests</h3>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${outgoingProfiles.length ? outgoingProfiles.map((user) => renderMiniProfile(user, `
+                                <button class="text-xs font-black uppercase tracking-widest text-red-400" data-action="cancel-request" data-request-id="${friendDocId(activeProfileUid, user.id)}">Cancel</button>
+                            `)).join("") : `<p class="text-sm text-gray-500 md:col-span-2">No outgoing requests.</p>`}
+                        </div>
+                    </article>
+                    <article class="glass rounded-[24px] p-6 md:col-span-2">
+                        <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Friends</h3>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${friendProfiles.length ? friendProfiles.map((user) => renderMiniProfile(user, `
+                                <button class="text-xs font-black uppercase tracking-widest text-gray-400" data-action="unfriend" data-request-id="${friendDocId(activeProfileUid, user.id)}">Remove</button>
+                            `)).join("") : `<p class="text-sm text-gray-500 md:col-span-2">No friends yet.</p>`}
+                        </div>
+                    </article>
+                `);
+            }
+
+            const followerSnap = await getDocs(query(collection(db, "follows"), where("followingId", "==", activeProfileUid)));
+            const followingSnap = await getDocs(query(collection(db, "follows"), where("followerId", "==", activeProfileUid)));
+            const followerProfiles = await getProfilesByIds(followerSnap.docs.map((docSnap) => docSnap.data().followerId));
+            const followingProfiles = await getProfilesByIds(followingSnap.docs.map((docSnap) => docSnap.data().followingId));
+
+            sections.push(`
+                <article class="glass rounded-[24px] p-6 md:col-span-2">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Followers</h3>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${followerProfiles.length ? followerProfiles.map((user) => renderMiniProfile(user)).join("") : `<p class="text-sm text-gray-500 md:col-span-2">No followers yet.</p>`}
+                    </div>
+                </article>
+                <article class="glass rounded-[24px] p-6 md:col-span-2">
+                    <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Following</h3>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${followingProfiles.length ? followingProfiles.map((user) => renderMiniProfile(user)).join("") : `<p class="text-sm text-gray-500 md:col-span-2">Not following anyone yet.</p>`}
+                    </div>
+                </article>
+            `);
+
+            roleContent.innerHTML = sections.join("");
+            await hydrateMediaIn(roleContent);
+        }
+
+        function renderNotifications(notifications = []) {
+            if (!signedInUser) {
+                notifList.innerHTML = "";
+                notifEmpty.innerText = "Sign in to see notifications.";
+                notifEmpty.classList.remove("hidden");
+                notifCount.classList.add("hidden");
+                return;
+            }
+            if (!notifications.length) {
+                notifList.innerHTML = "";
+                notifEmpty.innerText = "No notifications yet.";
+                notifEmpty.classList.remove("hidden");
+                notifCount.classList.add("hidden");
+                return;
+            }
+
+            notifEmpty.classList.add("hidden");
+            const unreadCount = notifications.filter((note) => !note.read).length;
+            if (unreadCount > 0) {
+                notifCount.innerText = String(unreadCount);
+                notifCount.classList.remove("hidden");
+            } else {
+                notifCount.classList.add("hidden");
+            }
+
+            notifList.innerHTML = notifications.map((note) => {
+                const actorName = escapeHtml(note.actorName || "Someone");
+                const message = note.type === "follow"
+                    ? `${actorName} followed you.`
+                    : note.type === "friend_request"
+                        ? `${actorName} sent a friend request.`
+                        : note.type === "friend_accept"
+                            ? `${actorName} accepted your friend request.`
+                            : `${actorName} sent a notification.`;
+                const link = note.actorId ? `profile.html?id=${encodeURIComponent(note.actorId)}` : "#";
+                return `
+                    <a class="notif-item ${note.read ? "opacity-70" : ""}" href="${link}">
+                        <i class="fas fa-circle text-[6px] mt-2 ${note.read ? "text-gray-600" : "text-pink-400"}"></i>
+                        <div>
+                            <strong>${message}</strong>
+                            <span>${formatTimestamp(note.createdAt)}</span>
+                        </div>
+                    </a>
+                `;
+            }).join("");
+        }
+
+        function startNotifications(uid) {
+            if (notifUnsub) notifUnsub();
+            const q = query(collection(db, "notifications"), where("userId", "==", uid), limit(20));
+            notifUnsub = onSnapshot(q, (snap) => {
+                const items = snap.docs
+                    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+                renderNotifications(items);
+            });
+        }
+
+        function stopNotifications() {
+            if (notifUnsub) {
+                notifUnsub();
+                notifUnsub = null;
+            }
+            renderNotifications([]);
+        }
+
+        function startPresence(uid) {
+            stopPresence();
+            if (!uid) return;
+            const profileRef = doc(db, "users", uid);
+            const pulse = async () => {
+                try {
+                    await updateDoc(profileRef, { lastActiveAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                } catch (err) {
+                    console.warn("Presence update failed:", err);
+                }
+            };
+            pulse();
+            presenceTimer = setInterval(pulse, 60 * 1000);
+        }
+
+        function stopPresence() {
+            if (presenceTimer) clearInterval(presenceTimer);
+            presenceTimer = null;
         }
 
         async function saveProfileChanges() {
@@ -560,6 +1146,8 @@
             const newBio = document.getElementById("edit-bio").value.trim().slice(0, 220);
             let avatarUrl = document.getElementById("edit-avatar-url").value.trim();
             let bannerUrl = document.getElementById("edit-banner-url").value.trim();
+            let avatarMediaId = viewedProfile?.avatarMediaId || "";
+            let bannerMediaId = viewedProfile?.bannerMediaId || "";
             const socials = {
                 website: document.getElementById("edit-social-website").value.trim(),
                 x: document.getElementById("edit-social-x").value.trim(),
@@ -591,19 +1179,27 @@
 
                 if (avatarFile) {
                     setUploadStatus("Uploading avatar image...", "text-pink-400");
-                    avatarUrl = await uploadProfileImage(avatarFile, "avatar");
+                    avatarMediaId = await uploadImageToMedia(avatarFile, { type: "avatar" });
+                    avatarUrl = "";
+                } else if (avatarUrl) {
+                    avatarMediaId = "";
                 }
                 if (bannerFile) {
                     setUploadStatus("Uploading banner image...", "text-pink-400");
-                    bannerUrl = await uploadProfileImage(bannerFile, "banner");
+                    bannerMediaId = await uploadImageToMedia(bannerFile, { type: "banner" });
+                    bannerUrl = "";
+                } else if (bannerUrl) {
+                    bannerMediaId = "";
                 }
 
                 const updates = {
                     username: requestedUsername,
                     usernameLower: requestedUsername,
                     bio: newBio,
-                    avatarUrl,
-                    bannerUrl,
+                    avatarUrl: validMediaUrl(avatarUrl) ? avatarUrl : "",
+                    bannerUrl: validMediaUrl(bannerUrl) ? bannerUrl : "",
+                    avatarMediaId,
+                    bannerMediaId,
                     socials,
                     isKnownCreator,
                     isFeaturedCreator,
@@ -621,8 +1217,8 @@
                 viewedProfile = { ...(viewedProfile || {}), ...updates };
                 signedInProfile = { ...(signedInProfile || {}), ...updates };
 
-                renderViewedProfile(activeProfileUid, normalizeProfile(viewedProfile, signedInUser.email || ""));
-                renderTopNav(normalizeProfile(signedInProfile, signedInUser.email || ""), signedInUser.uid, signedInUser.email || "");
+                await renderViewedProfile(activeProfileUid, normalizeProfile(viewedProfile, signedInUser.email || ""));
+                await renderTopNav(normalizeProfile(signedInProfile, signedInUser.email || ""), signedInUser.uid, signedInUser.email || "");
 
                 document.getElementById("edit-avatar-file").value = "";
                 document.getElementById("edit-banner-file").value = "";
@@ -641,7 +1237,7 @@
         async function hydrateViewedProfile(uid, currentUser) {
             if (viewingOwnProfile) {
                 const ownProfile = signedInProfile || await ensureUserProfile(uid, currentUser?.email || "");
-                renderViewedProfile(uid, normalizeProfile(ownProfile, currentUser?.email || ""));
+                await renderViewedProfile(uid, normalizeProfile(ownProfile, currentUser?.email || ""));
                 document.getElementById("self-actions").classList.remove("hidden");
                 document.getElementById("other-actions").classList.add("hidden");
                 await loadUserAssets(uid);
@@ -658,16 +1254,20 @@
                 return;
             }
 
-            renderViewedProfile(uid, normalizeProfile(snap.data()));
+            await renderViewedProfile(uid, normalizeProfile(snap.data()));
             document.getElementById("self-actions").classList.add("hidden");
             document.getElementById("other-actions").classList.remove("hidden");
             await loadUserAssets(uid);
+            await refreshFollowState();
+            await refreshFriendState();
         }
 
         tabRepository.addEventListener("click", () => loadUserAssets().catch(() => {
             roleContent.innerHTML = `<p class="text-sm text-red-400 md:col-span-2">Failed to load repository.</p>`;
         }));
-        tabNetwork.addEventListener("click", loadNetwork);
+        tabNetwork.addEventListener("click", () => loadNetwork().catch(() => {
+            roleContent.innerHTML = `<p class="text-sm text-red-400 md:col-span-2">Failed to load network.</p>`;
+        }));
 
         document.getElementById("open-edit").addEventListener("click", openEditOverlay);
         document.getElementById("cancel-edit").addEventListener("click", closeEditOverlay);
@@ -676,7 +1276,50 @@
         }));
         document.getElementById("edit-avatar-file").addEventListener("change", refreshPendingPreview);
         document.getElementById("edit-banner-file").addEventListener("change", refreshPendingPreview);
-        document.getElementById("follow-btn").addEventListener("click", () => alert("Follow system is not connected yet."));
+        followBtn.addEventListener("click", () => toggleFollow().catch(() => {
+            alert("Unable to update follow right now.");
+        }));
+        friendBtn.addEventListener("click", () => handleFriendAction().catch(() => {
+            alert("Unable to update friend status right now.");
+        }));
+
+        roleContent.addEventListener("click", async (event) => {
+            const actionEl = event.target.closest("[data-action]");
+            if (!actionEl) return;
+            const action = actionEl.dataset.action;
+            const requestId = actionEl.dataset.requestId;
+            if (!signedInUser || !requestId) return;
+            try {
+                if (action === "accept-request") {
+                    const snap = await getDoc(doc(db, "friendRequests", requestId));
+                    const fromId = snap.exists() ? snap.data().fromId : "";
+                    await updateDoc(doc(db, "friendRequests", requestId), { status: "accepted", updatedAt: serverTimestamp() });
+                    if (fromId) {
+                        await createNotification(fromId, "friend_accept");
+                    }
+                } else if (action === "decline-request" || action === "cancel-request" || action === "unfriend") {
+                    await deleteDoc(doc(db, "friendRequests", requestId));
+                }
+                await loadNetwork();
+                await refreshFriendState();
+            } catch (err) {
+                console.error("Network action failed:", err);
+            }
+        });
+
+        notifTrigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            notifMenu.classList.toggle("active");
+        });
+
+        notifMarkRead.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            if (!signedInUser) return;
+            const snap = await getDocs(query(collection(db, "notifications"), where("userId", "==", signedInUser.uid)));
+            await Promise.all(
+                snap.docs.map((docSnap) => updateDoc(doc(db, "notifications", docSnap.id), { read: true }))
+            );
+        });
 
         profileTrigger.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -686,6 +1329,9 @@
         window.addEventListener("click", (event) => {
             if (!accountMenu.contains(event.target) && !profileTrigger.contains(event.target)) {
                 accountMenu.classList.remove("active");
+            }
+            if (!notifMenu.contains(event.target) && !notifTrigger.contains(event.target)) {
+                notifMenu.classList.remove("active");
             }
             if (event.target === editOverlay) closeEditOverlay();
         });
@@ -702,12 +1348,16 @@
 
             if (currentUser) {
                 signedInProfile = await ensureUserProfile(currentUser.uid, currentUser.email || "");
-                renderTopNav(normalizeProfile(signedInProfile, currentUser.email || ""), currentUser.uid, currentUser.email || "");
+                await renderTopNav(normalizeProfile(signedInProfile, currentUser.email || ""), currentUser.uid, currentUser.email || "");
                 syncCurationAccess(normalizeProfile(signedInProfile, currentUser.email || ""));
+                startNotifications(currentUser.uid);
+                startPresence(currentUser.uid);
             } else {
                 signedInProfile = null;
                 renderGuestTopNav();
                 syncCurationAccess(null);
+                stopNotifications();
+                stopPresence();
             }
 
             const uid = targetId || currentUser?.uid;

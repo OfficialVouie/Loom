@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | Review Queue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#030305; --surface:#0a0a0c; --border:rgba(255,255,255,.08); --accent:#ff79c6; }
+        * { box-sizing:border-box; }
+        body { margin:0; background:var(--bg); color:#f8f8f2; font-family:"Outfit",sans-serif; min-height:100vh; }
+        .mesh-bg { position:fixed; inset:0; background:radial-gradient(circle at 50% -20%, #1a1525 0%, transparent 52%), radial-gradient(circle at 0% 100%, rgba(122,162,255,.08) 0%, transparent 35%); z-index:-1; }
+        .site-wrap { width:min(1500px, calc(100% - 2rem)); margin:0 auto; }
+        .glass { background:rgba(18,16,25,.7); backdrop-filter:blur(12px); border:1px solid var(--border); }
+        .chip { border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:4px 8px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.09em; }
+        .btn { border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); border-radius:14px; padding:.75rem 1rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; font-size:11px; }
+        .btn:hover { border-color:rgba(255,121,198,.35); }
+        .btn-ok { border-color:rgba(34,197,94,.45); background:rgba(34,197,94,.12); }
+        .btn-ok:hover { background:rgba(34,197,94,.18); }
+        .btn-no { border-color:rgba(239,68,68,.45); background:rgba(239,68,68,.12); }
+        .btn-no:hover { background:rgba(239,68,68,.18); }
+        .field { width:100%; background:rgba(255,255,255,.05); border:1px solid var(--border); color:white; padding:.75rem 1rem; border-radius:12px; outline:none; }
+        .field:focus { border-color:var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+
+    <header class="site-wrap py-6 flex items-center justify-between gap-4">
+        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
+            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
+            <h1 class="text-2xl font-black tracking-tighter uppercase italic">LOOM</h1>
+        </a>
+        <div class="flex items-center gap-3">
+            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
+            <a href="profile.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Profile</a>
+            <button id="signout-btn" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="site-wrap pb-12 space-y-6">
+        <section class="glass rounded-[28px] p-7">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-black italic uppercase tracking-tight">Review Queue</h2>
+                    <p class="text-sm text-gray-400 mt-2">Approve or reject new assets, images, and file uploads.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="access-chip" class="chip">Checking access...</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="no-access" class="glass rounded-[28px] p-7 hidden">
+            <h3 class="text-lg font-black uppercase tracking-[0.12em]">No Access</h3>
+            <p class="text-sm text-gray-400 mt-3">This page requires curator permission (`users/{uid}.canCurate`).</p>
+        </section>
+
+        <section id="queue" class="grid grid-cols-1 xl:grid-cols-3 gap-6 hidden">
+            <article class="glass rounded-[28px] p-6">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-[0.2em] text-gray-400">Pending Assets</h3>
+                    <span id="pending-assets-count" class="chip">0</span>
+                </div>
+                <div id="pending-assets" class="space-y-3 text-sm text-gray-300"></div>
+            </article>
+
+            <article class="glass rounded-[28px] p-6">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-[0.2em] text-gray-400">Pending Images</h3>
+                    <span id="pending-media-count" class="chip">0</span>
+                </div>
+                <div id="pending-media" class="space-y-3 text-sm text-gray-300"></div>
+            </article>
+
+            <article class="glass rounded-[28px] p-6">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-[0.2em] text-gray-400">Pending Files</h3>
+                    <span id="pending-files-count" class="chip">0</span>
+                </div>
+                <div id="pending-files" class="space-y-3 text-sm text-gray-300"></div>
+            </article>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            collection,
+            doc,
+            getDoc,
+            getDocs,
+            getFirestore,
+            limit,
+            query,
+            serverTimestamp,
+            updateDoc,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const accessChip = document.getElementById("access-chip");
+        const noAccess = document.getElementById("no-access");
+        const queue = document.getElementById("queue");
+        const signoutBtn = document.getElementById("signout-btn");
+
+        const pendingAssetsEl = document.getElementById("pending-assets");
+        const pendingMediaEl = document.getElementById("pending-media");
+        const pendingFilesEl = document.getElementById("pending-files");
+        const pendingAssetsCount = document.getElementById("pending-assets-count");
+        const pendingMediaCount = document.getElementById("pending-media-count");
+        const pendingFilesCount = document.getElementById("pending-files-count");
+
+        function escapeHtml(value = "") {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function formatBytes(bytes) {
+            const n = Number(bytes || 0);
+            if (n < 1024) return `${n} B`;
+            if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+            return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+        }
+
+        function card(title, subtitle, actions) {
+            return `
+                <div class="border border-white/10 bg-white/5 rounded-2xl p-4 space-y-2">
+                    <div class="font-black text-sm">${escapeHtml(title)}</div>
+                    <div class="text-xs text-gray-400">${escapeHtml(subtitle)}</div>
+                    <div class="flex flex-wrap gap-2 pt-2">${actions}</div>
+                </div>
+            `;
+        }
+
+        function setAccess(allowed) {
+            accessChip.textContent = allowed ? "Curator Access" : "No Access";
+            accessChip.style.borderColor = allowed ? "rgba(34,197,94,.45)" : "rgba(239,68,68,.45)";
+            accessChip.style.background = allowed ? "rgba(34,197,94,.12)" : "rgba(239,68,68,.12)";
+            noAccess.classList.toggle("hidden", allowed);
+            queue.classList.toggle("hidden", !allowed);
+        }
+
+        async function markAsset(id, status, reason = "") {
+            await updateDoc(doc(db, "assets", id), {
+                moderationStatus: status,
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: auth.currentUser?.uid || "",
+                moderationReason: reason || ""
+            });
+        }
+
+        async function markMedia(id, status, reason = "") {
+            await updateDoc(doc(db, "media", id), {
+                moderationStatus: status,
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: auth.currentUser?.uid || "",
+                moderationReason: reason || ""
+            });
+        }
+
+        async function markFile(id, status, reason = "") {
+            await updateDoc(doc(db, "assetFiles", id), {
+                status,
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: auth.currentUser?.uid || "",
+                moderationReason: reason || ""
+            });
+        }
+
+        async function loadQueue() {
+            const assetsSnap = await getDocs(query(collection(db, "assets"), where("moderationStatus", "==", "pending"), limit(25)));
+            const mediaSnap = await getDocs(query(collection(db, "media"), where("moderationStatus", "==", "pending"), limit(25)));
+            const filesSnap = await getDocs(query(collection(db, "assetFiles"), where("status", "==", "pending_review"), limit(25)));
+
+            pendingAssetsCount.textContent = String(assetsSnap.size);
+            pendingMediaCount.textContent = String(mediaSnap.size);
+            pendingFilesCount.textContent = String(filesSnap.size);
+
+            pendingAssetsEl.innerHTML = assetsSnap.empty
+                ? `<p class="text-sm text-gray-500">No pending assets.</p>`
+                : assetsSnap.docs.map((d) => {
+                    const a = d.data();
+                    const title = a.name || d.id;
+                    const subtitle = `Creator: ${a.creatorName || a.creatorId || "unknown"}`;
+                    const approve = `<button class="btn btn-ok" data-kind="asset" data-id="${escapeHtml(d.id)}" data-status="approved" type="button">Approve</button>`;
+                    const reject = `<button class="btn btn-no" data-kind="asset" data-id="${escapeHtml(d.id)}" data-status="rejected" type="button">Reject</button>`;
+                    const view = `<a class="btn" href="asset.html?id=${encodeURIComponent(d.id)}">View</a>`;
+                    return card(title, subtitle, `${view}${approve}${reject}`);
+                }).join("");
+
+            pendingMediaEl.innerHTML = mediaSnap.empty
+                ? `<p class="text-sm text-gray-500">No pending images.</p>`
+                : mediaSnap.docs.map((d) => {
+                    const m = d.data();
+                    const title = m.type ? `Image (${m.type})` : "Image";
+                    const subtitle = `Owner: ${m.ownerId || "unknown"} • ${formatBytes(m.size || 0)}`;
+                    const approve = `<button class="btn btn-ok" data-kind="media" data-id="${escapeHtml(d.id)}" data-status="approved" type="button">Approve</button>`;
+                    const reject = `<button class="btn btn-no" data-kind="media" data-id="${escapeHtml(d.id)}" data-status="rejected" type="button">Reject</button>`;
+                    const preview = m.dataUrl && String(m.dataUrl).startsWith("data:image/")
+                        ? `<img class="w-full rounded-xl border border-white/10 mt-2" src="${escapeHtml(m.dataUrl)}" alt="Media preview">`
+                        : "";
+                    return `
+                        <div class="border border-white/10 bg-white/5 rounded-2xl p-4">
+                            <div class="font-black text-sm">${escapeHtml(title)}</div>
+                            <div class="text-xs text-gray-400 mt-1">${escapeHtml(subtitle)}</div>
+                            ${preview}
+                            <div class="flex flex-wrap gap-2 pt-3">${approve}${reject}</div>
+                        </div>
+                    `;
+                }).join("");
+
+            pendingFilesEl.innerHTML = filesSnap.empty
+                ? `<p class="text-sm text-gray-500">No pending files.</p>`
+                : filesSnap.docs.map((d) => {
+                    const f = d.data();
+                    const title = f.name || "Asset file";
+                    const subtitle = `Asset: ${f.assetId || "unknown"} • ${formatBytes(f.size || 0)}`;
+                    const approve = `<button class="btn btn-ok" data-kind="file" data-id="${escapeHtml(d.id)}" data-status="ready" type="button">Approve</button>`;
+                    const reject = `<button class="btn btn-no" data-kind="file" data-id="${escapeHtml(d.id)}" data-status="rejected" type="button">Reject</button>`;
+                    const view = f.assetId ? `<a class="btn" href="asset.html?id=${encodeURIComponent(f.assetId)}">View Asset</a>` : "";
+                    return card(title, subtitle, `${view}${approve}${reject}`);
+                }).join("");
+        }
+
+        document.addEventListener("click", async (event) => {
+            const btn = event.target.closest("[data-kind][data-id][data-status]");
+            if (!btn) return;
+            const kind = btn.dataset.kind;
+            const id = btn.dataset.id;
+            const status = btn.dataset.status;
+            if (!kind || !id || !status) return;
+
+            const needsReason = status === "rejected";
+            const reason = needsReason ? (prompt("Reason (optional):") || "") : "";
+            try {
+                if (kind === "asset") await markAsset(id, status, reason);
+                if (kind === "media") await markMedia(id, status, reason);
+                if (kind === "file") await markFile(id, status, reason);
+                await loadQueue();
+            } catch (err) {
+                console.error("Review action failed:", err);
+                alert("Unable to update review status. Check Firestore rules.");
+            }
+        });
+
+        signoutBtn.addEventListener("click", async () => {
+            try { await signOut(auth); } catch {}
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                accessChip.textContent = "Sign in required";
+                setAccess(false);
+                return;
+            }
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                const allowed = snap.exists() && snap.data().canCurate === true;
+                setAccess(allowed);
+                if (allowed) {
+                    await loadQueue();
+                }
+            } catch (err) {
+                console.error("Access check failed:", err);
+                setAccess(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
