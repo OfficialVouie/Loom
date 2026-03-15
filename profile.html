@@ -4,44 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loom | Profile</title>
+    <meta name="description" content="Your Loom creator profile: edit your bio, links, and showcase published assets.">
+    <meta name="theme-color" content="#050507">
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-guard.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="loom.css">
     <style>
-        :root { --bg:#030305; --surface:#0a0a0c; --border:rgba(255,255,255,.08); --accent:#ff79c6; }
-        * { box-sizing:border-box; }
-        body { margin:0; background:var(--bg); color:#f8f8f2; font-family:"Outfit",sans-serif; min-height:100vh; display:flex; flex-direction:column; }
-        .mesh-bg { position:fixed; inset:0; background:radial-gradient(circle at 50% -20%, #1a1525 0%, transparent 50%); z-index:-1; }
-        .site-wrap { width:min(1500px, calc(100% - 2rem)); margin:0 auto; }
-        .glass { background:rgba(18,16,25,.7); backdrop-filter:blur(12px); border:1px solid var(--border); }
-        .dropdown-menu { position:absolute; top:calc(100% + .8rem); right:0; width:280px; background:#0d1117; border:1px solid var(--border); border-radius:24px; display:none; overflow:hidden; z-index:1000; }
-        .dropdown-menu.active { display:block; }
         .menu-item { display:flex; align-items:center; gap:12px; padding:14px 18px; color:inherit; text-decoration:none; border:0; width:100%; background:transparent; cursor:pointer; }
         .menu-item:hover { background:rgba(255,255,255,.05); }
         .notif-menu { width:320px; }
-        .notif-badge { background:#ff79c6; color:#0a0a0c; font-size:10px; font-weight:800; padding:2px 6px; border-radius:999px; line-height:1; }
-        .notif-item { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:10px; align-items:flex-start; }
-        .notif-item:last-child { border-bottom:0; }
-        .notif-item strong { display:block; font-size:12px; }
-        .notif-item span { display:block; font-size:11px; color:#9ca3af; }
         .profile-banner { height:170px; background:linear-gradient(135deg, rgba(255,121,198,.35), rgba(122,162,255,.25)); background-size:cover; background-position:center; border-bottom:1px solid rgba(255,255,255,.05); }
         .tab-btn { color:#a1a1aa; border-bottom:2px solid transparent; transition:.2s; }
         .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
-        .asset-card { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:20px; text-decoration:none; color:inherit; display:block; transition:.2s; }
+        .asset-card { border:1px solid rgba(255,255,255,.08); border-radius:26px; padding:20px; text-decoration:none; color:inherit; display:block; transition:.2s; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.35)); }
         .asset-card:hover { border-color:rgba(255,121,198,.45); transform:translateY(-2px); }
         #edit-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); z-index:2000; padding:1rem; align-items:center; justify-content:center; }
-        .overlay-field { width:100%; padding:.85rem 1rem; border-radius:12px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); color:#fff; outline:none; }
-        .overlay-field:focus { border-color:var(--accent); }
-        .upload-chip { display:block; text-align:center; padding:.75rem; border-radius:10px; border:1px dashed rgba(255,255,255,.2); background:rgba(255,255,255,.04); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+        .upload-chip { display:block; text-align:center; padding:.85rem; border-radius:18px; border:1px dashed rgba(255,255,255,.22); background:rgba(255,255,255,.04); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
         .upload-chip:hover { border-color:rgba(255,121,198,.45); }
         .social-link { font-size:12px; color:#c8c8d8; text-decoration:none; border:1px solid rgba(255,255,255,.1); padding:6px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; }
         .social-link:hover { border-color:rgba(255,121,198,.45); color:#fff; }
-        .stat-card { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); border-radius:14px; padding:12px; }
-        .progress-wrap { height:8px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
-        .progress-bar { height:100%; width:0%; background:linear-gradient(90deg, #ff79c6, #7aa2ff); transition:width .2s; }
+        .stat-card { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); border-radius:18px; padding:12px; }
         .upload-preview { width:100%; border-radius:12px; border:1px solid rgba(255,255,255,.12); aspect-ratio:16/9; object-fit:cover; background:rgba(255,255,255,.03); }
-        .site-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.08); background:#050507; }
-        .footer-bottom { width:min(1500px, calc(100% - 2rem)); margin:0 auto; padding:1rem 0; display:flex; justify-content:space-between; gap:.75rem; flex-wrap:wrap; font-size:12px; color:#777; }
     </style>
 </head>
 <body>
@@ -70,6 +56,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="upload-chip">Upload Avatar<input id="edit-avatar-file" type="file" accept="image/*" class="hidden"></label>
                     <label class="upload-chip">Upload Banner<input id="edit-banner-file" type="file" accept="image/*" class="hidden"></label>
+                    <button id="reset-avatar-btn" class="upload-chip" type="button">Reset Avatar</button>
+                    <button id="reset-banner-btn" class="upload-chip" type="button">Reset Banner</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <img id="edit-avatar-preview" class="upload-preview" src="https://api.dicebear.com/7.x/identicon/svg?seed=preview-avatar" alt="Avatar preview">
@@ -85,19 +73,22 @@
 
     <header class="site-wrap py-6 flex justify-between items-center gap-4">
         <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
-            <h1 class="text-2xl font-black tracking-tighter uppercase italic">LOOM</h1>
+            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
+            <div class="leading-tight">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Account</div>
+                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Profile</h1>
+            </div>
         </a>
         <div class="flex items-center gap-3">
             <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Home</a>
             <a href="upload.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Upload</a>
             <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
             <div class="relative">
-                <button id="notif-trigger" class="glass h-12 px-4 rounded-full flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">
+                <button id="notif-trigger" class="glass h-12 px-4 rounded-full flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="notif-menu" aria-label="Open notifications">
                     <i class="fas fa-bell"></i>
                     <span id="notif-count" class="notif-badge hidden">0</span>
                 </button>
-                <div id="notif-menu" class="dropdown-menu notif-menu">
+                <div id="notif-menu" class="dropdown-menu notif-menu" role="menu" aria-labelledby="notif-trigger">
                     <div class="p-4 border-b border-white/5 flex items-center justify-between">
                         <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
                         <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
@@ -107,11 +98,11 @@
                 </div>
             </div>
             <div class="relative">
-                <button id="profile-trigger" class="glass h-12 px-3 rounded-full flex items-center gap-3" type="button">
+                <button id="profile-trigger" class="glass h-12 px-3 rounded-full flex items-center gap-3" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu" aria-label="Open account menu">
                     <span id="nav-user-name" class="text-sm font-bold">Guest</span>
                     <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10" alt="Profile avatar">
                 </button>
-                <div id="account-menu" class="dropdown-menu">
+                <div id="account-menu" class="dropdown-menu" role="menu" aria-labelledby="profile-trigger">
                     <div class="p-6 border-b border-white/5 text-center">
                         <img id="dropdown-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-16 h-16 rounded-full border border-white/10 mx-auto mb-3" alt="Dropdown avatar">
                         <div id="dropdown-name" class="font-black lowercase">guest</div>
@@ -126,8 +117,8 @@
     </header>
 
     <main class="site-wrap pb-10">
-        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8 lg:gap-12">
-            <aside class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-8 lg:gap-12 items-start">
+            <aside class="space-y-6 order-2 lg:order-1 lg:sticky lg:top-8 self-start">
                 <div class="glass rounded-[24px] p-6 space-y-6 text-center">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="stat-card">
@@ -158,7 +149,7 @@
                 </div>
             </aside>
 
-            <section class="space-y-8">
+            <section class="space-y-8 order-1 lg:order-2">
                 <article class="glass rounded-[30px] overflow-hidden">
                     <div id="profile-banner" class="profile-banner"></div>
                     <div class="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
@@ -170,6 +161,7 @@
                                 <span id="role-pill" class="inline-block text-[10px] px-3 py-1 rounded-full border border-pink-500/30 text-pink-400 font-black uppercase tracking-widest">LOADING</span>
                                 <span id="known-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-blue-500/30 text-blue-300 font-black uppercase tracking-widest">Known Creator</span>
                                 <span id="featured-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-yellow-500/30 text-yellow-300 font-black uppercase tracking-widest">Featured Creator</span>
+                                <div id="badge-row" class="hidden flex flex-wrap items-center gap-2"></div>
                             </div>
                             <h2 id="prof-name" class="text-4xl md:text-5xl font-black lowercase">...</h2>
                             <p id="prof-bio" class="text-gray-400 italic mt-3">Fetching profile data...</p>
@@ -178,21 +170,112 @@
                     </div>
                 </article>
 
-                <section>
+                <article class="glass rounded-[30px] p-6 md:p-8">
                     <div class="flex items-center gap-8 border-b border-white/5 pb-3">
                         <button id="tab-repository" class="tab-btn active text-xs font-black uppercase tracking-[0.3em]" type="button">Repository</button>
                         <button id="tab-network" class="tab-btn text-xs font-black uppercase tracking-[0.3em]" type="button">Network</button>
                     </div>
                     <div id="role-content" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"></div>
-                </section>
+                </article>
             </section>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-bottom">
-            <span>&copy; 2026 Borborizo Development</span>
-            <span>&bull; Loom Network Online</span>
+    <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">
+        <div class="py-10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6">
+                <section class="relative overflow-hidden rounded-[34px] border border-white/15 bg-white/5 backdrop-blur-xl shadow-[0_22px_60px_rgba(0,0,0,0.55)] p-6 md:p-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 before:content-[''] before:absolute before:inset-0 before:opacity-25 before:pointer-events-none before:bg-[radial-gradient(circle_at_20%_10%,rgba(255,121,198,0.22)_0%,transparent_42%),radial-gradient(circle_at_80%_40%,rgba(122,162,255,0.18)_0%,transparent_48%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.25))]" aria-label="Loom footer call to action">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/60"><i class="fas fa-bolt mr-2"></i>Creator Registry</div>
+                        <h3 class="mt-2 text-2xl md:text-3xl font-black italic uppercase tracking-tight">Publish releases. Grow your profile.</h3>
+                        <p class="mt-3 text-sm md:text-base text-white/70 max-w-[60ch] leading-relaxed">Upload assets, write release notes, and make your work discoverable across the Loom registry.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-pink-400/50 bg-pink-400/15 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white hover:bg-pink-400/25 hover:border-pink-400/70 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="upload.html"><i class="fas fa-cloud-arrow-up"></i><span>Publish Asset</span></a>
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-black/20 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white/90 hover:bg-white/5 hover:border-white/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="index.html"><i class="fas fa-compass"></i><span>Browse Registry</span></a>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="pb-12">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 grid gap-10 md:grid-cols-2 lg:grid-cols-7">
+                <section class="lg:col-span-2">
+                    <a href="index.html" class="inline-flex items-center gap-3 text-white no-underline">
+                        <img src="logo.png" alt="Loom" class="w-9 h-9 object-contain">
+                        <div class="leading-tight">
+                            <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Ultra Registry</div>
+                            <div class="text-lg font-black italic uppercase tracking-tight">Loom</div>
+                        </div>
+                    </a>
+                    <p class="mt-4 text-sm text-white/65 leading-relaxed max-w-[52ch]">A creator registry for assets, releases, and discovery. Built for fast publishing and real-time updates.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-bolt text-white/70"></i>Realtime</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-shield-halved text-white/70"></i>Moderated</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-tags text-white/70"></i>Versioned</span>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Creators</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Creator tools">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="upload.html">Publish Asset</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="profile.html">Profile</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="friends.html">Friends</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Resources</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Resources">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="about.html">About Loom</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="guidelines.html">Publishing Guidelines</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Legal</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Legal">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy Policy</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms of Service</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Contact</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Community</div>
+                    <div class="mt-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-discord text-white/70"></i>Discord</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-github text-white/70"></i>GitHub</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-youtube text-white/70"></i>YouTube</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/60">
+                <div>&copy; 2026 Borborizo Development <span class="text-white/25">|</span> Loom Network Online</div>
+                <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer links">
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                </nav>
+            </div>
         </div>
     </footer>
 
@@ -243,6 +326,8 @@
         const uploadProgressBar = document.getElementById("edit-upload-progress");
         const avatarPreview = document.getElementById("edit-avatar-preview");
         const bannerPreview = document.getElementById("edit-banner-preview");
+        const resetAvatarBtn = document.getElementById("reset-avatar-btn");
+        const resetBannerBtn = document.getElementById("reset-banner-btn");
         const curationRow = document.getElementById("edit-curation-row");
         const curationNote = document.getElementById("edit-curation-note");
         const saveProfileBtn = document.getElementById("save-profile");
@@ -265,6 +350,8 @@
         let presenceTimer = null;
         let followState = { following: false };
         let friendState = { status: "none", docId: null, fromId: "", toId: "" };
+        let resetAvatarRequested = false;
+        let resetBannerRequested = false;
         const mediaCache = new Map();
 
         function escapeHtml(value = "") {
@@ -282,6 +369,28 @@
                 .toLowerCase()
                 .replace(/[^a-z0-9._-]/g, "")
                 .slice(0, 24);
+        }
+
+        const RESERVED_USERNAME_PREFIX = /^(admin|administrator|support|moderator|staff|system|official|team|security|loom)(?:$|[0-9._-])/;
+
+        function isReservedUsername(username = "") {
+            const value = sanitizeUsername(username);
+            return RESERVED_USERNAME_PREFIX.test(value);
+        }
+
+        function validateUsername(username = "") {
+            const value = sanitizeUsername(username);
+            if (value.length < 3) return "Username must be at least 3 characters.";
+            if (!/^[a-z0-9._-]{3,24}$/.test(value)) return "Username can only use letters, numbers, . _ -";
+            if (isReservedUsername(value)) return "That username is reserved. Please choose another.";
+            return "";
+        }
+
+        function safeUsernameBase(preferredUsername = "", email = "") {
+            let base = sanitizeUsername(preferredUsername) || usernameFromEmail(email);
+            if (base.length < 3) base = "user";
+            if (isReservedUsername(base)) base = "user";
+            return base.slice(0, 18);
         }
 
         function usernameFromEmail(email) {
@@ -322,6 +431,13 @@
                 usernameLower: sanitizeUsername(rawData.usernameLower || username) || username,
                 bio: typeof rawData.bio === "string" ? rawData.bio : "",
                 role: typeof rawData.role === "string" && rawData.role.trim() ? rawData.role : "Consumer",
+                badges: Array.isArray(rawData.badges)
+                    ? rawData.badges
+                        .filter((item) => typeof item === "string")
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .slice(0, 10)
+                    : [],
                 avatarUrl: typeof rawData.avatarUrl === "string" ? rawData.avatarUrl : "",
                 bannerUrl: typeof rawData.bannerUrl === "string" ? rawData.bannerUrl : "",
                 avatarMediaId: typeof rawData.avatarMediaId === "string" ? rawData.avatarMediaId : "",
@@ -529,26 +645,39 @@
             }
         }
 
-        async function refreshOverlayPreviews(profile = viewedProfile || {}) {
+        async function refreshAvatarPreview(profile = viewedProfile || {}) {
             avatarPreview.src = avatarForProfile(activeProfileUid || "guest", profile);
+            if (resetAvatarRequested) return;
             if (profile?.avatarMediaId) {
                 const mediaUrl = await getMediaUrl(profile.avatarMediaId);
                 if (mediaUrl) {
                     avatarPreview.src = mediaUrl;
+                    return;
                 }
-            } else if (validMediaUrl(profile?.avatarUrl)) {
+            }
+            if (validMediaUrl(profile?.avatarUrl)) {
                 avatarPreview.src = profile.avatarUrl;
             }
+        }
 
+        async function refreshBannerPreview(profile = viewedProfile || {}) {
             bannerPreview.src = "https://api.dicebear.com/7.x/shapes/svg?seed=banner";
+            if (resetBannerRequested) return;
             if (profile?.bannerMediaId) {
                 const mediaUrl = await getMediaUrl(profile.bannerMediaId);
                 if (mediaUrl) {
                     bannerPreview.src = mediaUrl;
+                    return;
                 }
-            } else if (validMediaUrl(profile?.bannerUrl)) {
+            }
+            if (validMediaUrl(profile?.bannerUrl)) {
                 bannerPreview.src = profile.bannerUrl;
             }
+        }
+
+        async function refreshOverlayPreviews(profile = viewedProfile || {}) {
+            await refreshAvatarPreview(profile);
+            await refreshBannerPreview(profile);
         }
 
         async function applyBanner(profile = {}) {
@@ -633,11 +762,11 @@
         }
 
         async function getAvailableUsername(requestedUsername, fallbackEmail, ignoreUid = "") {
-            const base = sanitizeUsername(requestedUsername) || usernameFromEmail(fallbackEmail);
+            const base = safeUsernameBase(requestedUsername, fallbackEmail);
             let candidate = base;
             let attempts = 0;
             while (attempts < 12) {
-                const taken = await isUsernameTaken(candidate, ignoreUid);
+                const taken = isReservedUsername(candidate) || await isUsernameTaken(candidate, ignoreUid);
                 if (!taken) return candidate;
                 attempts += 1;
                 candidate = `${base}${Math.floor(100 + Math.random() * 900)}`;
@@ -699,10 +828,17 @@
 
         function openEditOverlay() {
             if (!viewingOwnProfile) return;
+            resetAvatarRequested = false;
+            resetBannerRequested = false;
+            document.getElementById("edit-avatar-file").value = "";
+            document.getElementById("edit-banner-file").value = "";
+            refreshOverlayPreviews(viewedProfile).catch(() => {});
             editOverlay.style.display = "flex";
         }
 
         function closeEditOverlay() {
+            resetAvatarRequested = false;
+            resetBannerRequested = false;
             editOverlay.style.display = "none";
         }
 
@@ -710,24 +846,36 @@
             const avatarFile = document.getElementById("edit-avatar-file").files[0];
             const bannerFile = document.getElementById("edit-banner-file").files[0];
             if (avatarFile) {
+                resetAvatarRequested = false;
                 avatarPreview.src = URL.createObjectURL(avatarFile);
             } else {
-                await refreshOverlayPreviews(viewedProfile);
+                await refreshAvatarPreview(viewedProfile);
             }
             if (bannerFile) {
+                resetBannerRequested = false;
                 bannerPreview.src = URL.createObjectURL(bannerFile);
             } else {
-                await refreshOverlayPreviews(viewedProfile);
+                await refreshBannerPreview(viewedProfile);
             }
         }
 
         async function renderViewedProfile(uid, profileData) {
             viewedProfile = profileData;
             document.getElementById("prof-name").innerText = profileData.username || "unknown";
+            document.title = `Loom | ${profileData.username || "Profile"}`;
             document.getElementById("prof-bio").innerText = profileData.bio || "No bio set.";
             document.getElementById("role-pill").innerText = `${(profileData.role || "Consumer").toUpperCase()} UNIT`;
             document.getElementById("known-pill").classList.toggle("hidden", !profileData.isKnownCreator);
             document.getElementById("featured-pill").classList.toggle("hidden", !profileData.isFeaturedCreator);
+            const badgeRow = document.getElementById("badge-row");
+            if (badgeRow) {
+                const badges = Array.isArray(profileData.badges) ? profileData.badges : [];
+                badgeRow.innerHTML = badges
+                    .slice(0, 10)
+                    .map((badge) => `<span class="text-[10px] px-3 py-1 rounded-full border border-white/15 text-white/80 font-black uppercase tracking-widest">${escapeHtml(badge)}</span>`)
+                    .join("");
+                badgeRow.classList.toggle("hidden", badges.length === 0);
+            }
             await applyAvatarImage(document.getElementById("main-avatar"), profileData, uid);
             await applyBanner(profileData);
             await refreshFollowCounts(uid);
@@ -790,24 +938,32 @@
             friendBtn.disabled = false;
             friendBtn.classList.remove("opacity-60");
             const docId = friendDocId(signedInUser.uid, activeProfileUid);
-            const snap = await getDoc(doc(db, "friendRequests", docId));
+            let snap;
+            try {
+                snap = await getDoc(doc(db, "friendRequests", docId));
+            } catch (err) {
+                console.warn("Friend state read failed:", err);
+                friendState = { status: "none", docId, fromId: "", toId: "" };
+                friendBtn.innerText = "Add Friend";
+                return;
+            }
             if (!snap.exists()) {
                 friendState = { status: "none", docId, fromId: "", toId: "" };
                 friendBtn.innerText = "Add Friend";
                 return;
             }
             const data = snap.data();
-            if (data.status === "accepted") {
+            if (String(data.status || "").toLowerCase() === "accepted") {
                 friendState = { status: "friends", docId, fromId: data.fromId, toId: data.toId };
                 friendBtn.innerText = "Friends";
                 return;
             }
-            if (data.status === "pending" && data.fromId === signedInUser.uid) {
+            if (String(data.status || "").toLowerCase() === "pending" && data.fromId === signedInUser.uid) {
                 friendState = { status: "pending_outgoing", docId, fromId: data.fromId, toId: data.toId };
                 friendBtn.innerText = "Request Sent";
                 return;
             }
-            if (data.status === "pending" && data.toId === signedInUser.uid) {
+            if (String(data.status || "").toLowerCase() === "pending" && data.toId === signedInUser.uid) {
                 friendState = { status: "pending_incoming", docId, fromId: data.fromId, toId: data.toId };
                 friendBtn.innerText = "Accept Friend";
                 return;
@@ -986,13 +1142,15 @@
             if (viewingOwnProfile && signedInUser) {
                 const incomingSnap = await getDocs(query(collection(db, "friendRequests"), where("toId", "==", activeProfileUid)));
                 const outgoingSnap = await getDocs(query(collection(db, "friendRequests"), where("fromId", "==", activeProfileUid)));
-                const incoming = incomingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-                    .filter((req) => req.status === "pending");
-                const outgoing = outgoingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-                    .filter((req) => req.status === "pending");
-                const friendsSnap = await getDocs(query(collection(db, "friendRequests"), where("members", "array-contains", activeProfileUid)));
-                const friends = friendsSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-                    .filter((req) => req.status === "accepted");
+                const incomingDocs = incomingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+                const outgoingDocs = outgoingSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+
+                const incoming = incomingDocs.filter((req) => String(req.status || "").toLowerCase() === "pending");
+                const outgoing = outgoingDocs.filter((req) => String(req.status || "").toLowerCase() === "pending");
+
+                const byId = new Map();
+                [...incomingDocs, ...outgoingDocs].forEach((req) => byId.set(req.id, req));
+                const friends = [...byId.values()].filter((req) => String(req.status || "").toLowerCase() === "accepted");
 
                 const incomingProfiles = await getProfilesByIds(incoming.map((req) => req.fromId));
                 const outgoingProfiles = await getProfilesByIds(outgoing.map((req) => req.toId));
@@ -1148,6 +1306,8 @@
             let bannerUrl = document.getElementById("edit-banner-url").value.trim();
             let avatarMediaId = viewedProfile?.avatarMediaId || "";
             let bannerMediaId = viewedProfile?.bannerMediaId || "";
+            const wantsResetAvatar = resetAvatarRequested;
+            const wantsResetBanner = resetBannerRequested;
             const socials = {
                 website: document.getElementById("edit-social-website").value.trim(),
                 x: document.getElementById("edit-social-x").value.trim(),
@@ -1160,8 +1320,9 @@
             const avatarFile = document.getElementById("edit-avatar-file").files[0];
             const bannerFile = document.getElementById("edit-banner-file").files[0];
 
-            if (requestedUsername.length < 3) {
-                alert("Username must be at least 3 characters.");
+            const usernameError = validateUsername(requestedUsername);
+            if (usernameError) {
+                alert(usernameError);
                 return;
             }
             if (requestedUsername !== viewedProfile?.usernameLower) {
@@ -1176,6 +1337,21 @@
                 setSaveLoading(true);
                 setUploadProgress(0);
                 setUploadStatus("Saving profile...", "text-gray-400");
+
+                if (wantsResetAvatar) {
+                    avatarUrl = "";
+                    avatarMediaId = "";
+                    if (viewedProfile?.avatarMediaId) {
+                        try { await deleteDoc(doc(db, "media", viewedProfile.avatarMediaId)); } catch {}
+                    }
+                }
+                if (wantsResetBanner) {
+                    bannerUrl = "";
+                    bannerMediaId = "";
+                    if (viewedProfile?.bannerMediaId) {
+                        try { await deleteDoc(doc(db, "media", viewedProfile.bannerMediaId)); } catch {}
+                    }
+                }
 
                 if (avatarFile) {
                     setUploadStatus("Uploading avatar image...", "text-pink-400");
@@ -1222,6 +1398,8 @@
 
                 document.getElementById("edit-avatar-file").value = "";
                 document.getElementById("edit-banner-file").value = "";
+                resetAvatarRequested = false;
+                resetBannerRequested = false;
                 setUploadStatus("Profile saved.", "text-green-400");
                 closeEditOverlay();
             } catch (err) {
@@ -1246,6 +1424,7 @@
 
             const snap = await getDoc(doc(db, "users", uid));
             if (!snap.exists()) {
+                document.title = "Loom | Profile Not Found";
                 document.getElementById("prof-name").innerText = "user-not-found";
                 document.getElementById("prof-bio").innerText = "This profile does not exist.";
                 roleContent.innerHTML = `<p class="text-sm text-gray-400 md:col-span-2">No data available.</p>`;
@@ -1276,6 +1455,36 @@
         }));
         document.getElementById("edit-avatar-file").addEventListener("change", refreshPendingPreview);
         document.getElementById("edit-banner-file").addEventListener("change", refreshPendingPreview);
+        resetAvatarBtn.addEventListener("click", () => {
+            resetAvatarRequested = true;
+            document.getElementById("edit-avatar-url").value = "";
+            document.getElementById("edit-avatar-file").value = "";
+            refreshAvatarPreview(viewedProfile).catch(() => {});
+        });
+        resetBannerBtn.addEventListener("click", () => {
+            resetBannerRequested = true;
+            document.getElementById("edit-banner-url").value = "";
+            document.getElementById("edit-banner-file").value = "";
+            refreshBannerPreview(viewedProfile).catch(() => {});
+        });
+        document.getElementById("edit-avatar-url").addEventListener("input", (event) => {
+            const value = String(event.target.value || "").trim();
+            if (value) resetAvatarRequested = false;
+            if (!document.getElementById("edit-avatar-file").files[0] && validMediaUrl(value)) {
+                avatarPreview.src = value;
+            } else if (!document.getElementById("edit-avatar-file").files[0]) {
+                refreshAvatarPreview(viewedProfile).catch(() => {});
+            }
+        });
+        document.getElementById("edit-banner-url").addEventListener("input", (event) => {
+            const value = String(event.target.value || "").trim();
+            if (value) resetBannerRequested = false;
+            if (!document.getElementById("edit-banner-file").files[0] && validMediaUrl(value)) {
+                bannerPreview.src = value;
+            } else if (!document.getElementById("edit-banner-file").files[0]) {
+                refreshBannerPreview(viewedProfile).catch(() => {});
+            }
+        });
         followBtn.addEventListener("click", () => toggleFollow().catch(() => {
             alert("Unable to update follow right now.");
         }));
@@ -1307,9 +1516,32 @@
             }
         });
 
+        function setDropdownOpen(trigger, menu, isOpen) {
+            if (!trigger || !menu) return;
+            menu.classList.toggle("active", Boolean(isOpen));
+            trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (isOpen) {
+                const first = menu.querySelector("a,button,[tabindex]:not([tabindex='-1'])");
+                if (first) {
+                    try { first.focus(); } catch {}
+                }
+            }
+        }
+
+        function closeAllDropdowns() {
+            setDropdownOpen(profileTrigger, accountMenu, false);
+            setDropdownOpen(notifTrigger, notifMenu, false);
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeAllDropdowns();
+        });
+
         notifTrigger.addEventListener("click", (event) => {
             event.stopPropagation();
-            notifMenu.classList.toggle("active");
+            const willOpen = !notifMenu.classList.contains("active");
+            setDropdownOpen(notifTrigger, notifMenu, willOpen);
+            if (willOpen) setDropdownOpen(profileTrigger, accountMenu, false);
         });
 
         notifMarkRead.addEventListener("click", async (event) => {
@@ -1323,20 +1555,23 @@
 
         profileTrigger.addEventListener("click", (event) => {
             event.stopPropagation();
-            accountMenu.classList.toggle("active");
+            const willOpen = !accountMenu.classList.contains("active");
+            setDropdownOpen(profileTrigger, accountMenu, willOpen);
+            if (willOpen) setDropdownOpen(notifTrigger, notifMenu, false);
         });
 
         window.addEventListener("click", (event) => {
             if (!accountMenu.contains(event.target) && !profileTrigger.contains(event.target)) {
-                accountMenu.classList.remove("active");
+                setDropdownOpen(profileTrigger, accountMenu, false);
             }
             if (!notifMenu.contains(event.target) && !notifTrigger.contains(event.target)) {
-                notifMenu.classList.remove("active");
+                setDropdownOpen(notifTrigger, notifMenu, false);
             }
             if (event.target === editOverlay) closeEditOverlay();
         });
 
         document.getElementById("logout-btn").addEventListener("click", async () => {
+            closeAllDropdowns();
             await signOut(auth);
             window.location.href = "index.html";
         });

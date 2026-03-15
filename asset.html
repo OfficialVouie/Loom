@@ -4,47 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loom | View Asset</title>
+    <meta name="description" content="View asset details, versions, tags, and downloads in the Loom registry.">
+    <meta name="theme-color" content="#050507">
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-guard.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="loom.css">
     <style>
-        :root {
-            --bg: #030305;
-            --surface: #121019;
-            --accent: #ff79c6;
-            --border: rgba(255, 255, 255, 0.08);
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--bg);
-            color: #f8f8f2;
-            font-family: "Outfit", sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mesh-bg {
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at 50% -20%, #2a1b3d 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, #1a1025 0%, transparent 40%);
-            z-index: -1;
-        }
-
-        .site-wrap {
-            width: min(1320px, calc(100% - 2rem));
-            margin: 0 auto;
-        }
-
-        .glass {
-            background: rgba(18, 16, 25, 0.65);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--border);
-        }
-
         .hero-gradient {
             background: linear-gradient(135deg, rgba(255, 121, 198, 0.12) 0%, rgba(122, 162, 255, 0.08) 100%);
             border: 1px solid rgba(255, 121, 198, 0.2);
@@ -53,25 +21,14 @@
         .asset-icon {
             width: 96px;
             height: 96px;
-            border-radius: 22px;
+            border-radius: 26px;
             border: 1px solid rgba(255, 255, 255, 0.14);
             object-fit: cover;
             background: rgba(255, 255, 255, 0.05);
         }
 
         .field {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 0.9rem;
-            padding: 0.8rem 1rem;
             font-size: 0.84rem;
-            outline: none;
-        }
-
-        .field:focus {
-            border-color: var(--accent);
         }
 
         .upload-chip {
@@ -80,10 +37,10 @@
             align-items: center;
             justify-content: center;
             border: 1px dashed rgba(255, 255, 255, 0.22);
-            border-radius: 0.9rem;
+            border-radius: 18px;
             padding: 0.8rem 1rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             font-size: 0.62rem;
             font-weight: 800;
             color: #ddd;
@@ -101,41 +58,8 @@
             width: 100%;
             aspect-ratio: 16 / 10;
             object-fit: cover;
-            border-radius: 0.9rem;
+            border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .progress-wrap {
-            height: 8px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff79c6, #7aa2ff);
-            transition: width 0.2s;
-        }
-
-        .site-footer {
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            background: #050507;
-        }
-
-        .footer-bottom {
-            width: min(1320px, calc(100% - 2rem));
-            margin: 0 auto;
-            padding: 1.1rem 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            color: #777;
         }
     </style>
 </head>
@@ -144,8 +68,11 @@
 
     <header class="site-wrap py-6 flex justify-between items-center gap-4">
         <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
-            <h1 class="text-2xl font-black uppercase italic">LOOM</h1>
+            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
+            <div class="leading-tight">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Assets</div>
+                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">View</h1>
+            </div>
         </a>
         <div class="flex items-center gap-3">
             <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
@@ -156,7 +83,7 @@
     </header>
 
     <main class="site-wrap pb-12">
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
             <section class="space-y-8">
                 <article class="hero-gradient rounded-[34px] p-7 md:p-10">
                     <div class="flex items-start gap-5">
@@ -263,6 +190,10 @@
                             <label class="upload-chip">Upload Gallery<input id="edit-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
                             <label class="upload-chip">Upload Asset File<input id="edit-asset-file" type="file" class="hidden"></label>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <button id="reset-icon-btn" class="upload-chip" type="button">Reset Icon</button>
+                            <button id="clear-gallery-btn" class="upload-chip" type="button">Clear Gallery</button>
+                        </div>
                         <div class="progress-wrap"><div id="owner-progress-bar" class="progress-bar"></div></div>
                         <p id="owner-status" class="text-xs text-gray-500">No pending changes.</p>
                         <button id="save-owner-edits" class="w-full bg-white text-black font-black py-3 rounded-xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">Save Asset Changes</button>
@@ -270,7 +201,7 @@
                 </article>
             </section>
 
-            <aside class="space-y-6">
+            <aside class="space-y-6 lg:sticky lg:top-8 self-start">
                 <article class="glass rounded-[28px] p-7 space-y-6">
                     <button id="install-btn" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase text-xs">Install Asset</button>
                     <div class="space-y-4 pt-4 border-t border-white/5">
@@ -278,7 +209,10 @@
                         <div class="flex justify-between text-xs font-bold uppercase"><span class="text-gray-500">Version</span> <span id="asset-version" class="text-pink-400">...</span></div>
                         <div class="flex justify-between text-xs font-bold uppercase gap-4">
                             <span class="text-gray-500">Author</span>
-                            <a id="asset-author-link" class="text-white hover:text-pink-400 underline text-right break-all" href="profile.html">...</a>
+                            <div class="text-right">
+                                <a id="asset-author-link" class="text-white hover:text-pink-400 underline text-right break-all" href="profile.html">...</a>
+                                <div id="asset-author-badges" class="hidden mt-2 flex flex-wrap gap-1 justify-end"></div>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -290,10 +224,101 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-bottom">
-            <span>&copy; 2026 Borborizo Development</span>
-            <span>&bull; Loom Network Online</span>
+    <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">
+        <div class="py-10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6">
+                <section class="relative overflow-hidden rounded-[34px] border border-white/15 bg-white/5 backdrop-blur-xl shadow-[0_22px_60px_rgba(0,0,0,0.55)] p-6 md:p-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 before:content-[''] before:absolute before:inset-0 before:opacity-25 before:pointer-events-none before:bg-[radial-gradient(circle_at_20%_10%,rgba(255,121,198,0.22)_0%,transparent_42%),radial-gradient(circle_at_80%_40%,rgba(122,162,255,0.18)_0%,transparent_48%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.25))]" aria-label="Loom footer call to action">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/60"><i class="fas fa-bolt mr-2"></i>Creator Registry</div>
+                        <h3 class="mt-2 text-2xl md:text-3xl font-black italic uppercase tracking-tight">Publish releases. Grow your profile.</h3>
+                        <p class="mt-3 text-sm md:text-base text-white/70 max-w-[60ch] leading-relaxed">Upload assets, write release notes, and make your work discoverable across the Loom registry.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-pink-400/50 bg-pink-400/15 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white hover:bg-pink-400/25 hover:border-pink-400/70 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="upload.html"><i class="fas fa-cloud-arrow-up"></i><span>Publish Asset</span></a>
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-black/20 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white/90 hover:bg-white/5 hover:border-white/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="index.html"><i class="fas fa-compass"></i><span>Browse Registry</span></a>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="pb-12">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 grid gap-10 md:grid-cols-2 lg:grid-cols-7">
+                <section class="lg:col-span-2">
+                    <a href="index.html" class="inline-flex items-center gap-3 text-white no-underline">
+                        <img src="logo.png" alt="Loom" class="w-9 h-9 object-contain">
+                        <div class="leading-tight">
+                            <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Ultra Registry</div>
+                            <div class="text-lg font-black italic uppercase tracking-tight">Loom</div>
+                        </div>
+                    </a>
+                    <p class="mt-4 text-sm text-white/65 leading-relaxed max-w-[52ch]">A creator registry for assets, releases, and discovery. Built for fast publishing and real-time updates.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-bolt text-white/70"></i>Realtime</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-shield-halved text-white/70"></i>Moderated</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-tags text-white/70"></i>Versioned</span>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Creators</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Creator tools">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="upload.html">Publish Asset</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="profile.html">Profile</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="friends.html">Friends</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Resources</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Resources">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="about.html">About Loom</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="guidelines.html">Publishing Guidelines</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Legal</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Legal">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy Policy</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms of Service</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Contact</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Community</div>
+                    <div class="mt-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-discord text-white/70"></i>Discord</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-github text-white/70"></i>GitHub</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-youtube text-white/70"></i>YouTube</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/60">
+                <div>&copy; 2026 Borborizo Development <span class="text-white/25">|</span> Loom Network Online</div>
+                <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer links">
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                </nav>
+            </div>
         </div>
     </footer>
 
@@ -309,6 +334,7 @@
             getFirestore,
             increment,
             query,
+            runTransaction,
             serverTimestamp,
             setDoc,
             updateDoc,
@@ -338,6 +364,8 @@
         const assetFilesList = document.getElementById("asset-files-list");
         const reviewLink = document.getElementById("review-link");
         const editAssetFile = document.getElementById("edit-asset-file");
+        const resetIconBtn = document.getElementById("reset-icon-btn");
+        const clearGalleryBtn = document.getElementById("clear-gallery-btn");
         const params = new URLSearchParams(window.location.search);
         const assetId = params.get("id");
 
@@ -347,6 +375,8 @@
         let currentAsset = null;
         let currentCreatorProfile = null;
         let canCurate = false;
+        let resetIconRequested = false;
+        let clearGalleryRequested = false;
         let presenceTimer = null;
         let assetFiles = [];
         const mediaCache = new Map();
@@ -549,6 +579,63 @@
             return btoa(binary);
         }
 
+        const BLOCKED_ASSET_EXTENSIONS = new Set([
+            "exe",
+            "dll",
+            "msi",
+            "bat",
+            "cmd",
+            "com",
+            "scr",
+            "ps1",
+            "vbs",
+            "js",
+            "jar",
+            "app",
+            "dmg",
+            "pkg",
+            "sh"
+        ]);
+
+        function getFileExtension(name = "") {
+            const safe = String(name || "").trim();
+            const lastDot = safe.lastIndexOf(".");
+            if (lastDot < 0) return "";
+            return safe.slice(lastDot + 1).toLowerCase();
+        }
+
+        function detectExecutableMagic(bytes) {
+            if (!bytes || bytes.length < 4) return false;
+            const b0 = bytes[0];
+            const b1 = bytes[1];
+            const b2 = bytes[2];
+            const b3 = bytes[3];
+
+            const isMZ = b0 === 0x4d && b1 === 0x5a;
+            const isELF = b0 === 0x7f && b1 === 0x45 && b2 === 0x4c && b3 === 0x46;
+
+            const isMachO =
+                (b0 === 0xfe && b1 === 0xed && b2 === 0xfa && b3 === 0xce) ||
+                (b0 === 0xce && b1 === 0xfa && b2 === 0xed && b3 === 0xfe) ||
+                (b0 === 0xfe && b1 === 0xed && b2 === 0xfa && b3 === 0xcf) ||
+                (b0 === 0xcf && b1 === 0xfa && b2 === 0xed && b3 === 0xfe) ||
+                (b0 === 0xca && b1 === 0xfe && b2 === 0xba && b3 === 0xbe);
+
+            return isMZ || isELF || isMachO;
+        }
+
+        async function sha256Hex(buffer) {
+            try {
+                if (!crypto?.subtle?.digest) return "";
+                const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+            } catch (err) {
+                console.warn("SHA-256 failed:", err);
+                return "";
+            }
+        }
+
         function formatFileSize(bytes) {
             if (!Number.isFinite(bytes)) return "";
             if (bytes < 1024) return `${bytes} B`;
@@ -561,38 +648,62 @@
             if (file.size > MAX_ASSET_FILE_BYTES) {
                 throw new Error("Asset file must be 100MB or smaller.");
             }
+            const ext = getFileExtension(file.name || "");
+            if (ext && BLOCKED_ASSET_EXTENSIONS.has(ext)) {
+                throw new Error("That file type is blocked for safety. Please upload an archive (like .zip) instead.");
+            }
             const fileRef = doc(collection(db, "assetFiles"));
             const totalChunks = Math.ceil(file.size / ASSET_CHUNK_SIZE) || 1;
+            const buffer = await file.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            if (detectExecutableMagic(bytes)) {
+                throw new Error("This file looks like an executable. Upload an archive (like .zip) instead.");
+            }
+            const sha256 = await sha256Hex(buffer);
             await setDoc(fileRef, {
                 assetId,
                 ownerId: currentUser.uid,
                 name: file.name || "asset-package",
                 size: file.size,
                 mime: file.type || "application/octet-stream",
+                sha256,
+                scanStatus: "unscanned",
                 status: "uploading",
                 chunkCount: totalChunks,
                 createdAt: serverTimestamp()
             });
 
-            const buffer = await file.arrayBuffer();
-            const bytes = new Uint8Array(buffer);
             let index = 0;
-            for (let offset = 0; offset < bytes.length; offset += ASSET_CHUNK_SIZE) {
-                const chunkBytes = bytes.slice(offset, offset + ASSET_CHUNK_SIZE);
-                const data = bytesToBase64(chunkBytes);
-                await addDoc(collection(db, "assetFileChunks"), {
-                    fileId: fileRef.id,
-                    ownerId: currentUser.uid,
-                    index,
-                    data,
-                    createdAt: serverTimestamp()
-                });
-                index += 1;
-                const progress = Math.round((index / totalChunks) * 100);
-                setOwnerProgress(progress);
-            }
+             for (let offset = 0; offset < bytes.length; offset += ASSET_CHUNK_SIZE) {
+                  const chunkBytes = bytes.slice(offset, offset + ASSET_CHUNK_SIZE);
+                  const data = bytesToBase64(chunkBytes);
+                  await setDoc(doc(db, "assetFileChunks", `${fileRef.id}_${index}`), {
+                     fileId: fileRef.id,
+                     ownerId: currentUser.uid,
+                     index,
+                     data
+                 });
+                 index += 1;
+                  const progress = Math.round((index / totalChunks) * 100);
+                  setOwnerProgress(progress);
+              }
 
-            await updateDoc(fileRef, { status: canCurate ? "ready" : "pending_review" });
+            let finalUpdate = { status: "pending_review" };
+            if (canCurate) {
+                const confirmed = confirm("Virus check: confirm you scanned this file locally and it is clean.\n\nOK = mark ready now\nCancel = send to review queue");
+                if (confirmed) {
+                    finalUpdate = {
+                        status: "ready",
+                        scanStatus: "clean",
+                        scannedAt: serverTimestamp(),
+                        scannedBy: currentUser.uid,
+                        moderationReviewedAt: serverTimestamp(),
+                        moderationReviewedBy: currentUser.uid,
+                        moderationReason: ""
+                    };
+                }
+            }
+            await updateDoc(fileRef, finalUpdate);
             return fileRef.id;
         }
 
@@ -805,6 +916,20 @@
 
             document.getElementById("asset-author-link").innerText = creatorName;
             document.getElementById("asset-author-link").href = asset.creatorId ? `profile.html?id=${encodeURIComponent(asset.creatorId)}` : "profile.html";
+            const badgeWrap = document.getElementById("asset-author-badges");
+            if (badgeWrap) {
+                const badges = Array.isArray(currentCreatorProfile?.badges)
+                    ? currentCreatorProfile.badges
+                        .filter((item) => typeof item === "string")
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .slice(0, 8)
+                    : [];
+                badgeWrap.innerHTML = badges
+                    .map((badge) => `<span class="text-[10px] px-2 py-[3px] rounded-full border border-white/15 text-white/75 font-black uppercase tracking-widest">${escapeHtml(badge)}</span>`)
+                    .join("");
+                badgeWrap.classList.toggle("hidden", badges.length === 0);
+            }
 
             await renderMedia(asset);
             renderSocialLinks(asset);
@@ -825,6 +950,8 @@
         }
 
         function fillOwnerForm(asset) {
+            resetIconRequested = false;
+            clearGalleryRequested = false;
             document.getElementById("edit-name").value = asset.name;
             document.getElementById("edit-version").value = asset.version;
             document.getElementById("edit-summary").value = asset.summary;
@@ -935,18 +1062,18 @@
                 installBtn.disabled = true;
             }
             assetFilesList.innerHTML = assetFiles.map((file) => `
-                <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-2">
-                    <div>
-                        <div class="font-bold text-sm">
+                <div class="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                    <div class="min-w-0">
+                        <div class="font-bold text-sm break-words">
                             ${escapeHtml(file.name || "Asset File")}
                             ${file.status === "pending_review" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-yellow-500/30 text-yellow-300 uppercase tracking-widest font-black">Pending</span>` : ""}
                             ${file.status === "uploading" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-blue-400/30 text-blue-200 uppercase tracking-widest font-black">Uploading</span>` : ""}
                             ${file.status === "rejected" ? `<span class="ml-2 text-[10px] px-2 py-[2px] rounded-full border border-red-500/30 text-red-200 uppercase tracking-widest font-black">Rejected</span>` : ""}
                         </div>
-                        <div class="text-[11px] text-gray-500">${formatFileSize(Number(file.size || 0))}</div>
+                        <div class="text-[11px] text-gray-500 mt-1">${formatFileSize(Number(file.size || 0))}</div>
                     </div>
                     ${file.status === "ready" || canSeeAll
-                        ? `<button class="text-xs uppercase tracking-widest font-black text-pink-400" data-file-id="${file.id}">Download</button>`
+                        ? `<button class="text-xs uppercase tracking-widest font-black text-pink-400 hover:text-pink-300" type="button" data-file-id="${file.id}">Download</button>`
                         : `<button class="text-xs uppercase tracking-widest font-black text-gray-500 cursor-not-allowed" type="button" disabled>Pending</button>`
                     }
                 </div>
@@ -993,14 +1120,35 @@
                 link.remove();
                 URL.revokeObjectURL(url);
 
-                try {
-                    await updateDoc(assetRef, { downloads: increment(1), updatedAt: serverTimestamp() });
+                let trackingState = "skipped";
+                if (currentAsset?.moderationStatus === "approved") {
+                    try {
+                        const downloadId = `${assetId}_${currentUser.uid}`;
+                        const downloadRef = doc(db, "assetDownloads", downloadId);
+                        const result = await runTransaction(db, async (tx) => {
+                            const existing = await tx.get(downloadRef);
+                            if (existing.exists()) return { state: "already" };
+                            tx.set(downloadRef, { assetId, userId: currentUser.uid, createdAt: serverTimestamp() });
+                            tx.update(assetRef, { downloads: increment(1), updatedAt: serverTimestamp() });
+                            return { state: "tracked" };
+                        });
+                        trackingState = result?.state || "failed";
+                    } catch (err) {
+                        console.warn("Unique download tracking failed:", err);
+                        trackingState = "failed";
+                    }
+                }
+
+                if (trackingState === "tracked") {
                     currentAsset.downloads += 1;
                     document.getElementById("asset-downloads").innerText = String(currentAsset.downloads);
-                    setStatus("Download started. Download count updated.", "text-green-400");
-                } catch (err) {
-                    console.warn("Download count update failed:", err);
-                    setStatus("Download started. Sign in to track downloads.", "text-green-400");
+                    setStatus("Download started. Counted once for your account.", "text-green-400");
+                } else if (trackingState === "already") {
+                    setStatus("Download started. Already counted for your account.", "text-green-400");
+                } else if (trackingState === "failed") {
+                    setStatus("Download started. Unable to update download stats right now.", "text-green-400");
+                } else {
+                    setStatus("Download started.", "text-green-400");
                 }
             } catch (err) {
                 console.error("Download failed:", err);
@@ -1041,6 +1189,31 @@
             await downloadAssetFile(fileMeta);
         });
 
+        resetIconBtn?.addEventListener("click", () => {
+            resetIconRequested = true;
+            document.getElementById("edit-icon-url").value = "";
+            document.getElementById("edit-icon-file").value = "";
+            setOwnerStatus("Icon will reset to default when you save.", "text-gray-400");
+        });
+        clearGalleryBtn?.addEventListener("click", () => {
+            clearGalleryRequested = true;
+            document.getElementById("edit-gallery-urls").value = "";
+            document.getElementById("edit-gallery-files").value = "";
+            setOwnerStatus("Gallery will be cleared when you save.", "text-gray-400");
+        });
+        document.getElementById("edit-icon-url")?.addEventListener("input", (event) => {
+            if (String(event.target.value || "").trim()) resetIconRequested = false;
+        });
+        document.getElementById("edit-icon-file")?.addEventListener("change", (event) => {
+            if (event.target.files?.length) resetIconRequested = false;
+        });
+        document.getElementById("edit-gallery-urls")?.addEventListener("input", (event) => {
+            if (String(event.target.value || "").trim()) clearGalleryRequested = false;
+        });
+        document.getElementById("edit-gallery-files")?.addEventListener("change", (event) => {
+            if (event.target.files?.length) clearGalleryRequested = false;
+        });
+
         ownerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             if (!currentUser || !currentAsset || currentUser.uid !== currentAsset.creatorId) {
@@ -1063,6 +1236,15 @@
             let galleryMediaIds = Array.isArray(currentAsset?.galleryMediaIds) ? [...currentAsset.galleryMediaIds] : [];
             const requirements = parseLineList(document.getElementById("edit-requirements").value).slice(0, 20);
             const installGuide = document.getElementById("edit-install-guide").value.trim();
+
+            if (resetIconRequested) {
+                iconUrl = "";
+                iconMediaId = "";
+            }
+            if (clearGalleryRequested) {
+                galleryImages = [];
+                galleryMediaIds = [];
+            }
 
             if (!name || !version || !description) {
                 alert("Name, version, and description are required.");
@@ -1156,6 +1338,8 @@
                 document.getElementById("edit-icon-file").value = "";
                 document.getElementById("edit-asset-file").value = "";
                 document.getElementById("edit-gallery-files").value = "";
+                resetIconRequested = false;
+                clearGalleryRequested = false;
 
                 setOwnerStatus("Asset updated.", "text-green-400");
                 setStatus("Asset details updated by owner.", "text-green-400");

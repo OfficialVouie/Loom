@@ -4,41 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loom | Ultra Registry</title>
+    <meta name="description" content="Loom is an ultra registry for creator assets, releases, and discovery — realtime, moderated, and versioned.">
+    <meta name="theme-color" content="#050507">
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-guard.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="loom.css">
     <style>
-        :root { --bg:#030305; --surface:#0a0a0c; --border:rgba(255,255,255,.08); --accent:#ff79c6; }
-        * { box-sizing:border-box; }
-        body { margin:0; background:var(--bg); color:#f8f8f2; font-family:"Outfit",sans-serif; min-height:100vh; display:flex; flex-direction:column; }
-        .mesh-bg { position:fixed; inset:0; background:radial-gradient(circle at 50% -20%, #1a1525 0%, transparent 52%), radial-gradient(circle at 0% 100%, rgba(122,162,255,.08) 0%, transparent 35%); z-index:-1; }
-        .site-wrap { width:min(1600px, calc(100% - 2rem)); margin:0 auto; }
-        .surface { border:1px solid var(--border); border-radius:22px; background:var(--surface); }
-        .chip { border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:4px 8px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.09em; }
-        .asset-card { border:1px solid var(--border); border-radius:20px; background:var(--surface); transition:.25s; }
-        .asset-card:hover { transform:translateY(-4px); border-color:rgba(255,121,198,.35); }
-        .creator-card { border:1px solid var(--border); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.03), rgba(255,121,198,.04)); transition:.2s; }
-        .creator-card:hover { border-color:rgba(255,121,198,.35); }
-        .field { width:100%; background:rgba(255,255,255,.05); border:1px solid var(--border); color:white; padding:.75rem 1rem; border-radius:12px; outline:none; }
-        .field:focus { border-color:var(--accent); }
-        .menu-dropdown { display:block; position:absolute; top:calc(100% + .75rem); right:0; width:320px; background:rgba(10,12,20,.95); backdrop-filter:blur(18px); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.6); transform:translateY(-10px); opacity:0; pointer-events:none; transition:.2s; z-index:50; }
-        .menu-dropdown.active { transform:translateY(0); opacity:1; pointer-events:auto; }
-        .notif-menu { width:340px; }
-        .notif-badge { background:#ff79c6; color:#0a0a0c; font-size:10px; font-weight:800; padding:2px 6px; border-radius:999px; line-height:1; }
-        .notif-item { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:10px; align-items:flex-start; }
-        .notif-item:last-child { border-bottom:0; }
-        .notif-item strong { display:block; font-size:12px; }
-        .notif-item span { display:block; font-size:11px; color:#9ca3af; }
-        .profile-banner { height:90px; background:linear-gradient(135deg, #ff79c6, #7aa2ff); background-size:cover; background-position:center; position:relative; }
-        .profile-avatar { width:70px; height:70px; border-radius:50%; border:4px solid #050507; position:absolute; bottom:-35px; left:20px; object-fit:cover; }
-        #auth-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
-        #auth-modal.open { display:flex; }
-        .auth-card { background:#0a0a0c; border:1px solid var(--border); width:100%; max-width:400px; border-radius:26px; padding:2rem; position:relative; }
-        .site-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.08); background:#050507; }
-        .footer-grid { width:min(1600px, calc(100% - 2rem)); margin:0 auto; padding:2rem 0 1.5rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; }
-        .footer-bottom { width:min(1600px, calc(100% - 2rem)); margin:0 auto; padding:1rem 0; border-top:1px solid rgba(255,255,255,.06); display:flex; gap:.75rem; flex-wrap:wrap; justify-content:space-between; font-size:12px; color:#777; }
-        .footer-link { color:#a7a7b3; text-decoration:none; font-size:13px; }
-        .footer-link:hover { color:#fff; }
+        .asset-card { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.35)); transition: 0.2s; }
+        .asset-card:hover { transform: translateY(-2px); border-color: rgba(255, 121, 198, 0.35); }
+        .creator-card { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 121, 198, 0.06)); transition: 0.2s; }
+        .creator-card:hover { transform: translateY(-2px); border-color: rgba(255, 121, 198, 0.35); }
+        #auth-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
+        #auth-modal.open { display: flex; }
+        .auth-card { background: var(--surface-strong); border: 1px solid var(--border); width: 100%; max-width: 400px; border-radius: var(--radius-xl); padding: 2rem; position: relative; }
     </style>
 </head>
 <body>
@@ -61,16 +42,19 @@
 
     <header class="site-wrap py-6 flex justify-between items-center gap-4 relative">
         <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
-            <h1 class="text-xl font-extrabold tracking-tighter uppercase italic">LOOM</h1>
+            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
+            <div class="leading-tight">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Ultra Registry</div>
+                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">LOOM</h1>
+            </div>
         </a>
-        <div class="flex items-center gap-3">
-            <div class="relative">
-                <button id="notif-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-2" type="button">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                <button id="notif-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-2" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="notif-menu" aria-label="Open notifications">
                     <i class="fas fa-bell"></i>
                     <span id="notif-count" class="notif-badge hidden">0</span>
                 </button>
-                <div id="notif-menu" class="menu-dropdown notif-menu">
+                <div id="notif-menu" class="menu-dropdown notif-menu" role="menu" aria-labelledby="notif-trigger">
                     <div class="p-4 border-b border-white/5 flex items-center justify-between">
                         <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
                         <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
@@ -80,11 +64,11 @@
                 </div>
             </div>
             <div class="relative">
-                <button id="user-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-3">
+                <button id="user-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-3" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu" aria-label="Open account menu">
                     <span id="nav-user-name" class="text-sm font-bold">Connect</span>
                     <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10 object-cover" alt="User avatar">
                 </button>
-                <div id="user-menu" class="menu-dropdown">
+                <div id="user-menu" class="menu-dropdown" role="menu" aria-labelledby="user-trigger">
                     <div id="menu-banner" class="profile-banner"><img id="menu-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="profile-avatar" alt="Menu avatar"></div>
                     <div class="pt-10 px-5 pb-4 border-b border-white/5">
                         <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
@@ -110,13 +94,14 @@
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
                     <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
                 </div>
+                <a href="assets.html" class="btn btn-neutral w-full justify-center mt-3"><i class="fas fa-grid-2"></i><span>All Assets</span></a>
                 <div class="grid grid-cols-3 gap-2">
                     <div class="surface p-2 text-center"><div id="metric-assets" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Assets</div></div>
                     <div class="surface p-2 text-center"><div id="metric-creators" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Creators</div></div>
                     <div class="surface p-2 text-center"><div id="metric-downloads" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Installs</div></div>
                 </div>
             </aside>
-            <article class="surface p-8 border-pink-500/20 bg-gradient-to-br from-pink-500/10 to-transparent rounded-[28px]">
+            <article class="surface p-8 border-pink-500/20 bg-gradient-to-br from-pink-500/10 to-transparent">
                 <h2 class="text-4xl md:text-6xl font-black italic mb-3">Build. Ship. Spotlight.</h2>
                 <p class="text-gray-300 max-w-3xl">Feature system, most popular, dev choice, new releases, known creators, and featured creators all update from your Firebase data.</p>
                 <div class="flex flex-wrap gap-2 mt-4">
@@ -145,14 +130,102 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Loom</h4><p class="text-sm text-gray-400 mt-3">A creator registry for assets, releases, and discovery.</p></article>
-            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Explore</h4><div class="mt-3 space-y-2"><a class="footer-link" href="#featured-grid">Feature System</a><a class="footer-link" href="#popular-grid">Most Popular</a><a class="footer-link" href="#newrelease-grid">New Releases</a></div></article>
-            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Creator Tools</h4><div class="mt-3 space-y-2"><a class="footer-link" href="upload.html">Publish Asset</a><a class="footer-link" href="profile.html">Edit Profile</a></div></article>
-            <article><h4 class="font-black uppercase tracking-[0.12em] text-sm">Community</h4><div class="mt-3 flex flex-wrap gap-2"><span class="chip"><i class="fa-brands fa-discord mr-1"></i>Discord</span><span class="chip"><i class="fa-brands fa-github mr-1"></i>GitHub</span><span class="chip"><i class="fa-brands fa-youtube mr-1"></i>YouTube</span></div></article>
+    <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">
+        <div class="py-10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6">
+                <section class="relative overflow-hidden rounded-[34px] border border-white/15 bg-white/5 backdrop-blur-xl shadow-[0_22px_60px_rgba(0,0,0,0.55)] p-6 md:p-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 before:content-[''] before:absolute before:inset-0 before:opacity-25 before:pointer-events-none before:bg-[radial-gradient(circle_at_20%_10%,rgba(255,121,198,0.22)_0%,transparent_42%),radial-gradient(circle_at_80%_40%,rgba(122,162,255,0.18)_0%,transparent_48%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.25))]" aria-label="Loom footer call to action">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/60"><i class="fas fa-bolt mr-2"></i>Creator Registry</div>
+                        <h3 class="mt-2 text-2xl md:text-3xl font-black italic uppercase tracking-tight">Publish releases. Grow your profile.</h3>
+                        <p class="mt-3 text-sm md:text-base text-white/70 max-w-[60ch] leading-relaxed">Upload assets, write release notes, and make your work discoverable across the Loom registry.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-pink-400/50 bg-pink-400/15 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white hover:bg-pink-400/25 hover:border-pink-400/70 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="upload.html"><i class="fas fa-cloud-arrow-up"></i><span>Publish Asset</span></a>
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-black/20 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white/90 hover:bg-white/5 hover:border-white/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="index.html"><i class="fas fa-compass"></i><span>Browse Registry</span></a>
+                    </div>
+                </section>
+            </div>
         </div>
-        <div class="footer-bottom"><span>&copy; 2026 Borborizo Development</span><span>&bull; Loom Network Online</span></div>
+
+        <div class="pb-12">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 grid gap-10 md:grid-cols-2 lg:grid-cols-7">
+                <section class="lg:col-span-2">
+                    <a href="index.html" class="inline-flex items-center gap-3 text-white no-underline">
+                        <img src="logo.png" alt="Loom" class="w-9 h-9 object-contain">
+                        <div class="leading-tight">
+                            <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Ultra Registry</div>
+                            <div class="text-lg font-black italic uppercase tracking-tight">Loom</div>
+                        </div>
+                    </a>
+                    <p class="mt-4 text-sm text-white/65 leading-relaxed max-w-[52ch]">A creator registry for assets, releases, and discovery. Built for fast publishing and real-time updates.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-bolt text-white/70"></i>Realtime</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-shield-halved text-white/70"></i>Moderated</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-tags text-white/70"></i>Versioned</span>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Creators</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Creator tools">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="upload.html">Publish Asset</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="profile.html">Profile</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="friends.html">Friends</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Resources</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Resources">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="about.html">About Loom</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="guidelines.html">Publishing Guidelines</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Legal</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Legal">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy Policy</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms of Service</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Contact</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Community</div>
+                    <div class="mt-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-discord text-white/70"></i>Discord</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-github text-white/70"></i>GitHub</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-youtube text-white/70"></i>YouTube</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/60">
+                <div>&copy; 2026 Borborizo Development <span class="text-white/25">|</span> Loom Network Online</div>
+                <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer links">
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                </nav>
+            </div>
+        </div>
     </footer>
 
     <script type="module">
@@ -258,6 +331,28 @@
                 .toLowerCase()
                 .replace(/[^a-z0-9._-]/g, "")
                 .slice(0, 24);
+        }
+
+        const RESERVED_USERNAME_PREFIX = /^(admin|administrator|support|moderator|staff|system|official|team|security|loom)(?:$|[0-9._-])/;
+
+        function isReservedUsername(username = "") {
+            const value = sanitizeUsername(username);
+            return RESERVED_USERNAME_PREFIX.test(value);
+        }
+
+        function validateUsername(username = "") {
+            const value = sanitizeUsername(username);
+            if (value.length < 3) return "Username must be at least 3 characters.";
+            if (!/^[a-z0-9._-]{3,24}$/.test(value)) return "Username can only use letters, numbers, . _ -";
+            if (isReservedUsername(value)) return "That username is reserved. Please choose another.";
+            return "";
+        }
+
+        function safeUsernameBase(preferredUsername = "", email = "") {
+            let base = sanitizeUsername(preferredUsername) || usernameFromEmail(email);
+            if (base.length < 3) base = "user";
+            if (isReservedUsername(base)) base = "user";
+            return base.slice(0, 18);
         }
 
         function usernameFromEmail(email = "") {
@@ -380,6 +475,13 @@
                 avatarMediaId: typeof raw.avatarMediaId === "string" ? raw.avatarMediaId : "",
                 bannerMediaId: typeof raw.bannerMediaId === "string" ? raw.bannerMediaId : "",
                 role: typeof raw.role === "string" && raw.role.trim() ? raw.role.trim() : "Consumer",
+                badges: Array.isArray(raw.badges)
+                    ? raw.badges
+                        .filter((item) => typeof item === "string")
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .slice(0, 10)
+                    : [],
                 isKnownCreator: Boolean(raw.isKnownCreator),
                 isFeaturedCreator: Boolean(raw.isFeaturedCreator),
                 canCurate: Boolean(raw.canCurate),
@@ -832,10 +934,10 @@
             const profileSnap = await getDoc(profileRef);
 
             if (!profileSnap.exists()) {
-                const requested = sanitizeUsername(preferredUsername) || usernameFromEmail(user.email || "");
+                const requested = safeUsernameBase(preferredUsername, user.email || "");
                 let username = requested;
                 let attempts = 0;
-                while (await isUsernameTaken(username, user.uid)) {
+                while (isReservedUsername(username) || await isUsernameTaken(username, user.uid)) {
                     attempts += 1;
                     username = `${requested}${Math.floor(100 + Math.random() * 900)}`;
                     if (attempts > 10) {
@@ -900,9 +1002,12 @@
                 alert("Email and password are required.");
                 return;
             }
-            if (authMode === "signup" && requestedUsername.length < 3) {
-                alert("Username must be at least 3 characters.");
-                return;
+            if (authMode === "signup") {
+                const error = validateUsername(requestedUsername);
+                if (error) {
+                    alert(error);
+                    return;
+                }
             }
 
             authSubmit.disabled = true;
@@ -964,22 +1069,51 @@
             );
         }
 
+        function setDropdownOpen(trigger, menu, isOpen) {
+            if (!trigger || !menu) return;
+            menu.classList.toggle("active", Boolean(isOpen));
+            trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (isOpen) {
+                const first = menu.querySelector("a,button,[tabindex]:not([tabindex='-1'])");
+                if (first) {
+                    try { first.focus(); } catch {}
+                }
+            }
+        }
+
+        function closeAllDropdowns() {
+            setDropdownOpen(userTrigger, userMenu, false);
+            setDropdownOpen(notifTrigger, notifMenu, false);
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeAllDropdowns();
+            }
+        });
+
         userTrigger.addEventListener("click", (event) => {
             event.stopPropagation();
             if (!activeUser) {
+                closeAllDropdowns();
                 openAuthModal("signin");
                 return;
             }
-            userMenu.classList.toggle("active");
+            const willOpen = !userMenu.classList.contains("active");
+            setDropdownOpen(userTrigger, userMenu, willOpen);
+            if (willOpen) setDropdownOpen(notifTrigger, notifMenu, false);
         });
 
         notifTrigger.addEventListener("click", (event) => {
             event.stopPropagation();
             if (!activeUser) {
+                closeAllDropdowns();
                 openAuthModal("signin");
                 return;
             }
-            notifMenu.classList.toggle("active");
+            const willOpen = !notifMenu.classList.contains("active");
+            setDropdownOpen(notifTrigger, notifMenu, willOpen);
+            if (willOpen) setDropdownOpen(userTrigger, userMenu, false);
         });
 
         notifMarkRead.addEventListener("click", async (event) => {
@@ -1016,7 +1150,7 @@
             } catch (err) {
                 console.error("Sign out failed:", err);
             } finally {
-                userMenu.classList.remove("active");
+                setDropdownOpen(userTrigger, userMenu, false);
             }
         });
 
@@ -1027,16 +1161,16 @@
                     openAuthModal("signin");
                     return;
                 }
-                userMenu.classList.remove("active");
+                setDropdownOpen(userTrigger, userMenu, false);
             });
         }
 
         window.addEventListener("click", (event) => {
             if (!userMenu.contains(event.target) && !userTrigger.contains(event.target)) {
-                userMenu.classList.remove("active");
+                setDropdownOpen(userTrigger, userMenu, false);
             }
             if (!notifMenu.contains(event.target) && !notifTrigger.contains(event.target)) {
-                notifMenu.classList.remove("active");
+                setDropdownOpen(notifTrigger, notifMenu, false);
             }
             if (event.target === authModal) {
                 closeAuthModal();

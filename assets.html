@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom | All Assets</title>
+    <meta name="description" content="Browse all approved assets on Loom. Filter by tag, license, compatibility, and more.">
+    <meta name="theme-color" content="#050507">
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-guard.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="loom.css">
+</head>
+<body class="min-h-screen flex flex-col">
+    <div class="mesh-bg"></div>
+
+    <header class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex items-center justify-between gap-4">
+        <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
+            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
+            <div class="leading-tight">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Ultra Registry</div>
+                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">LOOM</h1>
+            </div>
+        </a>
+        <nav class="flex flex-wrap items-center gap-2">
+            <a href="index.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Home</a>
+            <a href="upload.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Publish</a>
+            <a href="assets.html" class="inline-flex items-center gap-2 rounded-xl border border-pink-400/40 bg-pink-400/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-white hover:border-pink-400/60 hover:bg-pink-400/15 transition"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="guidelines.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Guidelines</a>
+            <a href="support.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Support</a>
+        </nav>
+    </header>
+
+    <main class="mx-auto w-full max-w-[1500px] px-4 md:px-6 pb-12 space-y-6">
+        <section class="rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl p-7 md:p-10">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+                <div>
+                    <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Browse</div>
+                    <h2 class="mt-2 text-3xl md:text-4xl font-black italic uppercase tracking-tight">All Assets</h2>
+                    <p class="mt-3 text-sm md:text-base text-white/70 max-w-[80ch] leading-relaxed">
+                        Search and filter every approved asset in the Loom registry. Sort by installs, recency, or name.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span id="metric-assets" class="chip">0 assets</span>
+                    <span id="metric-creators" class="chip">0 creators</span>
+                    <span id="metric-installs" class="chip">0 installs</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6 items-start">
+            <aside class="surface p-6 space-y-4 h-fit xl:sticky xl:top-8">
+                <div>
+                    <label for="asset-search" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Search</label>
+                    <div class="relative mt-3">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                        <input id="asset-search" class="field pl-10" placeholder="Search name, tag, creator, license, compatibility">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label for="sort-by" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Sort</label>
+                        <select id="sort-by" class="field mt-3">
+                            <option value="updated_desc">Recently updated</option>
+                            <option value="downloads_desc">Most installs</option>
+                            <option value="created_desc">Newest</option>
+                            <option value="name_asc">Name (A-Z)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-tag" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Tag</label>
+                        <select id="filter-tag" class="field mt-3">
+                            <option value="">All tags</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-license" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">License</label>
+                        <select id="filter-license" class="field mt-3">
+                            <option value="">All licenses</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-compat" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Compatibility contains</label>
+                        <input id="filter-compat" class="field mt-3" placeholder="Example: Unity 2022, Roblox 2026">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 space-y-3">
+                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                        <input id="filter-featured" type="checkbox">
+                        <span>Featured only</span>
+                    </label>
+                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                        <input id="filter-devchoice" type="checkbox">
+                        <span>Dev Choice only</span>
+                    </label>
+                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                        <input id="filter-support" type="checkbox">
+                        <span>Has support link</span>
+                    </label>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 flex flex-wrap gap-2">
+                    <button id="clear-filters" class="btn btn-neutral" type="button"><i class="fas fa-broom"></i><span>Clear</span></button>
+                    <button id="refresh-assets" class="btn" type="button"><i class="fas fa-rotate"></i><span>Refresh</span></button>
+                </div>
+
+                <div class="text-xs text-white/55">
+                    <span id="load-status">Loading...</span>
+                </div>
+            </aside>
+
+            <article class="surface p-7 md:p-8">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Results</div>
+                        <h3 class="mt-2 text-2xl font-black italic uppercase">Registry</h3>
+                        <p id="active-filters" class="mt-3 text-sm text-white/55">Showing all approved assets.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span id="results-count" class="chip">0 results</span>
+                        <span id="results-note" class="chip hidden">Filters active</span>
+                    </div>
+                </div>
+
+                <div id="assets-empty" class="mt-8 rounded-[22px] border border-white/10 bg-black/20 p-6 hidden">
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">No results</div>
+                    <h4 class="mt-2 text-xl font-black italic uppercase">Try adjusting filters</h4>
+                    <p class="mt-3 text-sm text-white/65 max-w-[70ch]">Clear filters or broaden your search to see more assets.</p>
+                    <div class="mt-5 flex flex-wrap gap-2">
+                        <button id="empty-clear" class="btn btn-neutral" type="button"><i class="fas fa-broom"></i><span>Clear filters</span></button>
+                    </div>
+                </div>
+
+                <div id="assets-grid" class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+            </article>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">
+        <div class="py-10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6">
+                <section class="relative overflow-hidden rounded-[34px] border border-white/15 bg-white/5 backdrop-blur-xl shadow-[0_22px_60px_rgba(0,0,0,0.55)] p-6 md:p-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 before:content-[''] before:absolute before:inset-0 before:opacity-25 before:pointer-events-none before:bg-[radial-gradient(circle_at_20%_10%,rgba(255,121,198,0.22)_0%,transparent_42%),radial-gradient(circle_at_80%_40%,rgba(122,162,255,0.18)_0%,transparent_48%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.25))]" aria-label="Loom footer call to action">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/60"><i class="fas fa-bolt mr-2"></i>Creator Registry</div>
+                        <h3 class="mt-2 text-2xl md:text-3xl font-black italic uppercase tracking-tight">Publish releases. Grow your profile.</h3>
+                        <p class="mt-3 text-sm md:text-base text-white/70 max-w-[60ch] leading-relaxed">Upload assets, write release notes, and make your work discoverable across the Loom registry.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-pink-400/50 bg-pink-400/15 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white hover:bg-pink-400/25 hover:border-pink-400/70 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="upload.html"><i class="fas fa-cloud-arrow-up"></i><span>Publish Asset</span></a>
+                        <a class="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-black/20 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white/90 hover:bg-white/5 hover:border-white/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2" href="index.html"><i class="fas fa-compass"></i><span>Browse Registry</span></a>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="pb-12">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 grid gap-10 md:grid-cols-2 lg:grid-cols-7">
+                <section class="lg:col-span-2">
+                    <a href="index.html" class="inline-flex items-center gap-3 text-white no-underline">
+                        <img src="logo.png" alt="Loom" class="w-9 h-9 object-contain">
+                        <div class="leading-tight">
+                            <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Ultra Registry</div>
+                            <div class="text-lg font-black italic uppercase tracking-tight">Loom</div>
+                        </div>
+                    </a>
+                    <p class="mt-4 text-sm text-white/65 leading-relaxed max-w-[52ch]">A creator registry for assets, releases, and discovery. Built for fast publishing and real-time updates.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-bolt text-white/70"></i>Realtime</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-shield-halved text-white/70"></i>Moderated</span>
+                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fas fa-tags text-white/70"></i>Versioned</span>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Creators</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Creator tools">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="upload.html">Publish Asset</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="profile.html">Profile</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="friends.html">Friends</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Resources</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Resources">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="about.html">About Loom</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="guidelines.html">Publishing Guidelines</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Legal</div>
+                    <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Legal">
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy Policy</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms of Service</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Contact</a>
+                    </nav>
+                </section>
+
+                <section>
+                    <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Community</div>
+                    <div class="mt-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-discord text-white/70"></i>Discord</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-github text-white/70"></i>GitHub</span>
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/80"><i class="fa-brands fa-youtube text-white/70"></i>YouTube</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10">
+            <div class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-white/60">
+                <div>&copy; 2026 Borborizo Development <span class="text-white/25">|</span> Loom Network Online</div>
+                <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer links">
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="privacy.html">Privacy</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="terms.html">Terms</a>
+                    <a class="text-white/65 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="support.html">Support</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            collection,
+            doc,
+            getDoc,
+            getFirestore,
+            onSnapshot,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
+            authDomain: "loom-ef2c8.firebaseapp.com",
+            projectId: "loom-ef2c8",
+            storageBucket: "loom-ef2c8.firebasestorage.app",
+            messagingSenderId: "774949013487",
+            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const searchInput = document.getElementById("asset-search");
+        const sortBy = document.getElementById("sort-by");
+        const filterTag = document.getElementById("filter-tag");
+        const filterLicense = document.getElementById("filter-license");
+        const filterCompat = document.getElementById("filter-compat");
+        const filterFeatured = document.getElementById("filter-featured");
+        const filterDevChoice = document.getElementById("filter-devchoice");
+        const filterSupport = document.getElementById("filter-support");
+        const clearBtn = document.getElementById("clear-filters");
+        const refreshBtn = document.getElementById("refresh-assets");
+
+        const metricAssets = document.getElementById("metric-assets");
+        const metricCreators = document.getElementById("metric-creators");
+        const metricInstalls = document.getElementById("metric-installs");
+
+        const loadStatus = document.getElementById("load-status");
+        const resultsCount = document.getElementById("results-count");
+        const resultsNote = document.getElementById("results-note");
+        const activeFilters = document.getElementById("active-filters");
+        const grid = document.getElementById("assets-grid");
+        const emptyState = document.getElementById("assets-empty");
+        const emptyClear = document.getElementById("empty-clear");
+
+        const mediaCache = new Map();
+        let assets = [];
+        let unsubscribe = null;
+
+        function escapeHtml(value = "") {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function validHttpUrl(value = "") {
+            try {
+                const url = new URL(String(value || ""));
+                return url.protocol === "http:" || url.protocol === "https:";
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function toMillis(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === "function") return value.toMillis();
+            if (typeof value.seconds === "number") return value.seconds * 1000;
+            if (value instanceof Date) return value.getTime();
+            if (typeof value === "number") return value;
+            return 0;
+        }
+
+        function formatShortDate(millis) {
+            if (!millis) return "n/a";
+            try {
+                return new Date(millis).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+            } catch (_) {
+                return "n/a";
+            }
+        }
+
+        function normalizeAsset(id, raw = {}) {
+            const name = String(raw.name || "Untitled");
+            const version = String(raw.version || "v1.0.0");
+            const summary = String(raw.summary || "");
+            const description = String(raw.description || "");
+            const tag = String(raw.tag || "General");
+            const compatibility = String(raw.compatibility || "");
+            const license = String(raw.license || "Custom");
+            const creatorId = String(raw.creatorId || "");
+            const creatorName = String(raw.creatorName || "unknown");
+            const createdMs = toMillis(raw.createdAt);
+            const updatedMs = toMillis(raw.updatedAt) || createdMs;
+            const downloads = Number.isFinite(raw.downloads) ? raw.downloads : Number(raw.downloads || 0);
+            const supportUrl = String(raw.supportUrl || "");
+            return {
+                id,
+                name,
+                version,
+                summary,
+                description,
+                tag,
+                compatibility,
+                license,
+                creatorId,
+                creatorName,
+                downloads: Number.isFinite(downloads) ? downloads : 0,
+                featured: Boolean(raw.featured),
+                devChoice: Boolean(raw.devChoice),
+                supportUrl: validHttpUrl(supportUrl) ? supportUrl : "",
+                iconUrl: validHttpUrl(raw.iconUrl || "") || /^data:image\//i.test(String(raw.iconUrl || "")) ? String(raw.iconUrl || "") : "",
+                iconMediaId: typeof raw.iconMediaId === "string" ? raw.iconMediaId : "",
+                createdMs,
+                updatedMs,
+                searchText: `${name} ${version} ${summary} ${description} ${tag} ${compatibility} ${license} ${creatorName}`.toLowerCase()
+            };
+        }
+
+        function renderAssetCard(asset) {
+            const iconFallback = asset.iconUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
+            const iconMediaId = asset.iconMediaId || "";
+            const creator = asset.creatorName || "unknown";
+            const creatorAvatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(asset.creatorId || creator)}`;
+
+            const pills = [
+                asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
+                asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : "",
+                asset.license ? `<span class="chip border-white/15 text-gray-300">${escapeHtml(asset.license)}</span>` : "",
+                asset.supportUrl ? `<span class="chip border-white/15 text-gray-300"><i class="fas fa-life-ring mr-2"></i>Support</span>` : ""
+            ].filter(Boolean).join("");
+
+            const blurb = asset.summary || asset.description || "No description provided.";
+            const compatLine = asset.compatibility ? `<div class="text-[10px] text-white/45 uppercase tracking-widest">Compat: <span class="text-white/70">${escapeHtml(asset.compatibility)}</span></div>` : "";
+
+            return `
+                <a class="block rounded-[26px] border border-white/10 bg-gradient-to-b from-white/5 to-black/25 p-5 backdrop-blur-xl shadow-[0_14px_40px_rgba(0,0,0,0.45)] transition hover:-translate-y-0.5 hover:border-pink-400/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 no-underline text-inherit"
+                   href="asset.html?id=${encodeURIComponent(asset.id)}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img class="w-14 h-14 rounded-xl object-cover border border-white/10 bg-white/5" src="${escapeHtml(iconFallback)}" data-media-id="${escapeHtml(iconMediaId)}" alt="Asset icon">
+                            <div class="min-w-0">
+                                <div class="text-lg font-black lowercase truncate">${escapeHtml(asset.name)}</div>
+                                <div class="text-[10px] uppercase tracking-[0.14em] text-white/45 font-black">${escapeHtml(asset.version)}</div>
+                            </div>
+                        </div>
+                        <span class="chip">${escapeHtml(asset.tag)}</span>
+                    </div>
+                    <p class="mt-4 text-sm text-white/75 leading-relaxed min-h-[44px]">${escapeHtml(String(blurb).slice(0, 160))}</p>
+                    <div class="mt-4 flex flex-wrap gap-2">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
+                    <div class="mt-4">${compatLine}</div>
+                    <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" alt="Creator avatar">
+                            <span class="text-xs text-white/75 truncate">${escapeHtml(creator)}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-white font-bold">${Number(asset.downloads || 0).toLocaleString()} installs</div>
+                            <div class="text-[10px] text-white/40 uppercase tracking-wider">${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</div>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        function setStatus(message) {
+            loadStatus.textContent = message;
+        }
+
+        function computeOptionCounts(items, field) {
+            const counts = new Map();
+            for (const item of items) {
+                const key = String(item[field] || "").trim();
+                if (!key) continue;
+                counts.set(key, (counts.get(key) || 0) + 1);
+            }
+            return [...counts.entries()].sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]));
+        }
+
+        function rebuildFilterOptions() {
+            const tagCounts = computeOptionCounts(assets, "tag");
+            const licenseCounts = computeOptionCounts(assets, "license");
+
+            const keepTag = filterTag.value;
+            const keepLicense = filterLicense.value;
+
+            filterTag.innerHTML = `<option value="">All tags</option>` + tagCounts.map(([tag, count]) => {
+                return `<option value="${escapeHtml(tag)}">${escapeHtml(tag)} (${count})</option>`;
+            }).join("");
+
+            filterLicense.innerHTML = `<option value="">All licenses</option>` + licenseCounts.map(([license, count]) => {
+                return `<option value="${escapeHtml(license)}">${escapeHtml(license)} (${count})</option>`;
+            }).join("");
+
+            filterTag.value = keepTag;
+            filterLicense.value = keepLicense;
+        }
+
+        function currentFilterSummary() {
+            const parts = [];
+            const q = String(searchInput.value || "").trim();
+            const tag = String(filterTag.value || "");
+            const license = String(filterLicense.value || "");
+            const compat = String(filterCompat.value || "").trim();
+            if (q) parts.push(`Search: "${q}"`);
+            if (tag) parts.push(`Tag: ${tag}`);
+            if (license) parts.push(`License: ${license}`);
+            if (compat) parts.push(`Compat: ${compat}`);
+            if (filterFeatured.checked) parts.push("Featured only");
+            if (filterDevChoice.checked) parts.push("Dev Choice only");
+            if (filterSupport.checked) parts.push("Has support link");
+            return parts;
+        }
+
+        function applyFilters() {
+            const queryText = String(searchInput.value || "").trim().toLowerCase();
+            const tag = String(filterTag.value || "");
+            const license = String(filterLicense.value || "");
+            const compat = String(filterCompat.value || "").trim().toLowerCase();
+            const featuredOnly = Boolean(filterFeatured.checked);
+            const devChoiceOnly = Boolean(filterDevChoice.checked);
+            const supportOnly = Boolean(filterSupport.checked);
+
+            let filtered = assets.slice();
+
+            if (queryText) {
+                filtered = filtered.filter((asset) => asset.searchText.includes(queryText));
+            }
+            if (tag) {
+                filtered = filtered.filter((asset) => asset.tag === tag);
+            }
+            if (license) {
+                filtered = filtered.filter((asset) => (asset.license || "") === license);
+            }
+            if (compat) {
+                filtered = filtered.filter((asset) => String(asset.compatibility || "").toLowerCase().includes(compat));
+            }
+            if (featuredOnly) {
+                filtered = filtered.filter((asset) => asset.featured);
+            }
+            if (devChoiceOnly) {
+                filtered = filtered.filter((asset) => asset.devChoice);
+            }
+            if (supportOnly) {
+                filtered = filtered.filter((asset) => Boolean(asset.supportUrl));
+            }
+
+            const sort = String(sortBy.value || "updated_desc");
+            if (sort === "downloads_desc") {
+                filtered.sort((a, b) => (b.downloads - a.downloads) || (b.updatedMs - a.updatedMs));
+            } else if (sort === "created_desc") {
+                filtered.sort((a, b) => (b.createdMs - a.createdMs) || (b.updatedMs - a.updatedMs));
+            } else if (sort === "name_asc") {
+                filtered.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" }));
+            } else {
+                filtered.sort((a, b) => (b.updatedMs - a.updatedMs) || (b.downloads - a.downloads));
+            }
+
+            render(filtered);
+        }
+
+        function render(filtered) {
+            const totals = {
+                assets: assets.length,
+                creators: new Set(assets.map((a) => a.creatorId || a.creatorName)).size,
+                installs: assets.reduce((sum, a) => sum + Number(a.downloads || 0), 0)
+            };
+
+            metricAssets.textContent = `${totals.assets.toLocaleString()} assets`;
+            metricCreators.textContent = `${totals.creators.toLocaleString()} creators`;
+            metricInstalls.textContent = `${totals.installs.toLocaleString()} installs`;
+
+            resultsCount.textContent = `${filtered.length.toLocaleString()} results`;
+
+            const summaryParts = currentFilterSummary();
+            const filtersActive = summaryParts.length > 0;
+            resultsNote.classList.toggle("hidden", !filtersActive);
+            activeFilters.textContent = filtersActive
+                ? `Showing ${filtered.length.toLocaleString()} of ${assets.length.toLocaleString()} assets. ${summaryParts.join(" · ")}`
+                : "Showing all approved assets.";
+
+            if (!filtered.length) {
+                emptyState.classList.remove("hidden");
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            grid.innerHTML = filtered.map(renderAssetCard).join("");
+            hydrateMediaImages(grid).catch(() => {});
+        }
+
+        async function getMediaUrl(mediaId) {
+            if (!mediaId) return "";
+            if (mediaCache.has(mediaId)) return mediaCache.get(mediaId);
+            try {
+                const snap = await getDoc(doc(db, "media", mediaId));
+                if (snap.exists()) {
+                    const url = snap.data().dataUrl || "";
+                    mediaCache.set(mediaId, url);
+                    return url;
+                }
+            } catch (err) {
+                // ignore
+            }
+            return "";
+        }
+
+        async function mapLimit(list, limit, task) {
+            const results = [];
+            let index = 0;
+            const workers = new Array(Math.max(1, limit)).fill(0).map(async () => {
+                while (index < list.length) {
+                    const current = index;
+                    index += 1;
+                    results[current] = await task(list[current], current);
+                }
+            });
+            await Promise.all(workers);
+            return results;
+        }
+
+        async function hydrateMediaImages(root = document) {
+            const items = Array.from(root.querySelectorAll("img[data-media-id]"));
+            const targets = items.filter((img) => String(img.dataset.mediaId || "").trim());
+            await mapLimit(targets, 8, async (img) => {
+                const mediaId = String(img.dataset.mediaId || "").trim();
+                const url = await getMediaUrl(mediaId);
+                if (url) img.src = url;
+            });
+        }
+
+        function clearFilters() {
+            searchInput.value = "";
+            filterTag.value = "";
+            filterLicense.value = "";
+            filterCompat.value = "";
+            filterFeatured.checked = false;
+            filterDevChoice.checked = false;
+            filterSupport.checked = false;
+            sortBy.value = "updated_desc";
+            applyFilters();
+        }
+
+        function subscribe() {
+            setStatus("Loading...");
+            unsubscribe?.();
+            unsubscribe = onSnapshot(
+                query(collection(db, "assets"), where("moderationStatus", "==", "approved")),
+                (snapshot) => {
+                    assets = snapshot.docs.map((docSnap) => normalizeAsset(docSnap.id, docSnap.data()));
+                    rebuildFilterOptions();
+                    applyFilters();
+                    setStatus(`Updated ${new Date().toLocaleTimeString()}`);
+                },
+                (err) => {
+                    console.error("Assets subscription failed:", err);
+                    setStatus("Could not load assets. Check Firestore rules.");
+                }
+            );
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        sortBy.addEventListener("change", applyFilters);
+        filterTag.addEventListener("change", applyFilters);
+        filterLicense.addEventListener("change", applyFilters);
+        filterCompat.addEventListener("input", applyFilters);
+        filterFeatured.addEventListener("change", applyFilters);
+        filterDevChoice.addEventListener("change", applyFilters);
+        filterSupport.addEventListener("change", applyFilters);
+
+        clearBtn.addEventListener("click", clearFilters);
+        emptyClear.addEventListener("click", clearFilters);
+        refreshBtn.addEventListener("click", subscribe);
+
+        subscribe();
+    </script>
+</body>
+</html>
