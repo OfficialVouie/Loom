@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#050507">
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-guard.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
@@ -20,24 +21,29 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <header class="site-wrap py-6 flex items-center justify-between gap-4">
-        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Legal</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Terms</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Legal</div>
+                <div class="shell-brand-title">Terms</div>
             </div>
         </a>
-        <nav class="flex items-center gap-3">
-            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Home</a>
-            <a href="upload.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Publish</a>
-            <a href="support.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Support</a>
-            <a href="privacy.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Privacy</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link is-active"><i class="fas fa-life-ring"></i><span>Support</span></a>
         </nav>
+        <div class="shell-actions">
+            <a href="privacy.html" class="shell-pill"><i class="fas fa-shield-halved"></i><span>Privacy</span></a>
+            <a href="support.html" class="shell-pill"><i class="fas fa-envelope"></i><span>Contact</span></a>
+        </div>
     </header>
 
     <main class="site-wrap pb-12 space-y-6">
-        <section class="surface p-7 md:p-10">
+        <section class="page-hero surface p-7 md:p-10">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                 <div>
                     <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Loom (Borborizo Development)</div>
@@ -49,6 +55,30 @@
                     <a class="chip hover:border-blue-400/50 hover:text-white" href="#contact">Contact</a>
                 </div>
             </div>
+        </section>
+
+        <section class="page-shortcuts">
+            <a href="privacy.html" class="page-shortcut">
+                <span>
+                    <strong>Read Privacy</strong>
+                    <small>Review data handling and user rights alongside the service terms.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="support.html" class="page-shortcut">
+                <span>
+                    <strong>Need Policy Help?</strong>
+                    <small>Use support if you need clarification before using the platform.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="about.html" class="page-shortcut">
+                <span>
+                    <strong>Return To Overview</strong>
+                    <small>Go back to the product pages once the legal review is done.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">

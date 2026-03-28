@@ -80,24 +80,29 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <header class="site-wrap py-6 flex justify-between items-center gap-4">
-        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Creator</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Publish</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Creator Console</div>
+                <div class="shell-brand-title">Publish</div>
             </div>
         </a>
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
-            <a href="profile.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Profile</a>
-            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
-            <a id="review-link" href="review.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-yellow-200 hover:text-white hidden">Review</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link is-active"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+        </nav>
+        <div class="shell-actions">
+            <a href="guidelines.html" class="shell-pill"><i class="fas fa-book-open"></i><span>Guidelines</span></a>
+            <a id="review-link" href="review.html" class="shell-pill hidden"><i class="fas fa-shield-halved"></i><span>Review</span></a>
         </div>
     </header>
 
-    <main class="site-wrap pb-12">
-        <section class="glass p-8 md:p-12 rounded-[40px]">
+    <main class="site-wrap pb-12 page-stack">
+        <section class="page-hero glass p-8 md:p-12 rounded-[40px]">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-10">
                 <div>
                     <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Creator Console</div>
@@ -106,8 +111,32 @@
                 </div>
                 <div class="text-[10px] uppercase tracking-[0.22em] text-white/45 font-black flex items-center gap-2">
                     <i class="fas fa-cloud-arrow-up"></i>
-                    <span>Draft • Upload • Publish</span>
+                    <span>Draft | Upload | Publish</span>
                 </div>
+            </div>
+
+            <div class="page-shortcuts mb-8">
+                <a href="guidelines.html" class="page-shortcut">
+                    <span>
+                        <strong>Read Guidelines</strong>
+                        <small>Check moderation expectations before you submit a release.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
+                <a href="profile.html" class="page-shortcut">
+                    <span>
+                        <strong>Update Your Profile</strong>
+                        <small>Creators convert better when their page and links are current.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
+                <a href="support.html" class="page-shortcut">
+                    <span>
+                        <strong>Upload Help</strong>
+                        <small>Open the help page if files, previews, or auth are failing.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
             </div>
 
             <form id="publish-form">
@@ -342,6 +371,7 @@
     </footer>
 
     <script type="module">
+        import { queueAssetDiscordAnnouncement } from "./discord-sync.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
@@ -933,7 +963,7 @@
                 setUploadProgress(100);
 
                 const creatorName = sanitizeUsername(creatorProfile?.username, activeUser.email || "");
-                const assetRef = await addDoc(collection(db, "assets"), {
+                const assetPayload = {
                     name,
                     version,
                     description,
@@ -969,15 +999,47 @@
                     },
                     featured: isFeatured,
                     devChoice: isDevChoice
-                });
+                };
+                const assetRef = await addDoc(collection(db, "assets"), assetPayload);
 
                 if (packageFile) {
                     setUploadStatus("Uploading asset package...", "text-pink-400");
                     await uploadAssetPackage(packageFile, assetRef.id);
                 }
 
-                setUploadStatus(canCurate ? "Asset published." : "Asset submitted for review.", "text-green-400");
-                alert(canCurate ? "Asset published." : "Asset submitted for review.");
+                let publishMessage = canCurate ? "Asset published." : "Asset submitted for review.";
+                if (canCurate) {
+                    try {
+                        const syncResult = await queueAssetDiscordAnnouncement({
+                            db,
+                            assetId: assetRef.id,
+                            assetData: assetPayload,
+                            actorId: activeUser.uid
+                        });
+
+                    if (syncResult?.queued && syncResult?.directResult?.ok && !syncResult?.directResult?.deduped) {
+                        publishMessage = syncResult.eventType === "update"
+                            ? "Asset published and posted to the Discord updates channel."
+                            : "Asset published and posted to the Discord releases channel.";
+                    } else if (syncResult?.queued && syncResult?.directResult?.deduped) {
+                        publishMessage = "Asset published. Discord already has this listing.";
+                    } else if (syncResult?.queued) {
+                        publishMessage = syncResult.eventType === "update"
+                            ? "Asset published and queued for the Discord updates channel."
+                            : "Asset published and queued for the Discord releases channel.";
+                    } else if (syncResult?.skipped && syncResult.reason === "announced") {
+                        publishMessage = "Asset published. Discord already has this listing.";
+                    } else if (syncResult?.skipped && syncResult.reason === "version-already-announced") {
+                            publishMessage = "Asset published. That version was already announced on Discord.";
+                        }
+                    } catch (syncError) {
+                        console.error("Discord announcement queue failed:", syncError);
+                        publishMessage = "Asset published, but Discord sync queue failed.";
+                    }
+                }
+
+                setUploadStatus(publishMessage, "text-green-400");
+                alert(publishMessage);
                 window.location.href = "profile.html";
             } catch (err) {
                 console.error("Failed to publish asset:", err);

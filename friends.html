@@ -55,22 +55,24 @@
         </div>
     </aside>
 
-    <header class="site-wrap py-6 flex items-center justify-between gap-4">
-        <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Social</div>
-                <div class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Friends</div>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Social</div>
+                <div class="shell-brand-title">Friends</div>
             </div>
         </a>
 
-        <nav class="hidden lg:flex items-center gap-2 text-sm font-black">
-            <a class="px-4 py-2 rounded-full hover:bg-white/5 text-white/80" href="index.html"><i class="fas fa-house text-white/60 mr-2"></i>Home</a>
-            <a class="px-4 py-2 rounded-full hover:bg-white/5 text-white/80" href="profile.html"><i class="fas fa-user text-white/60 mr-2"></i>Profile</a>
-            <a class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white" href="friends.html"><i class="fas fa-user-friends text-white/70 mr-2"></i>Friends</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
         </nav>
 
-        <div class="flex items-center gap-2">
+        <div class="shell-actions">
             <div class="hidden sm:flex items-center gap-3 px-3 py-2 rounded-full border border-white/10 bg-white/5 min-w-0">
                 <img id="me-avatar" class="w-9 h-9 rounded-full border border-white/10 object-cover bg-white/5" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" alt="Me">
                 <div class="min-w-0 leading-tight">
@@ -87,7 +89,45 @@
         </div>
     </header>
 
-    <main class="site-wrap pb-12">
+    <main class="site-wrap pb-12 page-stack">
+        <section class="page-hero p-7 md:p-9">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+                <div>
+                    <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Friends Hub</div>
+                    <h2 class="mt-2 text-3xl md:text-4xl font-black italic uppercase tracking-tight">Keep your network clean, active, and easy to manage.</h2>
+                    <p class="mt-3 text-sm md:text-base text-white/70 max-w-[72ch] leading-relaxed">This page now opens with the network controls first, then your live lists underneath, so the friend tools are easier to find fast.</p>
+                </div>
+                <div class="page-chip-row">
+                    <span class="chip">Requests</span>
+                    <span class="chip">Blocks</span>
+                    <span class="chip">Realtime presence</span>
+                </div>
+            </div>
+            <div class="page-shortcuts mt-6">
+                <a href="profile.html" class="page-shortcut">
+                    <span>
+                        <strong>Back To Profile</strong>
+                        <small>Return to your public page after adjusting your social settings.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
+                <a href="developers.html" class="page-shortcut">
+                    <span>
+                        <strong>Find Creators</strong>
+                        <small>Open the creator directory when you want to expand your network.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
+                <a href="support.html" class="page-shortcut">
+                    <span>
+                        <strong>Account Help</strong>
+                        <small>Use support if requests, blocks, or auth look wrong.</small>
+                    </span>
+                    <i class="fas fa-arrow-right text-white/45"></i>
+                </a>
+            </div>
+        </section>
+
         <section class="grid grid-cols-1 xl:grid-cols-[380px_1fr] gap-6">
             <aside class="surface p-5 space-y-5 h-fit">
                 <div>

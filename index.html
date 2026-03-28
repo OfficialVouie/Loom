@@ -40,16 +40,23 @@
         </div>
     </div>
 
-    <header class="site-wrap py-6 flex justify-between items-center gap-4 relative">
-        <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Ultra Registry</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">LOOM</h1>
+    <header class="site-wrap shell-header relative">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Ultra Registry</div>
+                <div class="shell-brand-title">Loom</div>
             </div>
         </a>
-            <div class="flex items-center gap-3">
-                <div class="relative">
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link is-active"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+        </nav>
+        <div class="shell-actions">
+            <div class="relative">
                 <button id="notif-trigger" class="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 inline-flex items-center gap-2" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="notif-menu" aria-label="Open notifications">
                     <i class="fas fa-bell"></i>
                     <span id="notif-count" class="notif-badge hidden">0</span>
@@ -87,45 +94,190 @@
     </header>
 
     <main class="site-wrap pb-12 space-y-8">
-        <section class="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-6">
-            <aside class="surface p-4 space-y-4 h-fit">
-                <label for="search-input" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Asset Search</label>
-                <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                    <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
-                </div>
-                <a href="assets.html" class="btn btn-neutral w-full justify-center mt-3"><i class="fas fa-grid-2"></i><span>All Assets</span></a>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="surface p-2 text-center"><div id="metric-assets" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Assets</div></div>
-                    <div class="surface p-2 text-center"><div id="metric-creators" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Creators</div></div>
-                    <div class="surface p-2 text-center"><div id="metric-downloads" class="text-lg font-black">0</div><div class="text-[9px] uppercase text-gray-500 font-bold">Installs</div></div>
-                </div>
-            </aside>
-            <article class="surface p-8 border-pink-500/20 bg-gradient-to-br from-pink-500/10 to-transparent">
-                <h2 class="text-4xl md:text-6xl font-black italic mb-3">Build. Ship. Spotlight.</h2>
-                <p class="text-gray-300 max-w-3xl">Feature system, most popular, dev choice, new releases, known creators, and featured creators all update from your Firebase data.</p>
-                <div class="flex flex-wrap gap-2 mt-4">
-                    <span class="chip">Feature System</span><span class="chip">Most Popular</span><span class="chip">Dev Choice</span><span class="chip">New Releases</span><span class="chip">Creator Discovery</span>
-                </div>
-            </article>
+        <nav class="surface home-topbar" aria-label="Homepage shortcuts">
+            <div>
+                <div class="home-topbar-label">Registry Home</div>
+                <p class="home-topbar-copy">Browse the newest drops, jump into this week's free picks, and get to support without wading through extra pages.</p>
+            </div>
+            <div class="home-topbar-links">
+                <a href="assets.html" class="home-topbar-link"><i class="fas fa-grid-2"></i><span>All Assets</span></a>
+                <a href="assets.html?view=weekly-free" class="home-topbar-link"><i class="fas fa-gift"></i><span>Weekly Free 10</span></a>
+                <a href="upload.html" class="home-topbar-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+                <a href="support.html" class="home-topbar-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+            </div>
+        </nav>
+
+        <section class="page-shortcuts" aria-label="Start paths">
+            <a href="assets.html" class="page-shortcut">
+                <span>
+                    <strong>Browse Everything</strong>
+                    <small>Open the full asset library when you already know you want to search and filter.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="assets.html?view=weekly-free" class="page-shortcut">
+                <span>
+                    <strong>Start With Weekly Free</strong>
+                    <small>Use the rotating free shelf when you want a quick download without decision fatigue.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="upload.html" class="page-shortcut">
+                <span>
+                    <strong>Go Straight To Publish</strong>
+                    <small>Creators can jump into the release flow without bouncing through profile or browse first.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="support.html" class="page-shortcut">
+                <span>
+                    <strong>Need Help First?</strong>
+                    <small>Open support, setup help, and moderation answers before you dig further into the registry.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
         </section>
 
-        <section id="search-section" class="hidden">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Search Results</h3>
+        <section class="home-hero-grid">
+            <article class="surface home-hero-panel">
+                <div class="home-hero-copy">
+                    <div class="home-eyebrow">Browse Faster</div>
+                    <h2>Open Loom and get straight to releases, updates, and the free picks that matter this week.</h2>
+                    <p>The homepage is now focused on three jobs: finding assets quickly, spotting fresh updates, and surfacing 10 free assets every week without extra clutter.</p>
+                </div>
+
+                <div class="home-search-block">
+                    <label for="search-input" class="home-block-label">Asset Search</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                        <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
+                    </div>
+                    <div class="home-search-actions">
+                        <a href="assets.html" class="btn btn-neutral"><i class="fas fa-grid-2"></i><span>Browse All Assets</span></a>
+                        <a href="upload.html" class="btn"><i class="fas fa-wand-magic-sparkles"></i><span>Publish Something</span></a>
+                    </div>
+                </div>
+
+                <div class="home-stat-grid">
+                    <div class="home-stat-card">
+                        <div id="metric-assets" class="home-stat-value">0</div>
+                        <div class="home-stat-label">Assets</div>
+                    </div>
+                    <div class="home-stat-card">
+                        <div id="metric-creators" class="home-stat-value">0</div>
+                        <div class="home-stat-label">Creators</div>
+                    </div>
+                    <div class="home-stat-card">
+                        <div id="metric-downloads" class="home-stat-value">0</div>
+                        <div class="home-stat-label">Installs</div>
+                    </div>
+                </div>
+
+                <div class="home-anchor-row" aria-label="Curated sections">
+                    <a href="#weeklyfree-grid" class="chip home-anchor-link">Weekly Free</a>
+                    <a href="#newrelease-grid" class="chip home-anchor-link">New Releases</a>
+                    <a href="#popular-grid" class="chip home-anchor-link">Popular</a>
+                    <a href="#featured-grid" class="chip home-anchor-link">Featured</a>
+                </div>
+            </article>
+
+            <aside class="home-side-stack">
+                <section class="surface home-side-card">
+                    <div class="home-block-label">Start Here</div>
+                    <div class="home-quick-links">
+                        <a href="assets.html?view=weekly-free" class="home-quick-link">
+                            <span>
+                                <strong>Weekly Free 10</strong>
+                                <small>Jump into the rotating set of free assets for this week.</small>
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="upload.html" class="home-quick-link">
+                            <span>
+                                <strong>Publish Asset</strong>
+                                <small>Ship a release from the website and let Discord announce it automatically.</small>
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="support.html" class="home-quick-link">
+                            <span>
+                                <strong>Get Support</strong>
+                                <small>Use Discord tickets for support and community help.</small>
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="surface home-side-card">
+                    <div class="home-block-label">What Changed</div>
+                    <div class="home-note-list">
+                        <div class="home-note-item"><i class="fas fa-magnifying-glass"></i><span>Search is still the first action on the page so browsing starts immediately.</span></div>
+                        <div class="home-note-item"><i class="fas fa-gift"></i><span>A weekly free shelf rotates automatically from approved assets every week.</span></div>
+                        <div class="home-note-item"><i class="fas fa-bullhorn"></i><span>Discord now stays focused on tickets, community moderation, and release/update announcements.</span></div>
+                    </div>
+                </section>
+            </aside>
+        </section>
+
+        <section id="search-section" class="hidden surface home-results-panel">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                <div>
+                    <div class="home-block-label">Live Search</div>
+                    <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Search Results</h3>
+                </div>
                 <span id="search-count" class="text-xs text-gray-500 uppercase tracking-[0.12em]">0 results</span>
             </div>
             <div id="search-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
         </section>
 
-        <div id="curated-wrap" class="space-y-8">
-            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Feature System</h3><span class="text-xs text-gray-500 uppercase">Marked as featured</span></div><div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
-            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Most Popular</h3><span class="text-xs text-gray-500 uppercase">By installs</span></div><div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
-            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Dev Choice</h3><span class="text-xs text-gray-500 uppercase">Marked by creators</span></div><div id="devchoice-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
-            <section><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">New Releases</h3><span class="text-xs text-gray-500 uppercase">Latest updates</span></div><div id="newrelease-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div></section>
-            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <article><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Known Creators</h3><span class="text-xs text-gray-500 uppercase">Top and tagged</span></div><div id="known-creators-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></article>
-                <article><div class="flex items-center justify-between mb-3"><h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Featured Creators</h3><span class="text-xs text-gray-500 uppercase">Spotlight</span></div><div id="featured-creators-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></article>
+        <div id="curated-wrap" class="home-curated-layout">
+            <section class="home-section-grid">
+                <article class="surface home-section-card">
+                    <div class="home-section-head">
+                        <div>
+                            <div class="home-block-label">Free This Week</div>
+                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Weekly Free 10</h3>
+                        </div>
+                        <span class="text-xs text-gray-500 uppercase">Rotates weekly</span>
+                    </div>
+                    <div id="weeklyfree-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                </article>
+
+                <article class="surface home-section-card">
+                    <div class="home-section-head">
+                        <div>
+                            <div class="home-block-label">Fresh Updates</div>
+                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">New Releases</h3>
+                        </div>
+                        <span class="text-xs text-gray-500 uppercase">Latest updates</span>
+                    </div>
+                    <div id="newrelease-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                </article>
+            </section>
+
+            <section class="home-section-grid">
+                <article class="surface home-section-card">
+                    <div class="home-section-head">
+                        <div>
+                            <div class="home-block-label">High Traction</div>
+                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Most Popular</h3>
+                        </div>
+                        <span class="text-xs text-gray-500 uppercase">By installs</span>
+                    </div>
+                    <div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                </article>
+
+                <article class="surface home-section-card">
+                    <div class="home-section-head">
+                        <div>
+                            <div class="home-block-label">Editorial Picks</div>
+                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Featured</h3>
+                        </div>
+                        <span class="text-xs text-gray-500 uppercase">Marked as featured</span>
+                    </div>
+                    <div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                </article>
             </section>
         </div>
     </main>
@@ -169,10 +321,10 @@
                     <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
                     <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
-                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html?view=weekly-free">Weekly Free 10</a>
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
-                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Featured</a>
                     </nav>
                 </section>
 
@@ -314,6 +466,7 @@
         let users = [];
         let notifUnsub = null;
         let presenceTimer = null;
+        let weeklyFreeAssetIds = new Set();
         const mediaCache = new Map();
 
         function escapeHtml(value = "") {
@@ -425,6 +578,36 @@
             return new Date(millis).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
         }
 
+        function getWeekIdentifier(date = new Date()) {
+            const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const day = utcDate.getUTCDay() || 7;
+            utcDate.setUTCDate(utcDate.getUTCDate() + 4 - day);
+            const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+            const week = Math.ceil((((utcDate - yearStart) / 86400000) + 1) / 7);
+            return `${utcDate.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+        }
+
+        function hashText(value = "") {
+            let hash = 2166136261;
+            for (let index = 0; index < value.length; index += 1) {
+                hash ^= value.charCodeAt(index);
+                hash = Math.imul(hash, 16777619);
+            }
+            return hash >>> 0;
+        }
+
+        function getWeeklyFreeAssets(items = [], limitCount = 10) {
+            const weekKey = getWeekIdentifier();
+            return [...items]
+                .filter((asset) => asset.isFree)
+                .sort((a, b) => {
+                    const aScore = (hashText(`${weekKey}:${a.id}`) % 100000) + (a.featured ? 8000 : 0) + (a.devChoice ? 5000 : 0) + Math.min(Number(a.downloads || 0), 25000);
+                    const bScore = (hashText(`${weekKey}:${b.id}`) % 100000) + (b.featured ? 8000 : 0) + (b.devChoice ? 5000 : 0) + Math.min(Number(b.downloads || 0), 25000);
+                    return bScore - aScore || (b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs);
+                })
+                .slice(0, limitCount);
+        }
+
         function normalizeAsset(id, raw = {}) {
             const creatorName = sanitizeUsername(raw.creatorName || "") || "unknown";
             const name = String(raw.name || "Untitled");
@@ -444,6 +627,7 @@
                 creatorId: String(raw.creatorId || ""),
                 creatorName,
                 downloads: Number.isFinite(downloads) ? downloads : 0,
+                isFree: raw.isFree !== false,
                 featured: Boolean(raw.featured),
                 devChoice: Boolean(raw.devChoice),
                 iconUrl: validHttpUrl(raw.iconUrl || "") || /^data:image\//i.test(String(raw.iconUrl || "")) ? raw.iconUrl : "",
@@ -510,6 +694,7 @@
             const creatorAvatarMediaId = creatorUser?.avatarMediaId || "";
             const iconMediaId = asset.iconMediaId || "";
             const pills = [
+                weeklyFreeAssetIds.has(asset.id) ? `<span class="chip border-emerald-500/40 text-emerald-300">Weekly Free</span>` : asset.isFree ? `<span class="chip border-emerald-500/25 text-emerald-200">Free</span>` : "",
                 asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
                 asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : ""
             ].filter(Boolean).join("");
@@ -636,8 +821,9 @@
         }
 
         function renderCuratedSections() {
+            const weeklyFree = getWeeklyFreeAssets(assets, 10);
+            weeklyFreeAssetIds = new Set(weeklyFree.map((asset) => asset.id));
             const featured = assets.filter((asset) => asset.featured).slice(0, 6);
-            const devChoice = assets.filter((asset) => asset.devChoice).slice(0, 6);
             const popular = [...assets]
                 .sort((a, b) => (b.downloads - a.downloads) || ((b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs)))
                 .slice(0, 6);
@@ -645,24 +831,10 @@
                 .sort((a, b) => (b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs))
                 .slice(0, 6);
 
+            renderAssetGrid("weeklyfree-grid", weeklyFree, "No approved free assets yet.");
             renderAssetGrid("featured-grid", featured, "No featured assets yet.");
             renderAssetGrid("popular-grid", popular, "No assets available yet.");
-            renderAssetGrid("devchoice-grid", devChoice, "No dev choice assets yet.");
             renderAssetGrid("newrelease-grid", newReleases, "No release activity yet.");
-
-            const ranked = rankedCreators();
-            const known = ranked.filter((user) => user.isKnownCreator).slice(0, 6);
-            const featuredCreators = ranked.filter((user) => user.isFeaturedCreator).slice(0, 6);
-
-            if (!known.length) {
-                known.push(...ranked.slice(0, 4));
-            }
-            if (!featuredCreators.length) {
-                featuredCreators.push(...ranked.slice(0, 4));
-            }
-
-            renderCreatorGrid("known-creators-grid", known.slice(0, 6), "No known creators marked yet.");
-            renderCreatorGrid("featured-creators-grid", featuredCreators.slice(0, 6), "No featured creators marked yet.");
         }
 
         function computeSearchScore(asset, queryText, matchedCreatorIds) {

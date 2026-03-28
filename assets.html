@@ -16,31 +16,35 @@
 <body class="min-h-screen flex flex-col">
     <div class="mesh-bg"></div>
 
-    <header class="mx-auto w-full max-w-[1500px] px-4 md:px-6 py-6 flex items-center justify-between gap-4">
-        <a href="index.html" class="inline-flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Ultra Registry</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">LOOM</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Ultra Registry</div>
+                <div class="shell-brand-title">Loom</div>
             </div>
         </a>
-        <nav class="flex flex-wrap items-center gap-2">
-            <a href="index.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Home</a>
-            <a href="upload.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Publish</a>
-            <a href="assets.html" class="inline-flex items-center gap-2 rounded-xl border border-pink-400/40 bg-pink-400/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-white hover:border-pink-400/60 hover:bg-pink-400/15 transition"><i class="fas fa-grid-2"></i><span>Assets</span></a>
-            <a href="guidelines.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Guidelines</a>
-            <a href="support.html" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/75 hover:text-white hover:border-white/20 transition">Support</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link is-active"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
         </nav>
+        <div class="shell-actions">
+            <a href="guidelines.html" class="shell-pill"><i class="fas fa-book-open"></i><span>Guidelines</span></a>
+            <a href="support.html" class="shell-pill"><i class="fas fa-circle-info"></i><span>Help</span></a>
+        </div>
     </header>
 
     <main class="mx-auto w-full max-w-[1500px] px-4 md:px-6 pb-12 space-y-6">
-        <section class="rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl p-7 md:p-10">
+        <section class="page-hero rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl p-7 md:p-10">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
                 <div>
                     <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Browse</div>
                     <h2 class="mt-2 text-3xl md:text-4xl font-black italic uppercase tracking-tight">All Assets</h2>
                     <p class="mt-3 text-sm md:text-base text-white/70 max-w-[80ch] leading-relaxed">
-                        Search and filter every approved asset in the Loom registry. Sort by installs, recency, or name.
+                        Search approved assets, open this week's free 10, and move between fresh releases and established favorites without a crowded browse flow.
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2 items-center">
@@ -51,17 +55,59 @@
             </div>
         </section>
 
-        <section class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6 items-start">
-            <aside class="surface p-6 space-y-4 h-fit xl:sticky xl:top-8">
-                <div>
-                    <label for="asset-search" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Search</label>
-                    <div class="relative mt-3">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                        <input id="asset-search" class="field pl-10" placeholder="Search name, tag, creator, license, compatibility">
-                    </div>
-                </div>
+        <section class="page-shortcuts" aria-label="Browse shortcuts">
+            <a href="assets.html?view=weekly-free" class="page-shortcut">
+                <span>
+                    <strong>Open Weekly Free</strong>
+                    <small>Skip straight to the 10 rotating free picks when you just want something fast.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="upload.html" class="page-shortcut">
+                <span>
+                    <strong>Publish A Release</strong>
+                    <small>Creators can jump into the publish flow without backing out to the homepage.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="support.html" class="page-shortcut">
+                <span>
+                    <strong>Get Browse Help</strong>
+                    <small>Open support if downloads, setup, or discoverability are giving you trouble.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+        </section>
 
-                <div class="grid grid-cols-1 gap-3">
+        <section id="weekly-free-panel" class="surface p-7 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                <div>
+                    <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Featured Shelf</div>
+                    <h3 class="mt-2 text-2xl font-black italic uppercase">Weekly Free 10</h3>
+                    <p class="mt-3 text-sm text-white/65 max-w-[75ch]">A rotating weekly set pulled from approved free assets. Use it as the fast lane when you just want something good to download now.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="assets.html?view=weekly-free" class="btn btn-neutral"><i class="fas fa-gift"></i><span>Open Weekly View</span></a>
+                    <button id="jump-weekly-filter" class="btn" type="button"><i class="fas fa-filter"></i><span>Filter Results To Weekly Free</span></button>
+                </div>
+            </div>
+            <div id="weeklyfree-grid" class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6 items-start">
+            <aside class="space-y-4 h-fit xl:sticky xl:top-8">
+                <article class="surface p-6 space-y-4">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Step 1</div>
+                        <h3 class="mt-2 text-lg font-black italic uppercase">Search and sort</h3>
+                    </div>
+                    <div>
+                        <label for="asset-search" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Search</label>
+                        <div class="relative mt-3">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                            <input id="asset-search" class="field pl-10" placeholder="Search name, tag, creator, compatibility">
+                        </div>
+                    </div>
                     <div>
                         <label for="sort-by" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Sort</label>
                         <select id="sort-by" class="field mt-3">
@@ -71,54 +117,88 @@
                             <option value="name_asc">Name (A-Z)</option>
                         </select>
                     </div>
+                </article>
+
+                <article class="surface p-6 space-y-4">
                     <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Step 2</div>
+                        <h3 class="mt-2 text-lg font-black italic uppercase">Narrow it down</h3>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
                         <label for="filter-tag" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Tag</label>
                         <select id="filter-tag" class="field mt-3">
                             <option value="">All tags</option>
                         </select>
-                    </div>
-                    <div>
+                        </div>
+                        <div>
                         <label for="filter-license" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">License</label>
                         <select id="filter-license" class="field mt-3">
                             <option value="">All licenses</option>
                         </select>
-                    </div>
-                    <div>
+                        </div>
+                        <div>
                         <label for="filter-compat" class="text-xs uppercase tracking-[0.2em] text-gray-500 font-black">Compatibility contains</label>
                         <input id="filter-compat" class="field mt-3" placeholder="Example: Unity 2022, Roblox 2026">
+                        </div>
                     </div>
-                </div>
+                    <div class="pt-4 border-t border-white/10 space-y-3">
+                        <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                            <input id="filter-weeklyfree" type="checkbox">
+                            <span>Weekly Free 10 only</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                            <input id="filter-free" type="checkbox">
+                            <span>Free only</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                            <input id="filter-featured" type="checkbox">
+                            <span>Featured only</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
+                            <input id="filter-support" type="checkbox">
+                            <span>Has support link</span>
+                        </label>
+                    </div>
+                </article>
 
-                <div class="pt-4 border-t border-white/10 space-y-3">
-                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
-                        <input id="filter-featured" type="checkbox">
-                        <span>Featured only</span>
-                    </label>
-                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
-                        <input id="filter-devchoice" type="checkbox">
-                        <span>Dev Choice only</span>
-                    </label>
-                    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.14em] text-white/70 font-black">
-                        <input id="filter-support" type="checkbox">
-                        <span>Has support link</span>
-                    </label>
-                </div>
-
-                <div class="pt-4 border-t border-white/10 flex flex-wrap gap-2">
-                    <button id="clear-filters" class="btn btn-neutral" type="button"><i class="fas fa-broom"></i><span>Clear</span></button>
-                    <button id="refresh-assets" class="btn" type="button"><i class="fas fa-rotate"></i><span>Refresh</span></button>
-                </div>
-
-                <div class="text-xs text-white/55">
-                    <span id="load-status">Loading...</span>
-                </div>
+                <article class="surface p-6 space-y-4">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Step 3</div>
+                        <h3 class="mt-2 text-lg font-black italic uppercase">Move or reset</h3>
+                        <p class="mt-3 text-sm text-white/60">Use quick actions when you want to switch paths instead of rebuilding your browse flow from scratch.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="clear-filters" class="btn btn-neutral" type="button"><i class="fas fa-broom"></i><span>Clear</span></button>
+                        <button id="refresh-assets" class="btn" type="button"><i class="fas fa-rotate"></i><span>Refresh</span></button>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3 pt-1">
+                        <a href="assets.html?view=weekly-free" class="page-shortcut">
+                            <span>
+                                <strong>Weekly Free Shelf</strong>
+                                <small>Jump to the smaller curated set if the full registry feels too wide.</small>
+                            </span>
+                            <i class="fas fa-arrow-right text-white/45"></i>
+                        </a>
+                        <a href="upload.html" class="page-shortcut">
+                            <span>
+                                <strong>Publish Instead</strong>
+                                <small>Switch from browsing to releasing without backing all the way out.</small>
+                            </span>
+                            <i class="fas fa-arrow-right text-white/45"></i>
+                        </a>
+                    </div>
+                    <div class="text-xs text-white/55">
+                        <span id="load-status">Loading...</span>
+                    </div>
+                </article>
             </aside>
 
             <article class="surface p-7 md:p-8">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                     <div>
                         <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Results</div>
-                        <h3 class="mt-2 text-2xl font-black italic uppercase">Registry</h3>
+                        <h3 class="mt-2 text-2xl font-black italic uppercase">Browse Assets</h3>
                         <p id="active-filters" class="mt-3 text-sm text-white/55">Showing all approved assets.</p>
                     </div>
                     <div class="flex flex-wrap gap-2 items-center">
@@ -181,10 +261,10 @@
                     <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Explore</div>
                     <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="Explore">
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html">All Assets</a>
-                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Feature System</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="assets.html?view=weekly-free">Weekly Free 10</a>
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#popular-grid">Most Popular</a>
-                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#devchoice-grid">Dev Choice</a>
                         <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#newrelease-grid">New Releases</a>
+                        <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="index.html#featured-grid">Featured</a>
                     </nav>
                 </section>
 
@@ -270,11 +350,13 @@
         const filterTag = document.getElementById("filter-tag");
         const filterLicense = document.getElementById("filter-license");
         const filterCompat = document.getElementById("filter-compat");
+        const filterWeeklyFree = document.getElementById("filter-weeklyfree");
+        const filterFree = document.getElementById("filter-free");
         const filterFeatured = document.getElementById("filter-featured");
-        const filterDevChoice = document.getElementById("filter-devchoice");
         const filterSupport = document.getElementById("filter-support");
         const clearBtn = document.getElementById("clear-filters");
         const refreshBtn = document.getElementById("refresh-assets");
+        const jumpWeeklyFilter = document.getElementById("jump-weekly-filter");
 
         const metricAssets = document.getElementById("metric-assets");
         const metricCreators = document.getElementById("metric-creators");
@@ -285,11 +367,15 @@
         const resultsNote = document.getElementById("results-note");
         const activeFilters = document.getElementById("active-filters");
         const grid = document.getElementById("assets-grid");
+        const weeklyFreeGrid = document.getElementById("weeklyfree-grid");
         const emptyState = document.getElementById("assets-empty");
         const emptyClear = document.getElementById("empty-clear");
 
         const mediaCache = new Map();
+        const urlParams = new URLSearchParams(window.location.search);
         let assets = [];
+        let weeklyFreeSelection = [];
+        let weeklyFreeIds = new Set();
         let unsubscribe = null;
 
         function escapeHtml(value = "") {
@@ -328,6 +414,36 @@
             }
         }
 
+        function getWeekIdentifier(date = new Date()) {
+            const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const day = utcDate.getUTCDay() || 7;
+            utcDate.setUTCDate(utcDate.getUTCDate() + 4 - day);
+            const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+            const week = Math.ceil((((utcDate - yearStart) / 86400000) + 1) / 7);
+            return `${utcDate.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+        }
+
+        function hashText(value = "") {
+            let hash = 2166136261;
+            for (let index = 0; index < value.length; index += 1) {
+                hash ^= value.charCodeAt(index);
+                hash = Math.imul(hash, 16777619);
+            }
+            return hash >>> 0;
+        }
+
+        function getWeeklyFreeAssets(items = [], limitCount = 10) {
+            const weekKey = getWeekIdentifier();
+            return [...items]
+                .filter((asset) => asset.isFree)
+                .sort((a, b) => {
+                    const aScore = (hashText(`${weekKey}:${a.id}`) % 100000) + (a.featured ? 8000 : 0) + (a.devChoice ? 5000 : 0) + Math.min(Number(a.downloads || 0), 25000);
+                    const bScore = (hashText(`${weekKey}:${b.id}`) % 100000) + (b.featured ? 8000 : 0) + (b.devChoice ? 5000 : 0) + Math.min(Number(b.downloads || 0), 25000);
+                    return bScore - aScore || (b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs);
+                })
+                .slice(0, limitCount);
+        }
+
         function normalizeAsset(id, raw = {}) {
             const name = String(raw.name || "Untitled");
             const version = String(raw.version || "v1.0.0");
@@ -354,6 +470,7 @@
                 creatorId,
                 creatorName,
                 downloads: Number.isFinite(downloads) ? downloads : 0,
+                isFree: raw.isFree !== false,
                 featured: Boolean(raw.featured),
                 devChoice: Boolean(raw.devChoice),
                 supportUrl: validHttpUrl(supportUrl) ? supportUrl : "",
@@ -372,8 +489,8 @@
             const creatorAvatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(asset.creatorId || creator)}`;
 
             const pills = [
+                weeklyFreeIds.has(asset.id) ? `<span class="chip border-emerald-500/40 text-emerald-300">Weekly Free</span>` : asset.isFree ? `<span class="chip border-emerald-500/25 text-emerald-200">Free</span>` : "",
                 asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
-                asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : "",
                 asset.license ? `<span class="chip border-white/15 text-gray-300">${escapeHtml(asset.license)}</span>` : "",
                 asset.supportUrl ? `<span class="chip border-white/15 text-gray-300"><i class="fas fa-life-ring mr-2"></i>Support</span>` : ""
             ].filter(Boolean).join("");
@@ -454,8 +571,9 @@
             if (tag) parts.push(`Tag: ${tag}`);
             if (license) parts.push(`License: ${license}`);
             if (compat) parts.push(`Compat: ${compat}`);
+            if (filterWeeklyFree.checked) parts.push("Weekly Free 10");
+            if (filterFree.checked) parts.push("Free only");
             if (filterFeatured.checked) parts.push("Featured only");
-            if (filterDevChoice.checked) parts.push("Dev Choice only");
             if (filterSupport.checked) parts.push("Has support link");
             return parts;
         }
@@ -465,11 +583,14 @@
             const tag = String(filterTag.value || "");
             const license = String(filterLicense.value || "");
             const compat = String(filterCompat.value || "").trim().toLowerCase();
+            const weeklyFreeOnly = Boolean(filterWeeklyFree.checked);
+            const freeOnly = Boolean(filterFree.checked);
             const featuredOnly = Boolean(filterFeatured.checked);
-            const devChoiceOnly = Boolean(filterDevChoice.checked);
             const supportOnly = Boolean(filterSupport.checked);
+            weeklyFreeSelection = getWeeklyFreeAssets(assets, 10);
+            weeklyFreeIds = new Set(weeklyFreeSelection.map((asset) => asset.id));
 
-            let filtered = assets.slice();
+            let filtered = weeklyFreeOnly ? weeklyFreeSelection.slice() : assets.slice();
 
             if (queryText) {
                 filtered = filtered.filter((asset) => asset.searchText.includes(queryText));
@@ -483,11 +604,11 @@
             if (compat) {
                 filtered = filtered.filter((asset) => String(asset.compatibility || "").toLowerCase().includes(compat));
             }
+            if (freeOnly) {
+                filtered = filtered.filter((asset) => asset.isFree);
+            }
             if (featuredOnly) {
                 filtered = filtered.filter((asset) => asset.featured);
-            }
-            if (devChoiceOnly) {
-                filtered = filtered.filter((asset) => asset.devChoice);
             }
             if (supportOnly) {
                 filtered = filtered.filter((asset) => Boolean(asset.supportUrl));
@@ -523,9 +644,12 @@
             const summaryParts = currentFilterSummary();
             const filtersActive = summaryParts.length > 0;
             resultsNote.classList.toggle("hidden", !filtersActive);
+            const separator = String.fromCharCode(183);
             activeFilters.textContent = filtersActive
                 ? `Showing ${filtered.length.toLocaleString()} of ${assets.length.toLocaleString()} assets. ${summaryParts.join(" · ")}`
                 : "Showing all approved assets.";
+
+            activeFilters.textContent = activeFilters.textContent.replace(/\u00c2\u00b7/g, separator);
 
             if (!filtered.length) {
                 emptyState.classList.remove("hidden");
@@ -534,7 +658,11 @@
             }
 
             grid.innerHTML = filtered.map(renderAssetCard).join("");
+            weeklyFreeGrid.innerHTML = weeklyFreeSelection.length
+                ? weeklyFreeSelection.map((asset) => renderAssetCard(asset)).join("")
+                : `<article class="surface p-5 text-sm text-gray-400 border border-white/10">No approved free assets are available yet.</article>`;
             hydrateMediaImages(grid).catch(() => {});
+            hydrateMediaImages(weeklyFreeGrid).catch(() => {});
         }
 
         async function getMediaUrl(mediaId) {
@@ -582,8 +710,9 @@
             filterTag.value = "";
             filterLicense.value = "";
             filterCompat.value = "";
+            filterWeeklyFree.checked = false;
+            filterFree.checked = false;
             filterFeatured.checked = false;
-            filterDevChoice.checked = false;
             filterSupport.checked = false;
             sortBy.value = "updated_desc";
             applyFilters();
@@ -612,13 +741,23 @@
         filterTag.addEventListener("change", applyFilters);
         filterLicense.addEventListener("change", applyFilters);
         filterCompat.addEventListener("input", applyFilters);
+        filterWeeklyFree.addEventListener("change", applyFilters);
+        filterFree.addEventListener("change", applyFilters);
         filterFeatured.addEventListener("change", applyFilters);
-        filterDevChoice.addEventListener("change", applyFilters);
         filterSupport.addEventListener("change", applyFilters);
 
         clearBtn.addEventListener("click", clearFilters);
         emptyClear.addEventListener("click", clearFilters);
         refreshBtn.addEventListener("click", subscribe);
+        jumpWeeklyFilter.addEventListener("click", () => {
+            filterWeeklyFree.checked = true;
+            applyFilters();
+            grid.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        if ((urlParams.get("view") || "").toLowerCase() === "weekly-free") {
+            filterWeeklyFree.checked = true;
+        }
 
         subscribe();
     </script>

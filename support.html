@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loom | Privacy Policy</title>
-    <meta name="description" content="Privacy Policy for Loom (Borborizo Development).">
+    <title>Loom | Support</title>
+    <meta name="description" content="Help and support for Loom accounts, publishing, moderation, and local setup.">
     <meta name="theme-color" content="#050507">
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,21 +12,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
-    <style>
-        .toc-link { display: block; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.22); color: rgba(255,255,255,.78); text-decoration: none; font-size: 13px; }
-        .toc-link:hover { border-color: rgba(255,121,198,.35); color: rgba(255,255,255,.92); }
-        .callout { border: 1px solid rgba(255,121,198,.22); background: linear-gradient(160deg, rgba(255,121,198,.14), rgba(0,0,0,.22)); border-radius: 18px; padding: 14px; color: rgba(255,255,255,.86); }
-    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     <div class="mesh-bg"></div>
 
     <header class="site-wrap shell-header">
         <a href="index.html" class="shell-brand">
             <img src="logo.png" alt="Loom">
             <div class="shell-brand-copy">
-                <div class="shell-brand-label">Legal</div>
-                <div class="shell-brand-title">Privacy</div>
+                <div class="shell-brand-label">Help Center</div>
+                <div class="shell-brand-title">Support</div>
             </div>
         </a>
         <nav class="shell-nav" aria-label="Primary">
@@ -37,178 +32,132 @@
             <a href="support.html" class="shell-link is-active"><i class="fas fa-life-ring"></i><span>Support</span></a>
         </nav>
         <div class="shell-actions">
-            <a href="terms.html" class="shell-pill"><i class="fas fa-scale-balanced"></i><span>Terms</span></a>
-            <a href="support.html" class="shell-pill"><i class="fas fa-envelope"></i><span>Contact</span></a>
+            <a href="guidelines.html" class="shell-pill"><i class="fas fa-book-open"></i><span>Guidelines</span></a>
+            <a href="privacy.html" class="shell-pill"><i class="fas fa-shield-halved"></i><span>Privacy</span></a>
         </div>
     </header>
 
-    <main class="site-wrap pb-12 space-y-6">
-        <section class="page-hero surface p-7 md:p-10">
-            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+    <main class="mx-auto w-full max-w-[1500px] px-4 md:px-6 pb-12 space-y-6">
+        <section class="page-hero rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl p-7 md:p-10">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
                 <div>
-                    <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Loom (Borborizo Development)</div>
-                    <h2 class="text-3xl md:text-4xl font-black italic uppercase tracking-tight">Privacy Policy</h2>
-                    <p class="mt-3 text-sm text-white/55">This policy explains what we collect, why we collect it, and the choices you have.</p>
+                    <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Support</div>
+                    <h2 class="mt-2 text-3xl md:text-4xl font-black italic uppercase tracking-tight">Need help with Loom?</h2>
+                    <p class="mt-3 text-sm md:text-base text-white/70 max-w-[80ch] leading-relaxed">
+                        This page covers the most common issues in the registry right now: account access, publishing, moderation, and running the site locally when Firebase pages fail from <code>file://</code>.
+                    </p>
                 </div>
-                <div class="flex flex-wrap gap-2 items-center">
-                    <span class="chip">Last updated: March 15, 2026</span>
-                    <a class="chip hover:border-pink-400/50 hover:text-white" href="#contact">Contact</a>
+                <div class="flex flex-wrap gap-3">
+                    <a href="upload.html" class="inline-flex items-center gap-3 rounded-2xl border border-pink-400/50 bg-pink-400/15 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white hover:bg-pink-400/25 hover:border-pink-400/70 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2">
+                        <i class="fas fa-cloud-arrow-up"></i><span>Publish Asset</span>
+                    </a>
+                    <a href="guidelines.html" class="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-black/20 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-white/90 hover:bg-white/5 hover:border-white/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2">
+                        <i class="fas fa-book-open"></i><span>Read Guidelines</span>
+                    </a>
                 </div>
             </div>
         </section>
 
         <section class="page-shortcuts">
-            <a href="terms.html" class="page-shortcut">
+            <a href="guidelines.html" class="page-shortcut">
                 <span>
-                    <strong>Read Terms</strong>
-                    <small>Pair the privacy policy with the service rules in one pass.</small>
+                    <strong>Publishing Rules</strong>
+                    <small>Jump to the moderation checklist if your issue is submission-related.</small>
                 </span>
                 <i class="fas fa-arrow-right text-white/45"></i>
             </a>
-            <a href="support.html" class="page-shortcut">
+            <a href="privacy.html" class="page-shortcut">
                 <span>
-                    <strong>Ask A Question</strong>
-                    <small>Use the help page if you need policy clarification.</small>
+                    <strong>Privacy + Terms</strong>
+                    <small>Open the legal pages for account, data, and policy questions.</small>
                 </span>
                 <i class="fas fa-arrow-right text-white/45"></i>
             </a>
             <a href="about.html" class="page-shortcut">
                 <span>
-                    <strong>Back To Product</strong>
-                    <small>Return to the non-legal overview after reading the policy pages.</small>
+                    <strong>Back To Overview</strong>
+                    <small>Go back to the higher-level explanation of how the registry works.</small>
                 </span>
                 <i class="fas fa-arrow-right text-white/45"></i>
             </a>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">
-            <aside class="surface p-6 h-fit lg:sticky lg:top-8 space-y-4">
-                <div>
-                    <div class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">On this page</div>
-                    <div class="mt-3 space-y-2">
-                        <a class="toc-link" href="#overview">Overview</a>
-                        <a class="toc-link" href="#data-we-collect">Information we collect</a>
-                        <a class="toc-link" href="#how-we-use">How we use information</a>
-                        <a class="toc-link" href="#sharing">How we share information</a>
-                        <a class="toc-link" href="#cookies">Cookies and local storage</a>
-                        <a class="toc-link" href="#retention">Data retention</a>
-                        <a class="toc-link" href="#your-rights">Your rights and choices</a>
-                        <a class="toc-link" href="#security">Security</a>
-                        <a class="toc-link" href="#children">Children</a>
-                        <a class="toc-link" href="#changes">Changes</a>
-                        <a class="toc-link" href="#contact">Contact</a>
-                    </div>
-                </div>
-
-            </aside>
-
-            <article class="surface p-7 md:p-10 legal-prose">
-                <h2 id="overview">Overview</h2>
-                <p>
-                    Loom (the "Service") is operated by Borborizo Development ("we", "us", or "our").
-                    This Privacy Policy describes how we collect, use, and share information when you use the Service.
-                </p>
-                <p>
-                    If you do not agree with this Privacy Policy, do not use the Service.
-                </p>
-
-                <h2 id="data-we-collect">Information We Collect</h2>
-                <h3>Information you provide</h3>
-                <ul>
-                    <li><strong>Account information:</strong> email address and authentication identifiers when you create an account or sign in.</li>
-                    <li><strong>Profile information:</strong> username, bio, avatar/banner URLs, and optional social links.</li>
-                    <li><strong>Content you upload:</strong> asset metadata (name, description, version, tags), images, media, and files you submit to the Service.</li>
-                    <li><strong>Social and community actions:</strong> friend requests, friend lists, blocks, and related messages or status fields you submit through the UI.</li>
-                    <li><strong>Support requests:</strong> the subject and message you send when you ask us for help or report an issue.</li>
-                </ul>
-
-                <h3>Information collected automatically</h3>
-                <ul>
-                    <li><strong>Usage and device data:</strong> interactions with the Service, and basic device/browser information that may be collected by our hosting, CDN, and analytics providers.</li>
-                    <li><strong>Log data:</strong> IP address, timestamps, and request information that may appear in server logs or provider logs.</li>
-                </ul>
-
-                <h3>Information from third parties</h3>
-                <p>
-                    The Service relies on third-party services and content delivery networks, which may receive information from your browser as part of providing their services.
-                    Examples may include:
-                </p>
-                <ul>
-                    <li><strong>Firebase (Google):</strong> authentication, database, and storage services.</li>
-                    <li><strong>CDNs:</strong> Tailwind CDN, Cloudflare (Font Awesome), and Google Fonts.</li>
-                    <li><strong>Avatar generation:</strong> Dicebear (used for identicon-style avatars when you do not set an avatar).</li>
-                </ul>
-
-                <h2 id="how-we-use">How We Use Information</h2>
-                <ul>
-                    <li>Provide, operate, and maintain the Service (accounts, profiles, uploads, discovery, and social features).</li>
-                    <li>Moderate and review content to keep the registry safe (including reviewing uploads and enforcing rules).</li>
-                    <li>Prevent fraud, abuse, and security incidents, and enforce our Terms of Service.</li>
-                    <li>Improve performance and user experience, including debugging and analytics.</li>
-                    <li>Communicate with you about updates, security notices, and important account-related messages.</li>
-                    <li>Respond to support requests and troubleshoot issues.</li>
-                </ul>
-
-                <h2 id="sharing">How We Share Information</h2>
-                <p>We may share information in the following circumstances:</p>
-                <ul>
-                    <li><strong>Service providers:</strong> with providers we use to operate the Service (for example, Firebase/Google and CDNs).</li>
-                    <li><strong>Legal and safety:</strong> to comply with law, respond to lawful requests, or protect the rights, safety, and security of the Service and users.</li>
-                    <li><strong>Public content:</strong> information you choose to make public (for example, your username/profile, and asset listings you publish) may be visible to other users or visitors.</li>
-                    <li><strong>Support and moderation:</strong> your support requests and related account/content details may be reviewed by authorized moderators/curators to respond and enforce our rules.</li>
-                    <li><strong>With your consent:</strong> when you explicitly agree to share information.</li>
-                </ul>
-
-                <h2 id="cookies">Cookies And Local Storage</h2>
-                <p>
-                    We and our providers may use cookies, local storage, or similar technologies to keep you signed in, remember preferences, and operate security features.
-                    You can control cookies through your browser settings, but some features may not work if cookies are disabled.
-                </p>
-
-                <h2 id="retention">Data Retention</h2>
-                <p>
-                    We retain information for as long as needed to provide the Service, comply with legal obligations, resolve disputes, and enforce our agreements.
-                    You can request deletion of your account data as described below.
-                </p>
-
-                <h2 id="your-rights">Your Rights And Choices</h2>
-                <ul>
-                    <li><strong>Access and update:</strong> you can update certain profile fields from within the Service.</li>
-                    <li><strong>Deletion:</strong> you can request account deletion by submitting a ticket through our <a href="support.html">Support</a> page.</li>
-                    <li><strong>Opt-out:</strong> if we offer marketing emails in the future, you will be able to opt out via an unsubscribe link or by contacting us.</li>
-                </ul>
-                <p>
-                    Depending on where you live, you may have additional rights (for example, under GDPR/UK GDPR or state privacy laws).
-                    If applicable, contact us and we will respond consistent with applicable law.
-                </p>
-
-                <h2 id="security">Security</h2>
-                <p>
-                    We use reasonable administrative, technical, and organizational safeguards to help protect information.
-                    No method of transmission or storage is completely secure, and we cannot guarantee absolute security.
-                </p>
-
-                <h2 id="children">Children</h2>
-                <p>
-                    The Service is not directed to children under 13 (or the minimum age required in your jurisdiction).
-                    If you believe a child has provided personal information, submit a ticket through our <a href="support.html">Support</a> page.
-                </p>
-
-                <h2 id="changes">Changes To This Policy</h2>
-                <p>
-                    We may update this Privacy Policy from time to time. We will update the "Last updated" date at the top of this page when changes are made.
-                </p>
-
-                <h2 id="contact">Contact</h2>
-                <p>
-                    If you have questions about this Privacy Policy, contact:
-                </p>
-                <ul>
-                    <li><strong>Borborizo Development</strong></li>
-                    <li>Support: <a href="support.html">support ticket form</a> (sign-in required)</li>
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <article class="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-xl p-7">
+                <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Accounts</div>
+                <h3 class="mt-2 text-xl font-black italic uppercase">Login and profile issues</h3>
+                <ul class="mt-4 space-y-3 text-sm text-white/70">
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Enable the right Firebase Auth providers if sign-in is failing.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>If profile data looks blank, check the matching <code>users/{uid}</code> document in Firestore.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Moderator-only links stay hidden unless the active user document has the right review or curation flags.</span></li>
                 </ul>
             </article>
-        </div>
+
+            <article class="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-xl p-7">
+                <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Publishing</div>
+                <h3 class="mt-2 text-xl font-black italic uppercase">Upload and release issues</h3>
+                <ul class="mt-4 space-y-3 text-sm text-white/70">
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Use direct image URLs or smaller files if previews are not generating correctly.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Fill out version, tag, summary, and compatibility so assets are easier to review and discover.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Featured and Dev Choice controls only appear when the signed-in account has curator access.</span></li>
+                </ul>
+            </article>
+
+            <article class="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-xl p-7">
+                <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">Moderation</div>
+                <h3 class="mt-2 text-xl font-black italic uppercase">Registry and review help</h3>
+                <ul class="mt-4 space-y-3 text-sm text-white/70">
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>New submissions should remain hidden until moderation fields mark them approved or public.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>If the review queue looks empty, verify reviewer access on the active user document.</span></li>
+                    <li class="flex gap-3"><span class="mt-0.5 text-pink-300"><i class="fas fa-circle-check"></i></span><span>Creator pages and discovery rails depend on approved documents being readable from Firestore.</span></li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6">
+            <article class="rounded-[28px] border border-white/10 bg-white/5 backdrop-blur-xl p-7 md:p-10">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Run locally</div>
+                <h3 class="mt-2 text-2xl font-black italic uppercase">If pages break from file://</h3>
+                <p class="mt-3 text-sm text-white/70 leading-relaxed max-w-[72ch]">
+                    Loom now includes local launch helpers. Firebase module pages can fail if you open the HTML files directly from disk, so use the included local server instead.
+                </p>
+                <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
+                        <div class="text-[10px] uppercase tracking-widest text-white/45 font-black">Step 1</div>
+                        <p class="mt-2 text-sm text-white/75">Open <code>launch-local.bat</code> or <code>launch-local.ps1</code>.</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
+                        <div class="text-[10px] uppercase tracking-widest text-white/45 font-black">Step 2</div>
+                        <p class="mt-2 text-sm text-white/75">Wait for the local server to start on <code>http://127.0.0.1:4173</code>.</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
+                        <div class="text-[10px] uppercase tracking-widest text-white/45 font-black">Step 3</div>
+                        <p class="mt-2 text-sm text-white/75">Open the site from the local server instead of double-clicking the HTML files.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-xl p-7">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-white/55 font-black">Quick links</div>
+                <div class="mt-4 grid grid-cols-1 gap-3">
+                    <a href="about.html" class="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white/80 hover:text-white hover:border-white/20 transition">
+                        <span>About Loom</span><i class="fas fa-arrow-right text-white/40"></i>
+                    </a>
+                    <a href="guidelines.html" class="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white/80 hover:text-white hover:border-white/20 transition">
+                        <span>Publishing Guidelines</span><i class="fas fa-arrow-right text-white/40"></i>
+                    </a>
+                    <a href="privacy.html" class="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white/80 hover:text-white hover:border-white/20 transition">
+                        <span>Privacy Policy</span><i class="fas fa-arrow-right text-white/40"></i>
+                    </a>
+                    <a href="terms.html" class="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white/80 hover:text-white hover:border-white/20 transition">
+                        <span>Terms of Service</span><i class="fas fa-arrow-right text-white/40"></i>
+                    </a>
+                </div>
+                <div class="mt-5 rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-white/65 leading-relaxed">
+                    This build does not ship a live support inbox yet. If you want direct support submissions next, the cleanest improvement is wiring this page to Firestore or a forms backend.
+                </div>
+            </article>
+        </section>
     </main>
 
     <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">

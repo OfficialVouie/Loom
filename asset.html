@@ -66,26 +66,56 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <header class="site-wrap py-6 flex justify-between items-center gap-4">
-        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Assets</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">View</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Assets</div>
+                <div class="shell-brand-title">View Asset</div>
             </div>
         </a>
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Browse</a>
-            <button id="back-btn" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">Back</button>
-            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
-            <a id="review-link" href="review.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-yellow-200 hover:text-white hidden">Review</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link is-active"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+        </nav>
+        <div class="shell-actions">
+            <button id="back-btn" class="shell-pill" type="button"><i class="fas fa-arrow-left"></i><span>Back</span></button>
+            <a href="friends.html" class="shell-pill"><i class="fas fa-user-friends"></i><span>Friends</span></a>
+            <a id="review-link" href="review.html" class="shell-pill hidden"><i class="fas fa-shield-halved"></i><span>Review</span></a>
         </div>
     </header>
 
-    <main class="site-wrap pb-12">
+    <main class="site-wrap pb-12 page-stack">
+        <section class="page-shortcuts">
+            <a href="profile.html" class="page-shortcut">
+                <span>
+                    <strong>View Creator</strong>
+                    <small>Jump from this release straight to the creator profile.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="assets.html" class="page-shortcut">
+                <span>
+                    <strong>Browse More Assets</strong>
+                    <small>Go back to the full registry without losing this detail view.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="support.html" class="page-shortcut">
+                <span>
+                    <strong>Need Help?</strong>
+                    <small>Open support if downloads, files, or setup steps are giving you trouble.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+        </section>
+
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
             <section class="space-y-8">
-                <article class="hero-gradient rounded-[34px] p-7 md:p-10">
+                <article class="page-hero hero-gradient rounded-[34px] p-7 md:p-10">
                     <div class="flex items-start gap-5">
                         <img id="asset-icon" class="asset-icon" src="" alt="Asset icon">
                         <div class="flex-grow">
@@ -196,7 +226,10 @@
                         </div>
                         <div class="progress-wrap"><div id="owner-progress-bar" class="progress-bar"></div></div>
                         <p id="owner-status" class="text-xs text-gray-500">No pending changes.</p>
-                        <button id="save-owner-edits" class="w-full bg-white text-black font-black py-3 rounded-xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">Save Asset Changes</button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <button id="save-owner-edits" class="w-full bg-white text-black font-black py-3 rounded-xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">Save Asset Changes</button>
+                            <button id="delete-owner-asset" class="w-full border border-red-500/40 bg-red-500/10 text-red-200 font-black py-3 rounded-xl hover:bg-red-500/20 transition uppercase text-xs tracking-widest" type="button">Delete Asset</button>
+                        </div>
                     </form>
                 </article>
             </section>
@@ -323,11 +356,13 @@
     </footer>
 
     <script type="module">
+        import { queueAssetDiscordAnnouncement } from "./discord-sync.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             addDoc,
             collection,
+            deleteDoc,
             doc,
             getDoc,
             getDocs,
@@ -364,6 +399,7 @@
         const assetFilesList = document.getElementById("asset-files-list");
         const reviewLink = document.getElementById("review-link");
         const editAssetFile = document.getElementById("edit-asset-file");
+        const deleteOwnerAssetBtn = document.getElementById("delete-owner-asset");
         const resetIconBtn = document.getElementById("reset-icon-btn");
         const clearGalleryBtn = document.getElementById("clear-gallery-btn");
         const params = new URLSearchParams(window.location.search);
@@ -754,6 +790,11 @@
             btn.disabled = isSaving;
             btn.classList.toggle("opacity-60", isSaving);
             btn.classList.toggle("cursor-not-allowed", isSaving);
+            if (deleteOwnerAssetBtn) {
+                deleteOwnerAssetBtn.disabled = isSaving;
+                deleteOwnerAssetBtn.classList.toggle("opacity-60", isSaving);
+                deleteOwnerAssetBtn.classList.toggle("cursor-not-allowed", isSaving);
+            }
         }
 
         function escapeHtml(value = "") {
@@ -812,6 +853,12 @@
                     docs: String(raw.socials?.docs || "")
                 },
                 moderationStatus: String(raw.moderationStatus || "approved"),
+                discordAnnouncementStatus: String(raw.discordAnnouncementStatus || ""),
+                discordAnnouncementEventType: String(raw.discordAnnouncementEventType || ""),
+                discordAnnouncementAnnouncedAt: raw.discordAnnouncementAnnouncedAt || "",
+                discordReleaseAnnouncedAt: raw.discordReleaseAnnouncedAt || raw.discordAnnouncementAnnouncedAt || "",
+                discordReleaseMessageId: String(raw.discordReleaseMessageId || raw.discordAnnouncementMessageId || ""),
+                discordLastAnnouncedVersion: String(raw.discordLastAnnouncedVersion || ""),
                 featured: Boolean(raw.featured),
                 devChoice: Boolean(raw.devChoice)
             };
@@ -1156,6 +1203,87 @@
             }
         }
 
+        async function deleteDocumentsFromSnapshot(snapshot) {
+            for (const docSnap of snapshot.docs) {
+                await deleteDoc(docSnap.ref);
+            }
+        }
+
+        async function deleteOwnedAssetFiles() {
+            const filesSnap = await getDocs(query(collection(db, "assetFiles"), where("assetId", "==", assetId)));
+            for (const fileSnap of filesSnap.docs) {
+                const chunksSnap = await getDocs(query(collection(db, "assetFileChunks"), where("fileId", "==", fileSnap.id)));
+                await deleteDocumentsFromSnapshot(chunksSnap);
+                await deleteDoc(fileSnap.ref);
+            }
+        }
+
+        async function deleteOwnedAssetMedia() {
+            const mediaIds = new Set([
+                currentAsset?.iconMediaId || "",
+                ...(Array.isArray(currentAsset?.galleryMediaIds) ? currentAsset.galleryMediaIds : [])
+            ]);
+
+            for (const mediaId of mediaIds) {
+                if (!String(mediaId || "").trim()) continue;
+                try {
+                    await deleteDoc(doc(db, "media", mediaId));
+                } catch (err) {
+                    console.warn(`Unable to delete media ${mediaId}:`, err);
+                }
+            }
+        }
+
+        async function deleteAssetDownloadRecords() {
+            const downloadsSnap = await getDocs(query(collection(db, "assetDownloads"), where("assetId", "==", assetId)));
+            await deleteDocumentsFromSnapshot(downloadsSnap);
+        }
+
+        async function deletePendingDiscordQueueRecord() {
+            try {
+                await deleteDoc(doc(db, "discordAssetSyncQueue", assetId));
+            } catch (err) {
+                console.warn("Unable to delete Discord sync queue record:", err);
+            }
+        }
+
+        async function deleteCurrentAsset() {
+            if (!currentUser || !currentAsset || currentUser.uid !== currentAsset.creatorId) {
+                return;
+            }
+
+            const confirmed = prompt(
+                `Type DELETE to permanently remove "${currentAsset.name}" from Loom.\n\nThis removes the website listing, stored files, media, and pending sync records. Existing Discord posts are not removed automatically.`
+            );
+            if (confirmed !== "DELETE") {
+                setOwnerStatus("Asset deletion canceled.", "text-gray-400");
+                return;
+            }
+
+            try {
+                setOwnerSaving(true);
+                setOwnerProgress(100);
+                setOwnerStatus("Deleting asset and related records...", "text-red-300");
+
+                await deleteAssetDownloadRecords();
+                await deletePendingDiscordQueueRecord();
+                await deleteOwnedAssetFiles();
+                await deleteOwnedAssetMedia();
+                await deleteDoc(assetRef);
+
+                setOwnerStatus("Asset deleted.", "text-green-400");
+                setStatus("Asset deleted. Redirecting to your profile...", "text-green-400");
+                window.location.href = "profile.html";
+            } catch (err) {
+                console.error("Asset deletion failed:", err);
+                setOwnerStatus("Delete failed. Check Firestore rules.", "text-red-400");
+                setStatus("Failed to delete asset.", "text-red-400");
+            } finally {
+                setOwnerSaving(false);
+                setTimeout(() => setOwnerProgress(0), 600);
+            }
+        }
+
         document.getElementById("back-btn").addEventListener("click", () => {
             if (window.history.length > 1) {
                 history.back();
@@ -1213,6 +1341,7 @@
         document.getElementById("edit-gallery-files")?.addEventListener("change", (event) => {
             if (event.target.files?.length) clearGalleryRequested = false;
         });
+        deleteOwnerAssetBtn?.addEventListener("click", deleteCurrentAsset);
 
         ownerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -1293,6 +1422,11 @@
                 const creatorName = creatorProfileSnap.exists()
                     ? normalizeUsername(creatorProfileSnap.data().username, normalizeUsername(currentAsset.creatorName, "unknown"))
                     : normalizeUsername(currentAsset.creatorName, "unknown");
+                const shouldBackfillLastVersion = Boolean(
+                    currentAsset?.discordReleaseAnnouncedAt
+                    && !currentAsset?.discordLastAnnouncedVersion
+                    && currentAsset?.version
+                );
 
                 const updates = {
                     name,
@@ -1321,6 +1455,7 @@
                     devChoice: canCurate ? document.getElementById("edit-dev-choice").checked : Boolean(currentAsset.devChoice),
                     creatorName,
                     updatedAt: serverTimestamp(),
+                    ...(shouldBackfillLastVersion ? { discordLastAnnouncedVersion: currentAsset.version } : {}),
                     ...(canCurate ? {} : { moderationStatus: "pending" })
                 };
 
@@ -1332,7 +1467,48 @@
                     await loadAssetFiles();
                 }
 
-                currentAsset = normalizeAsset({ ...currentAsset, ...updates });
+                const mergedAsset = {
+                    ...currentAsset,
+                    ...updates,
+                    moderationStatus: canCurate ? (currentAsset?.moderationStatus || "approved") : "pending"
+                };
+                let ownerNotice = canCurate ? "Asset updated." : "Asset changes saved and sent for review.";
+
+                if (canCurate) {
+                    try {
+                        const syncResult = await queueAssetDiscordAnnouncement({
+                            db,
+                            assetId,
+                            assetData: mergedAsset,
+                            actorId: currentUser.uid
+                        });
+
+                    if (syncResult?.queued && syncResult?.directResult?.ok && !syncResult?.directResult?.deduped) {
+                        ownerNotice = syncResult.eventType === "update"
+                            ? "Asset updated and posted to the Discord updates channel."
+                            : "Asset saved and posted to the Discord releases channel.";
+                        mergedAsset.discordAnnouncementStatus = "announced";
+                        mergedAsset.discordAnnouncementEventType = syncResult.eventType;
+                    } else if (syncResult?.queued && syncResult?.directResult?.deduped) {
+                        ownerNotice = "Asset updated. Discord already has this listing.";
+                        mergedAsset.discordAnnouncementStatus = "duplicate";
+                        mergedAsset.discordAnnouncementEventType = syncResult.eventType;
+                    } else if (syncResult?.queued) {
+                        ownerNotice = syncResult.eventType === "update"
+                            ? "Asset updated and queued for the Discord updates channel."
+                            : "Asset saved and queued for the Discord releases channel.";
+                        mergedAsset.discordAnnouncementStatus = "pending";
+                        mergedAsset.discordAnnouncementEventType = syncResult.eventType;
+                    } else if (syncResult?.skipped && syncResult.reason === "version-already-announced") {
+                        ownerNotice = "Asset updated. That version was already announced on Discord.";
+                        }
+                    } catch (syncError) {
+                        console.error("Discord update queue failed:", syncError);
+                        ownerNotice = "Asset updated, but Discord sync queue failed.";
+                    }
+                }
+
+                currentAsset = normalizeAsset(mergedAsset);
                 await renderAsset(currentAsset, creatorName);
                 fillOwnerForm(currentAsset);
                 document.getElementById("edit-icon-file").value = "";
@@ -1341,8 +1517,8 @@
                 resetIconRequested = false;
                 clearGalleryRequested = false;
 
-                setOwnerStatus("Asset updated.", "text-green-400");
-                setStatus("Asset details updated by owner.", "text-green-400");
+                setOwnerStatus(ownerNotice, "text-green-400");
+                setStatus(ownerNotice, "text-green-400");
             } catch (err) {
                 console.error("Failed to save asset edits:", err);
                 setOwnerStatus("Save failed. Check Firestore rules.", "text-red-400");

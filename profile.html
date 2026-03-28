@@ -71,18 +71,22 @@
         </div>
     </div>
 
-    <header class="site-wrap py-6 flex justify-between items-center gap-4">
-        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Account</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Profile</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Account</div>
+                <div class="shell-brand-title">Profile</div>
             </div>
         </a>
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Home</a>
-            <a href="upload.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Upload</a>
-            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+        </nav>
+        <div class="shell-actions">
             <div class="relative">
                 <button id="notif-trigger" class="glass h-12 px-4 rounded-full flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="notif-menu" aria-label="Open notifications">
                     <i class="fas fa-bell"></i>
@@ -116,7 +120,31 @@
         </div>
     </header>
 
-    <main class="site-wrap pb-10">
+    <main class="site-wrap pb-10 page-stack">
+        <section class="page-shortcuts">
+            <a href="upload.html" class="page-shortcut">
+                <span>
+                    <strong>Publish From Here</strong>
+                    <small>Jump into the publish flow once your profile is ready.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="developers.html" class="page-shortcut">
+                <span>
+                    <strong>See Creator Directory</strong>
+                    <small>Compare your public page with the rest of the creator network.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="friends.html" class="page-shortcut">
+                <span>
+                    <strong>Manage Network</strong>
+                    <small>Handle follows, requests, and blocks without leaving the account flow.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+        </section>
+
         <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-8 lg:gap-12 items-start">
             <aside class="space-y-6 order-2 lg:order-1 lg:sticky lg:top-8 self-start">
                 <div class="glass rounded-[24px] p-6 space-y-6 text-center">
@@ -150,7 +178,7 @@
             </aside>
 
             <section class="space-y-8 order-1 lg:order-2">
-                <article class="glass rounded-[30px] overflow-hidden">
+                <article class="page-hero glass rounded-[30px] overflow-hidden">
                     <div id="profile-banner" class="profile-banner"></div>
                     <div class="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
                         <div class="w-40 h-40 rounded-[30px] overflow-hidden border border-white/10 -mt-16 bg-black/40">

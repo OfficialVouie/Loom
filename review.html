@@ -16,23 +16,28 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <header class="site-wrap py-6 flex items-center justify-between gap-4">
-        <a href="index.html" class="flex items-center gap-4 text-inherit no-underline">
-            <img src="logo.png" class="w-9 h-9 object-contain" alt="Loom">
-            <div class="leading-tight">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Curator</div>
-                <h1 class="text-xl font-extrabold tracking-tighter uppercase italic leading-none">Review</h1>
+    <header class="site-wrap shell-header">
+        <a href="index.html" class="shell-brand">
+            <img src="logo.png" alt="Loom">
+            <div class="shell-brand-copy">
+                <div class="shell-brand-label">Curator</div>
+                <div class="shell-brand-title">Review Queue</div>
             </div>
         </a>
-        <div class="flex items-center gap-3">
-            <a href="friends.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Friends</a>
-            <a href="profile.html" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white">Profile</a>
-            <button id="signout-btn" class="glass px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-gray-300 hover:text-white" type="button">Sign Out</button>
+        <nav class="shell-nav" aria-label="Primary">
+            <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
+            <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
+            <a href="assets.html?view=weekly-free" class="shell-link"><i class="fas fa-gift"></i><span>Weekly Free</span></a>
+            <a href="upload.html" class="shell-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
+            <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
+        </nav>
+        <div class="shell-actions">
+            <button id="signout-btn" class="shell-pill" type="button"><i class="fas fa-right-from-bracket"></i><span>Sign Out</span></button>
         </div>
     </header>
 
     <main class="site-wrap pb-12 space-y-6">
-        <section class="glass rounded-[28px] p-7">
+        <section class="page-hero glass rounded-[28px] p-7">
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl font-black italic uppercase tracking-tight">Review Queue</h2>
@@ -42,6 +47,30 @@
                     <span id="access-chip" class="chip">Checking access...</span>
                 </div>
             </div>
+        </section>
+
+        <section class="page-shortcuts">
+            <a href="upload.html" class="page-shortcut">
+                <span>
+                    <strong>Open Publish</strong>
+                    <small>Cross-check what creators currently see in the submission flow.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="support.html" class="page-shortcut">
+                <span>
+                    <strong>Moderation Notes</strong>
+                    <small>Use support and guideline pages as the shared policy reference.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
+            <a href="profile.html" class="page-shortcut">
+                <span>
+                    <strong>Back To Account</strong>
+                    <small>Jump out of the queue without losing your place in the wider site flow.</small>
+                </span>
+                <i class="fas fa-arrow-right text-white/45"></i>
+            </a>
         </section>
 
         <section id="no-access" class="glass rounded-[28px] p-7 hidden">
@@ -175,6 +204,7 @@
     </footer>
 
     <script type="module">
+        import { queueAssetDiscordAnnouncementById } from "./discord-sync.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
@@ -354,10 +384,46 @@
             const needsReason = status === "rejected";
             const reason = needsReason ? (prompt("Reason (optional):") || "") : "";
             try {
-                if (kind === "asset") await markAsset(id, status, reason);
+                let reviewNotice = "";
+
+                if (kind === "asset") {
+                    await markAsset(id, status, reason);
+
+                    if (status === "approved") {
+                        try {
+                            const syncResult = await queueAssetDiscordAnnouncementById({
+                                db,
+                                assetId: id,
+                                actorId: auth.currentUser?.uid || ""
+                            });
+
+                    if (syncResult?.queued && syncResult?.directResult?.ok && !syncResult?.directResult?.deduped) {
+                        reviewNotice = syncResult.eventType === "update"
+                            ? "Asset approved and posted to the Discord updates channel."
+                            : "Asset approved and posted to the Discord releases channel.";
+                    } else if (syncResult?.queued && syncResult?.directResult?.deduped) {
+                        reviewNotice = "Asset approved. Discord already has this listing.";
+                    } else if (syncResult?.queued) {
+                        reviewNotice = syncResult.eventType === "update"
+                            ? "Asset approved and queued for the Discord updates channel."
+                            : "Asset approved and queued for the Discord releases channel.";
+                    } else if (syncResult?.skipped && syncResult.reason === "announced") {
+                        reviewNotice = "Asset approved. Discord already has this listing.";
+                    } else if (syncResult?.skipped && syncResult.reason === "version-already-announced") {
+                                reviewNotice = "Asset approved. That version was already announced on Discord.";
+                            }
+                        } catch (syncError) {
+                            console.error("Discord announcement queue failed:", syncError);
+                            reviewNotice = "Asset approved, but Discord sync queue failed.";
+                        }
+                    }
+                }
                 if (kind === "media") await markMedia(id, status, reason);
                 if (kind === "file") await markFile(id, status, reason);
                 await loadQueue();
+                if (reviewNotice) {
+                    alert(reviewNotice);
+                }
             } catch (err) {
                 console.error("Review action failed:", err);
                 alert("Unable to update review status. Check Firestore rules.");
