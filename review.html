@@ -12,15 +12,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
+    <link rel="stylesheet" href="workflow.css">
 </head>
-<body>
+<body class="workflow-page">
     <div class="mesh-bg"></div>
 
     <header class="site-wrap shell-header">
         <a href="index.html" class="shell-brand">
             <img src="logo.png" alt="Loom">
             <div class="shell-brand-copy">
-                <div class="shell-brand-label">Curator</div>
+                <div class="shell-brand-label">Curator Workspace</div>
                 <div class="shell-brand-title">Review Queue</div>
             </div>
         </a>
@@ -32,7 +33,7 @@
             <a href="support.html" class="shell-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
         </nav>
         <div class="shell-actions">
-            <button id="signout-btn" class="shell-pill" type="button"><i class="fas fa-right-from-bracket"></i><span>Sign Out</span></button>
+            <button id="signout-btn" class="shell-pill hidden" type="button"><i class="fas fa-right-from-bracket"></i><span>Sign Out</span></button>
         </div>
     </header>
 
@@ -75,7 +76,7 @@
 
         <section id="no-access" class="glass rounded-[28px] p-7 hidden">
             <h3 class="text-lg font-black uppercase tracking-[0.12em]">No Access</h3>
-            <p class="text-sm text-gray-400 mt-3">This page requires curator permission (`users/{uid}.canCurate`).</p>
+            <p class="text-sm text-gray-400 mt-3">Sign in with a curator-enabled account (`users/{uid}.canCurate`) to use the review queue.</p>
         </section>
 
         <section id="queue" class="grid grid-cols-1 xl:grid-cols-3 gap-6 hidden">
@@ -436,10 +437,12 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
+                signoutBtn.classList.add("hidden");
                 accessChip.textContent = "Sign in required";
                 setAccess(false);
                 return;
             }
+            signoutBtn.classList.remove("hidden");
             try {
                 const snap = await getDoc(doc(db, "users", user.uid));
                 const allowed = snap.exists() && snap.data().canCurate === true;

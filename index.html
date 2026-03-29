@@ -13,29 +13,1104 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
     <style>
-        .asset-card { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.35)); transition: 0.2s; }
-        .asset-card:hover { transform: translateY(-2px); border-color: rgba(255, 121, 198, 0.35); }
-        .creator-card { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 121, 198, 0.06)); transition: 0.2s; }
-        .creator-card:hover { transform: translateY(-2px); border-color: rgba(255, 121, 198, 0.35); }
-        #auth-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
-        #auth-modal.open { display: flex; }
-        .auth-card { background: var(--surface-strong); border: 1px solid var(--border); width: 100%; max-width: 400px; border-radius: var(--radius-xl); padding: 2rem; position: relative; }
+        body.page-index .workspace-bar {
+            width: min(1520px, calc(100% - 2.4rem));
+            margin-top: 0.4rem;
+            margin-bottom: 1.7rem;
+            padding: 0 0 1.5rem;
+            border: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+
+        body.page-index .workspace-title {
+            font-size: clamp(2rem, 3vw, 2.85rem);
+        }
+
+        body.page-index .workspace-summary {
+            max-width: 72ch;
+        }
+
+        body.page-index .workspace-action {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: transparent;
+        }
+
+        body.site-frame-ready.page-index .workspace-bar {
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 1.35rem;
+        }
+
+        body.page-index #site-footer section[aria-label="Loom footer call to action"] {
+            border: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0;
+            padding: 2rem 0 1.4rem;
+            background: none;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+
+        body.page-index #site-footer section[aria-label="Loom footer call to action"]::before {
+            inset: 0 auto auto 0;
+            width: 180px;
+            height: 1px;
+            opacity: 1;
+            background: linear-gradient(90deg, rgba(255, 121, 198, 0.95), transparent);
+        }
+
+        .home-flow {
+            display: grid;
+            gap: 3.4rem;
+        }
+
+        .home-intro {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+            gap: 2.6rem;
+            padding: 2.2rem 0 2.8rem;
+        }
+
+        .home-intro::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                radial-gradient(circle at 14% 18%, rgba(255, 121, 198, 0.18), transparent 34%),
+                radial-gradient(circle at 88% 28%, rgba(122, 162, 255, 0.14), transparent 32%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 56%);
+            pointer-events: none;
+        }
+
+        .home-intro > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-intro-copy {
+            min-width: 0;
+            padding-right: 0.5rem;
+        }
+
+        .home-intro-label,
+        .home-search-label,
+        .home-stream-label {
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .home-intro-label,
+        .home-stream-label {
+            color: rgba(255, 121, 198, 0.92);
+        }
+
+        .home-search-label {
+            color: rgba(248, 248, 242, 0.54);
+        }
+
+        .home-intro-title {
+            margin: 0.55rem 0 0;
+            max-width: 10.5ch;
+            font-size: clamp(3rem, 6vw, 6.2rem);
+            line-height: 0.9;
+            letter-spacing: -0.06em;
+            text-transform: uppercase;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .home-intro-summary {
+            margin: 1.2rem 0 0;
+            max-width: 66ch;
+            color: rgba(248, 248, 242, 0.72);
+            font-size: 1.02rem;
+            line-height: 1.72;
+        }
+
+        .home-intro-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.5rem;
+        }
+
+        .home-scene-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem 1.25rem;
+            margin-top: 1.7rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-scene-link,
+        .home-stream-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            color: rgba(248, 248, 242, 0.84);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .home-scene-link:hover,
+        .home-stream-link:hover {
+            color: rgba(255, 255, 255, 0.98);
+        }
+
+        .home-intro-side {
+            display: grid;
+            gap: 1.5rem;
+            align-content: start;
+            padding-left: 2rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-search-stack {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .home-search-note {
+            margin: 0;
+            color: rgba(248, 248, 242, 0.58);
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .home-metric-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-metric-item {
+            min-width: 0;
+        }
+
+        .home-metric-value {
+            font-size: clamp(1.6rem, 3vw, 2.45rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+        }
+
+        .home-metric-label {
+            margin-top: 0.35rem;
+            color: rgba(248, 248, 242, 0.48);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .home-guides {
+            display: grid;
+            gap: 0;
+        }
+
+        .home-guide {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: start;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .home-guide:first-child {
+            border-top: 0;
+        }
+
+        .home-guide:hover {
+            color: rgba(255, 255, 255, 0.98);
+            transform: translateX(6px);
+        }
+
+        .home-guide i {
+            margin-top: 0.2rem;
+            color: rgba(255, 121, 198, 0.82);
+        }
+
+        .home-guide-label {
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .home-guide-copy {
+            margin: 0.35rem 0 0;
+            color: rgba(248, 248, 242, 0.56);
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .home-streams {
+            display: grid;
+            gap: 2.8rem;
+        }
+
+        .home-stream-section {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+            gap: 2rem;
+            align-items: start;
+            padding-top: 1.75rem;
+        }
+
+        .home-stream-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .home-stream-section::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 121, 198, 0.95), transparent);
+        }
+
+        .home-stream-section:nth-child(2n)::after {
+            background: linear-gradient(90deg, rgba(122, 162, 255, 0.95), transparent);
+        }
+
+        .home-stream-intro {
+            position: sticky;
+            top: 6.25rem;
+            align-self: start;
+            min-width: 0;
+        }
+
+        .home-stream-title {
+            margin: 0.5rem 0 0;
+            font-size: clamp(1.7rem, 2.7vw, 2.8rem);
+            line-height: 0.94;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .home-stream-copy {
+            margin: 0.9rem 0 0;
+            color: rgba(248, 248, 242, 0.66);
+            font-size: 0.92rem;
+            line-height: 1.68;
+        }
+
+        .home-stream-meta {
+            margin-top: 1rem;
+            color: rgba(248, 248, 242, 0.45);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .home-stream-link {
+            margin-top: 1rem;
+        }
+
+        .home-search-stage .home-stream-intro {
+            position: static;
+        }
+
+        .home-release-rail {
+            display: grid;
+            gap: 0;
+            min-width: 0;
+        }
+
+        .home-empty-state {
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(248, 248, 242, 0.58);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .asset-card {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem 1.5rem;
+            align-items: center;
+            padding: 1.2rem 0;
+            color: inherit;
+            text-decoration: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: transparent;
+        }
+
+        .asset-card:hover {
+            transform: translateX(6px);
+        }
+
+        .asset-card:hover .asset-card-art {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 34px rgba(0, 0, 0, 0.32);
+        }
+
+        .asset-card-main {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 1rem;
+            align-items: start;
+            min-width: 0;
+        }
+
+        .asset-card-art {
+            width: 74px;
+            height: 74px;
+            display: grid;
+            place-items: center;
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at 30% 25%, rgba(255, 121, 198, 0.2), transparent 56%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.24));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .asset-card-art img {
+            width: 56px;
+            height: 56px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .asset-card-copy,
+        .asset-card-head-copy {
+            min-width: 0;
+        }
+
+        .asset-card-copy {
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .asset-card-overline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            align-items: center;
+        }
+
+        .asset-card-tag,
+        .asset-card-version {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .asset-card-tag {
+            color: rgba(255, 121, 198, 0.88);
+        }
+
+        .asset-card-version {
+            color: rgba(248, 248, 242, 0.44);
+        }
+
+        .asset-card-title {
+            margin: 0.32rem 0 0;
+            font-size: 1.22rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-transform: lowercase;
+        }
+
+        .asset-card-description {
+            margin: 0;
+            max-width: 62ch;
+            color: rgba(248, 248, 242, 0.68);
+            font-size: 0.94rem;
+            line-height: 1.68;
+        }
+
+        .asset-card-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        .asset-card-side {
+            display: grid;
+            gap: 0.9rem;
+            min-width: 190px;
+            justify-items: end;
+            text-align: right;
+        }
+
+        .asset-card-creator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-width: 0;
+            color: rgba(248, 248, 242, 0.72);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .asset-card-creator img {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            object-fit: cover;
+        }
+
+        .asset-card-creator span {
+            max-width: 132px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .asset-card-stats strong {
+            display: block;
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+
+        .asset-card-stats span {
+            display: block;
+            margin-top: 0.22rem;
+            color: rgba(248, 248, 242, 0.44);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .creator-card {
+            display: block;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: inherit;
+            text-decoration: none;
+            background: transparent;
+        }
+
+        .creator-card:hover {
+            transform: translateX(6px);
+        }
+
+        .home-release-rail > .asset-card:first-child,
+        .home-release-rail > .creator-card:first-child,
+        .home-release-rail > .home-empty-state:first-child,
+        #search-grid > .asset-card:first-child,
+        #search-grid > .creator-card:first-child,
+        #search-grid > .home-empty-state:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .auth-card { max-width: 460px; }
+
+        @media (max-width: 1100px) {
+            .home-intro,
+            .home-stream-section {
+                grid-template-columns: 1fr;
+            }
+
+            .home-intro-side {
+                padding-left: 0;
+                border-left: 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding-top: 1.4rem;
+            }
+
+            .home-stream-intro,
+            .home-search-stage .home-stream-intro {
+                position: static;
+            }
+        }
+
+        @media (max-width: 760px) {
+            body.page-index .workspace-bar {
+                width: min(1520px, calc(100% - 1rem));
+                margin-bottom: 1.2rem;
+                padding-bottom: 1.2rem;
+            }
+
+            body.page-index #site-footer section[aria-label="Loom footer call to action"] {
+                padding-top: 1.5rem;
+            }
+
+            .home-flow {
+                gap: 2.6rem;
+            }
+
+            .home-intro {
+                gap: 1.8rem;
+                padding: 1.8rem 0 2rem;
+            }
+
+            .home-intro-title {
+                font-size: clamp(2.4rem, 11vw, 4rem);
+            }
+
+            .home-metric-strip {
+                grid-template-columns: 1fr;
+                gap: 0.85rem;
+            }
+
+            .asset-card,
+            .asset-card-main {
+                grid-template-columns: 1fr;
+            }
+
+            .asset-card-side {
+                min-width: 0;
+                justify-items: start;
+                text-align: left;
+            }
+        }
+
+        body.page-index .workspace-bar {
+            display: none;
+        }
+
+        body.site-frame-ready.page-index .site-frame {
+            width: min(1720px, calc(100% - 1.4rem));
+            grid-template-columns: 1fr;
+            gap: 0.95rem;
+            margin-top: 0.85rem;
+        }
+
+        body.site-frame-ready.page-index .site-sidebar {
+            position: static;
+            top: auto;
+        }
+
+        body.site-frame-ready.page-index .site-main-column {
+            gap: 0.95rem;
+        }
+
+        body.site-frame-ready.page-index .shell-header {
+            min-height: 0;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem 1.15rem;
+            border-radius: 30px;
+            background:
+                radial-gradient(circle at 14% 18%, rgba(255, 121, 198, 0.14), transparent 32%),
+                radial-gradient(circle at 86% 24%, rgba(122, 162, 255, 0.14), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.26)),
+                rgba(8, 8, 11, 0.92);
+            box-shadow: 0 22px 58px rgba(0, 0, 0, 0.36);
+        }
+
+        body.site-frame-ready.page-index .shell-sidebar-meta {
+            display: none;
+        }
+
+        body.site-frame-ready.page-index .shell-nav {
+            justify-content: center;
+            gap: 0.55rem;
+        }
+
+        body.site-frame-ready.page-index .shell-actions {
+            justify-content: flex-end;
+        }
+
+        .home-canvas {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .home-stage {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1.16fr) minmax(330px, 0.84fr);
+            gap: 2.2rem;
+            padding: 1.9rem 0 2.35rem;
+        }
+
+        .home-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                radial-gradient(circle at 18% 10%, rgba(255, 121, 198, 0.22), transparent 32%),
+                radial-gradient(circle at 88% 25%, rgba(122, 162, 255, 0.18), transparent 30%),
+                linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 42%, rgba(255, 255, 255, 0.02));
+            pointer-events: none;
+        }
+
+        .home-stage-copy,
+        .home-stage-radar {
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+        }
+
+        .home-stage-copy {
+            padding-top: 0.4rem;
+        }
+
+        .home-stage-kicker,
+        .home-search-dock-label,
+        .home-section-marker,
+        .home-band-label,
+        .home-panorama-label {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+
+        .home-stage-kicker,
+        .home-band-label,
+        .home-panorama-label {
+            color: rgba(255, 121, 198, 0.92);
+        }
+
+        .home-search-dock-label,
+        .home-section-marker {
+            color: rgba(248, 248, 242, 0.52);
+        }
+
+        .home-stage-title {
+            margin: 0.6rem 0 0;
+            max-width: 9.8ch;
+            font-size: clamp(3.5rem, 7vw, 7.2rem);
+            line-height: 0.86;
+            letter-spacing: -0.07em;
+            text-transform: uppercase;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .home-stage-summary {
+            margin: 1.25rem 0 0;
+            max-width: 66ch;
+            color: rgba(248, 248, 242, 0.72);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .home-stage-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.55rem;
+        }
+
+        .home-stage-radar {
+            display: grid;
+            gap: 1.4rem;
+            align-content: start;
+            padding: 0.55rem 0 0 2rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-search-dock {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .home-search-dock-copy {
+            margin: 0;
+            color: rgba(248, 248, 242, 0.58);
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .home-stat-ribbon {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            padding: 0.95rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-stat-node {
+            min-width: 0;
+        }
+
+        .home-stat-number {
+            font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+        }
+
+        .home-stat-text {
+            margin-top: 0.35rem;
+            color: rgba(248, 248, 242, 0.46);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .home-signal-list {
+            display: grid;
+            gap: 0;
+        }
+
+        .home-signal {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: start;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .home-signal:first-child {
+            border-top: 0;
+        }
+
+        .home-signal:hover {
+            transform: translateX(8px);
+            color: rgba(255, 255, 255, 0.98);
+        }
+
+        .home-signal i {
+            margin-top: 0.2rem;
+            color: rgba(255, 121, 198, 0.82);
+        }
+
+        .home-signal-title {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .home-signal-copy {
+            margin: 0.35rem 0 0;
+            color: rgba(248, 248, 242, 0.56);
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .home-panorama {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .home-panorama-link {
+            position: relative;
+            display: block;
+            min-height: 180px;
+            padding: 1.2rem 1.15rem 1rem;
+            color: inherit;
+            text-decoration: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 78%);
+            overflow: hidden;
+        }
+
+        .home-panorama-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top left, rgba(255, 121, 198, 0.14), transparent 42%),
+                linear-gradient(140deg, transparent 40%, rgba(255, 255, 255, 0.03));
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        .home-panorama-link:nth-child(2n)::before {
+            background:
+                radial-gradient(circle at top left, rgba(122, 162, 255, 0.16), transparent 44%),
+                linear-gradient(140deg, transparent 40%, rgba(255, 255, 255, 0.03));
+        }
+
+        .home-panorama-link > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-panorama-link:hover {
+            transform: translateY(-4px);
+        }
+
+        .home-panorama-link strong {
+            display: block;
+            margin-top: 0.55rem;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .home-panorama-link small {
+            display: block;
+            margin-top: 0.55rem;
+            max-width: 26ch;
+            color: rgba(248, 248, 242, 0.62);
+            font-size: 0.84rem;
+            line-height: 1.62;
+        }
+
+        .home-search-panel {
+            padding-top: 1.6rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .home-search-head {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: end;
+            justify-content: space-between;
+            margin-top: 0.45rem;
+            margin-bottom: 0.95rem;
+        }
+
+        .home-search-title {
+            margin: 0;
+            font-size: clamp(1.9rem, 3vw, 2.9rem);
+            line-height: 0.96;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .home-bands {
+            display: grid;
+            gap: 2.5rem;
+        }
+
+        .home-band {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            gap: 2rem;
+            align-items: start;
+            padding-top: 1.8rem;
+        }
+
+        .home-band::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .home-band::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 121, 198, 0.95), transparent);
+        }
+
+        .home-band:nth-child(2n)::after {
+            background: linear-gradient(90deg, rgba(122, 162, 255, 0.95), transparent);
+        }
+
+        .home-band:nth-child(2n) {
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+        }
+
+        .home-band-copy {
+            position: sticky;
+            top: 6.45rem;
+            align-self: start;
+            min-width: 0;
+        }
+
+        .home-band:nth-child(2n) .home-band-copy {
+            order: 2;
+            padding-left: 0.8rem;
+        }
+
+        .home-band:nth-child(2n) .home-release-stack {
+            order: 1;
+        }
+
+        .home-band-title {
+            margin: 0.5rem 0 0;
+            font-size: clamp(1.7rem, 2.8vw, 2.9rem);
+            line-height: 0.94;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            font-style: italic;
+            font-weight: 900;
+        }
+
+        .home-band-summary {
+            margin: 0.95rem 0 0;
+            color: rgba(248, 248, 242, 0.66);
+            font-size: 0.92rem;
+            line-height: 1.68;
+        }
+
+        .home-band-meta {
+            margin-top: 1rem;
+            color: rgba(248, 248, 242, 0.44);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .home-band-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-top: 1rem;
+            color: rgba(248, 248, 242, 0.84);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .home-band-link:hover {
+            color: rgba(255, 255, 255, 0.98);
+        }
+
+        .home-release-stack {
+            display: grid;
+            gap: 0;
+            min-width: 0;
+        }
+
+        @media (max-width: 1180px) {
+            body.site-frame-ready.page-index .shell-header {
+                grid-template-columns: 1fr;
+            }
+
+            body.site-frame-ready.page-index .shell-nav,
+            body.site-frame-ready.page-index .shell-actions {
+                justify-content: flex-start;
+            }
+
+            .home-stage,
+            .home-band,
+            .home-band:nth-child(2n) {
+                grid-template-columns: 1fr;
+            }
+
+            .home-stage-radar {
+                padding-left: 0;
+                padding-top: 1.3rem;
+                border-left: 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .home-band-copy,
+            .home-band:nth-child(2n) .home-band-copy {
+                position: static;
+                order: 0;
+                padding-left: 0;
+            }
+
+            .home-band:nth-child(2n) .home-release-stack {
+                order: 0;
+            }
+
+            .home-panorama {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            body.site-frame-ready.page-index .site-frame {
+                width: min(1720px, calc(100% - 0.9rem));
+                gap: 0.8rem;
+            }
+
+            body.site-frame-ready.page-index .shell-header {
+                padding: 0.9rem;
+                border-radius: 24px;
+            }
+
+            .home-canvas {
+                gap: 1.6rem;
+            }
+
+            .home-stage {
+                gap: 1.55rem;
+                padding: 1.45rem 0 1.7rem;
+            }
+
+            .home-stage-title {
+                font-size: clamp(2.6rem, 12vw, 4.8rem);
+            }
+
+            .home-stat-ribbon,
+            .home-panorama {
+                grid-template-columns: 1fr;
+            }
+
+            .home-band {
+                gap: 1.35rem;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="page-index">
     <div class="mesh-bg"></div>
 
-    <div id="auth-modal" aria-hidden="true">
-        <div class="auth-card">
-            <button id="auth-close" class="absolute top-6 right-6 text-gray-500 hover:text-white" type="button"><i class="fas fa-times"></i></button>
-            <h2 id="auth-title" class="text-2xl font-black italic mb-2">WELCOME BACK</h2>
-            <p id="auth-subtitle" class="text-gray-400 text-sm mb-8">Enter your details to access Loom.</p>
-            <div class="space-y-4">
+    <div id="auth-modal" class="site-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="auth-card site-overlay-card">
+            <div class="site-overlay-shell">
+                <div class="site-overlay-head">
+                    <div class="site-overlay-copy">
+                        <div class="site-overlay-kicker">Account Access</div>
+                        <h2 id="auth-title" class="site-overlay-title">WELCOME BACK</h2>
+                        <p id="auth-subtitle" class="site-overlay-subtitle">Enter your details to access Loom.</p>
+                    </div>
+                    <button id="auth-close" class="site-overlay-close" type="button" aria-label="Close sign in dialog"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="site-overlay-scroll space-y-4">
                 <input type="email" id="auth-email" class="field" placeholder="Email Address" autocomplete="email">
                 <div id="auth-username-wrap" class="hidden"><input type="text" id="auth-username" class="field" placeholder="Username (letters, numbers, . _ -)"></div>
                 <input type="password" id="auth-pass" class="field" placeholder="Password" autocomplete="current-password">
                 <button id="auth-submit" class="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-pink-500 hover:text-white transition-all" type="button">Sign In</button>
                 <p class="text-center text-xs text-gray-500 mt-4"><span id="auth-switch-text">Don't have an account?</span> <button id="auth-switch-btn" class="text-pink-500 font-bold ml-1" type="button">Sign Up</button></p>
+                </div>
             </div>
         </div>
     </div>
@@ -61,7 +1136,7 @@
                     <i class="fas fa-bell"></i>
                     <span id="notif-count" class="notif-badge hidden">0</span>
                 </button>
-                <div id="notif-menu" class="menu-dropdown notif-menu" role="menu" aria-labelledby="notif-trigger">
+                <div id="notif-menu" class="menu-dropdown notif-menu" role="menu" aria-labelledby="notif-trigger" aria-hidden="true">
                     <div class="p-4 border-b border-white/5 flex items-center justify-between">
                         <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
                         <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
@@ -75,7 +1150,7 @@
                     <span id="nav-user-name" class="text-sm font-bold">Connect</span>
                     <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10 object-cover" alt="User avatar">
                 </button>
-                <div id="user-menu" class="menu-dropdown" role="menu" aria-labelledby="user-trigger">
+                <div id="user-menu" class="menu-dropdown" role="menu" aria-labelledby="user-trigger" aria-hidden="true">
                     <div id="menu-banner" class="profile-banner"><img id="menu-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="profile-avatar" alt="Menu avatar"></div>
                     <div class="pt-10 px-5 pb-4 border-b border-white/5">
                         <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
@@ -93,191 +1168,154 @@
         </div>
     </header>
 
-    <main class="site-wrap pb-12 space-y-8">
-        <nav class="surface home-topbar" aria-label="Homepage shortcuts">
-            <div>
-                <div class="home-topbar-label">Registry Home</div>
-                <p class="home-topbar-copy">Browse the newest drops, jump into this week's free picks, and get to support without wading through extra pages.</p>
-            </div>
-            <div class="home-topbar-links">
-                <a href="assets.html" class="home-topbar-link"><i class="fas fa-grid-2"></i><span>All Assets</span></a>
-                <a href="assets.html?view=weekly-free" class="home-topbar-link"><i class="fas fa-gift"></i><span>Weekly Free 10</span></a>
-                <a href="upload.html" class="home-topbar-link"><i class="fas fa-cloud-arrow-up"></i><span>Publish</span></a>
-                <a href="support.html" class="home-topbar-link"><i class="fas fa-life-ring"></i><span>Support</span></a>
-            </div>
-        </nav>
-
-        <section class="page-shortcuts" aria-label="Start paths">
-            <a href="assets.html" class="page-shortcut">
-                <span>
-                    <strong>Browse Everything</strong>
-                    <small>Open the full asset library when you already know you want to search and filter.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-            <a href="assets.html?view=weekly-free" class="page-shortcut">
-                <span>
-                    <strong>Start With Weekly Free</strong>
-                    <small>Use the rotating free shelf when you want a quick download without decision fatigue.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-            <a href="upload.html" class="page-shortcut">
-                <span>
-                    <strong>Go Straight To Publish</strong>
-                    <small>Creators can jump into the release flow without bouncing through profile or browse first.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-            <a href="support.html" class="page-shortcut">
-                <span>
-                    <strong>Need Help First?</strong>
-                    <small>Open support, setup help, and moderation answers before you dig further into the registry.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-        </section>
-
-        <section class="home-hero-grid">
-            <article class="surface home-hero-panel">
-                <div class="home-hero-copy">
-                    <div class="home-eyebrow">Browse Faster</div>
-                    <h2>Open Loom and get straight to releases, updates, and the free picks that matter this week.</h2>
-                    <p>The homepage is now focused on three jobs: finding assets quickly, spotting fresh updates, and surfacing 10 free assets every week without extra clutter.</p>
+    <main class="site-wrap home-canvas pb-20">
+        <section class="home-stage" aria-labelledby="home-stage-title">
+            <div class="home-stage-copy">
+                <div class="home-stage-kicker">Ultra Registry / Live Feed</div>
+                <h1 id="home-stage-title" class="home-stage-title">Releases, updates, and free picks in one runway.</h1>
+                <p class="home-stage-summary">Open Loom like a publication front page instead of a dashboard. Search first, scan the strongest tracks, and move from discovery to publishing without the site feeling chopped into little containers.</p>
+                <div class="home-stage-actions">
+                    <a href="assets.html" class="btn"><i class="fas fa-compass"></i><span>Browse Registry</span></a>
+                    <a href="upload.html" class="btn btn-neutral"><i class="fas fa-cloud-arrow-up"></i><span>Publish Release</span></a>
                 </div>
+            </div>
 
-                <div class="home-search-block">
-                    <label for="search-input" class="home-block-label">Asset Search</label>
+            <div class="home-stage-radar">
+                <div class="home-search-dock">
+                    <label for="search-input" class="home-search-dock-label">Search The Registry</label>
+                    <p class="home-search-dock-copy">Start with an asset, tag, or creator and drop straight into the catalog.</p>
                     <div class="relative">
                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
                         <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
                     </div>
-                    <div class="home-search-actions">
-                        <a href="assets.html" class="btn btn-neutral"><i class="fas fa-grid-2"></i><span>Browse All Assets</span></a>
-                        <a href="upload.html" class="btn"><i class="fas fa-wand-magic-sparkles"></i><span>Publish Something</span></a>
+                </div>
+
+                <div class="home-stat-ribbon" aria-label="Registry metrics">
+                    <div class="home-stat-node">
+                        <div id="metric-assets" class="home-stat-number">0</div>
+                        <div class="home-stat-text">Assets</div>
+                    </div>
+                    <div class="home-stat-node">
+                        <div id="metric-creators" class="home-stat-number">0</div>
+                        <div class="home-stat-text">Creators</div>
+                    </div>
+                    <div class="home-stat-node">
+                        <div id="metric-downloads" class="home-stat-number">0</div>
+                        <div class="home-stat-text">Installs</div>
                     </div>
                 </div>
 
-                <div class="home-stat-grid">
-                    <div class="home-stat-card">
-                        <div id="metric-assets" class="home-stat-value">0</div>
-                        <div class="home-stat-label">Assets</div>
-                    </div>
-                    <div class="home-stat-card">
-                        <div id="metric-creators" class="home-stat-value">0</div>
-                        <div class="home-stat-label">Creators</div>
-                    </div>
-                    <div class="home-stat-card">
-                        <div id="metric-downloads" class="home-stat-value">0</div>
-                        <div class="home-stat-label">Installs</div>
-                    </div>
+                <div class="home-signal-list">
+                    <a href="assets.html?view=weekly-free" class="home-signal">
+                        <div>
+                            <div class="home-signal-title">Weekly Free 10</div>
+                            <p class="home-signal-copy">Jump into this week's rotating set of free releases.</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="assets.html" class="home-signal">
+                        <div>
+                            <div class="home-signal-title">Newest Releases</div>
+                            <p class="home-signal-copy">Move straight into the full registry when you want the latest activity first.</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="support.html" class="home-signal">
+                        <div>
+                            <div class="home-signal-title">Support + Community</div>
+                            <p class="home-signal-copy">Get help, moderation, and Discord-linked support without leaving the flow.</p>
+                        </div>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
-
-                <div class="home-anchor-row" aria-label="Curated sections">
-                    <a href="#weeklyfree-grid" class="chip home-anchor-link">Weekly Free</a>
-                    <a href="#newrelease-grid" class="chip home-anchor-link">New Releases</a>
-                    <a href="#popular-grid" class="chip home-anchor-link">Popular</a>
-                    <a href="#featured-grid" class="chip home-anchor-link">Featured</a>
-                </div>
-            </article>
-
-            <aside class="home-side-stack">
-                <section class="surface home-side-card">
-                    <div class="home-block-label">Start Here</div>
-                    <div class="home-quick-links">
-                        <a href="assets.html?view=weekly-free" class="home-quick-link">
-                            <span>
-                                <strong>Weekly Free 10</strong>
-                                <small>Jump into the rotating set of free assets for this week.</small>
-                            </span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                        <a href="upload.html" class="home-quick-link">
-                            <span>
-                                <strong>Publish Asset</strong>
-                                <small>Ship a release from the website and let Discord announce it automatically.</small>
-                            </span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                        <a href="support.html" class="home-quick-link">
-                            <span>
-                                <strong>Get Support</strong>
-                                <small>Use Discord tickets for support and community help.</small>
-                            </span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </section>
-
-                <section class="surface home-side-card">
-                    <div class="home-block-label">What Changed</div>
-                    <div class="home-note-list">
-                        <div class="home-note-item"><i class="fas fa-magnifying-glass"></i><span>Search is still the first action on the page so browsing starts immediately.</span></div>
-                        <div class="home-note-item"><i class="fas fa-gift"></i><span>A weekly free shelf rotates automatically from approved assets every week.</span></div>
-                        <div class="home-note-item"><i class="fas fa-bullhorn"></i><span>Discord now stays focused on tickets, community moderation, and release/update announcements.</span></div>
-                    </div>
-                </section>
-            </aside>
-        </section>
-
-        <section id="search-section" class="hidden surface home-results-panel">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-                <div>
-                    <div class="home-block-label">Live Search</div>
-                    <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Search Results</h3>
-                </div>
-                <span id="search-count" class="text-xs text-gray-500 uppercase tracking-[0.12em]">0 results</span>
             </div>
-            <div id="search-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
         </section>
 
-        <div id="curated-wrap" class="home-curated-layout">
-            <section class="home-section-grid">
-                <article class="surface home-section-card">
-                    <div class="home-section-head">
-                        <div>
-                            <div class="home-block-label">Free This Week</div>
-                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Weekly Free 10</h3>
-                        </div>
-                        <span class="text-xs text-gray-500 uppercase">Rotates weekly</span>
-                    </div>
-                    <div id="weeklyfree-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-                </article>
+        <section class="home-panorama" aria-label="Homepage browse map">
+            <a href="#weeklyfree-grid" class="home-panorama-link">
+                <span class="home-panorama-label">Start Here</span>
+                <strong>Weekly Free</strong>
+                <small>Ten rotating picks that reset every week and keep the front page moving.</small>
+            </a>
+            <a href="#newrelease-grid" class="home-panorama-link">
+                <span class="home-panorama-label">Fresh Activity</span>
+                <strong>New Releases</strong>
+                <small>The most recent approved updates across the registry, sorted to stay current.</small>
+            </a>
+            <a href="#popular-grid" class="home-panorama-link">
+                <span class="home-panorama-label">Momentum</span>
+                <strong>Popular</strong>
+                <small>Track what is pulling the strongest install numbers right now.</small>
+            </a>
+            <a href="#featured-grid" class="home-panorama-link">
+                <span class="home-panorama-label">Editorial</span>
+                <strong>Featured</strong>
+                <small>Surfaced releases with strong presentation, quality, and visibility.</small>
+            </a>
+        </section>
 
-                <article class="surface home-section-card">
-                    <div class="home-section-head">
-                        <div>
-                            <div class="home-block-label">Fresh Updates</div>
-                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">New Releases</h3>
-                        </div>
-                        <span class="text-xs text-gray-500 uppercase">Latest updates</span>
-                    </div>
-                    <div id="newrelease-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-                </article>
+        <section id="search-section" class="hidden home-search-panel" aria-labelledby="search-results-title">
+            <div class="home-section-marker">Live Search</div>
+            <div class="home-search-head">
+                <h2 id="search-results-title" class="home-search-title">Search Results</h2>
+                <div id="search-count" class="home-band-meta">0 results</div>
+            </div>
+            <div id="search-grid" class="home-release-stack home-release-rail">
+                <article class="home-empty-state">Start typing to search the registry.</article>
+            </div>
+        </section>
+
+        <div id="curated-wrap" class="home-bands">
+            <section class="home-band" aria-labelledby="weeklyfree-title">
+                <div class="home-band-copy">
+                    <div class="home-band-label">Free This Week</div>
+                    <h2 id="weeklyfree-title" class="home-band-title">Weekly Free 10</h2>
+                    <p class="home-band-summary">A rotating weekly runway of approved releases that are free right now.</p>
+                    <div class="home-band-meta">Rotates weekly</div>
+                    <a href="assets.html?view=weekly-free" class="home-band-link">Open weekly free <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div id="weeklyfree-grid" class="home-release-stack home-release-rail">
+                    <article class="home-empty-state">Loading this week's free picks...</article>
+                </div>
             </section>
 
-            <section class="home-section-grid">
-                <article class="surface home-section-card">
-                    <div class="home-section-head">
-                        <div>
-                            <div class="home-block-label">High Traction</div>
-                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Most Popular</h3>
-                        </div>
-                        <span class="text-xs text-gray-500 uppercase">By installs</span>
-                    </div>
-                    <div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-                </article>
+            <section class="home-band" aria-labelledby="newrelease-title">
+                <div class="home-band-copy">
+                    <div class="home-band-label">Fresh Updates</div>
+                    <h2 id="newrelease-title" class="home-band-title">New Releases</h2>
+                    <p class="home-band-summary">The latest release activity across Loom, sorted to keep the feed moving forward.</p>
+                    <div class="home-band-meta">Latest updates</div>
+                    <a href="assets.html" class="home-band-link">Browse all assets <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div id="newrelease-grid" class="home-release-stack home-release-rail">
+                    <article class="home-empty-state">Loading the newest releases...</article>
+                </div>
+            </section>
 
-                <article class="surface home-section-card">
-                    <div class="home-section-head">
-                        <div>
-                            <div class="home-block-label">Editorial Picks</div>
-                            <h3 class="text-lg md:text-xl font-black uppercase tracking-[0.14em]">Featured</h3>
-                        </div>
-                        <span class="text-xs text-gray-500 uppercase">Marked as featured</span>
-                    </div>
-                    <div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-                </article>
+            <section class="home-band" aria-labelledby="popular-title">
+                <div class="home-band-copy">
+                    <div class="home-band-label">High Traction</div>
+                    <h2 id="popular-title" class="home-band-title">Most Popular</h2>
+                    <p class="home-band-summary">The releases with the strongest install pull, surfaced as a dedicated momentum track.</p>
+                    <div class="home-band-meta">By installs</div>
+                    <a href="assets.html" class="home-band-link">See the registry <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div id="popular-grid" class="home-release-stack home-release-rail">
+                    <article class="home-empty-state">Loading popular releases...</article>
+                </div>
+            </section>
+
+            <section class="home-band" aria-labelledby="featured-title">
+                <div class="home-band-copy">
+                    <div class="home-band-label">Editorial Picks</div>
+                    <h2 id="featured-title" class="home-band-title">Featured</h2>
+                    <p class="home-band-summary">Hand-picked releases surfaced for quality, visibility, and how well they represent the registry.</p>
+                    <div class="home-band-meta">Marked as featured</div>
+                    <a href="assets.html" class="home-band-link">Explore more picks <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div id="featured-grid" class="home-release-stack home-release-rail">
+                    <article class="home-empty-state">Loading featured releases...</article>
+                </div>
             </section>
         </div>
     </main>
@@ -468,6 +1506,22 @@
         let presenceTimer = null;
         let weeklyFreeAssetIds = new Set();
         const mediaCache = new Map();
+        const pageParams = new URLSearchParams(window.location.search);
+
+        function safeRedirectPath(rawValue = "") {
+            const value = String(rawValue || "").trim();
+            if (!value.startsWith("/")) return "";
+            if (value.startsWith("//")) return "";
+            if (value.includes("://")) return "";
+            return value;
+        }
+
+        const pendingAuthMode = pageParams.get("auth") === "signup"
+            ? "signup"
+            : pageParams.get("auth") === "signin"
+                ? "signin"
+                : "";
+        const pendingAuthRedirect = safeRedirectPath(pageParams.get("redirect"));
 
         function escapeHtml(value = "") {
             return String(value)
@@ -622,6 +1676,7 @@
                 id,
                 name,
                 version,
+                summary,
                 description,
                 tag,
                 creatorId: String(raw.creatorId || ""),
@@ -680,6 +1735,12 @@
             return users.find((user) => user.id === uid) || null;
         }
 
+        function compactCardText(value, max = 84) {
+            const text = String(value || "").replace(/\s+/g, " ").trim();
+            if (!text) return "No description provided.";
+            return text.length > max ? `${text.slice(0, Math.max(0, max - 3)).trim()}...` : text;
+        }
+
         function getCreatorName(asset) {
             const user = getUserById(asset.creatorId);
             if (user?.username) return user.username;
@@ -694,32 +1755,41 @@
             const creatorAvatarMediaId = creatorUser?.avatarMediaId || "";
             const iconMediaId = asset.iconMediaId || "";
             const pills = [
-                weeklyFreeAssetIds.has(asset.id) ? `<span class="chip border-emerald-500/40 text-emerald-300">Weekly Free</span>` : asset.isFree ? `<span class="chip border-emerald-500/25 text-emerald-200">Free</span>` : "",
+                weeklyFreeAssetIds.has(asset.id)
+                    ? `<span class="chip border-emerald-500/40 text-emerald-300">Weekly Free</span>`
+                    : asset.isFree
+                        ? `<span class="chip border-emerald-500/25 text-emerald-200">Free</span>`
+                        : "",
                 asset.featured ? `<span class="chip border-pink-500/40 text-pink-400">Featured</span>` : "",
                 asset.devChoice ? `<span class="chip border-blue-500/40 text-blue-300">Dev Choice</span>` : ""
             ].filter(Boolean).join("");
+            const cardDescription = compactCardText(asset.summary || asset.description, 84);
             return `
-                <a class="asset-card p-5 flex flex-col gap-4 no-underline text-inherit" href="asset.html?id=${encodeURIComponent(asset.id)}">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <img class="w-14 h-14 rounded-xl object-cover border border-white/10 bg-white/5" src="${escapeHtml(iconFallback)}" data-media-id="${escapeHtml(iconMediaId)}" alt="Asset icon">
-                            <div class="min-w-0">
-                                <h4 class="text-lg font-black lowercase truncate">${escapeHtml(asset.name)}</h4>
-                                <p class="text-[10px] uppercase tracking-[0.14em] text-gray-500 font-bold">${escapeHtml(asset.version)}</p>
+                <a class="asset-card" href="asset.html?id=${encodeURIComponent(asset.id)}">
+                    <div class="asset-card-main">
+                        <div class="asset-card-art">
+                            <img src="${escapeHtml(iconFallback)}" data-media-id="${escapeHtml(iconMediaId)}" alt="Asset icon">
+                        </div>
+                        <div class="asset-card-copy">
+                            <div class="asset-card-head-copy">
+                                <div class="asset-card-overline">
+                                    <span class="asset-card-tag">${escapeHtml(asset.tag || "Asset")}</span>
+                                    <span class="asset-card-version">${escapeHtml(asset.version || "Release")}</span>
+                                </div>
+                                <h3 class="asset-card-title">${escapeHtml(asset.name)}</h3>
                             </div>
+                            <p class="asset-card-description">${escapeHtml(cardDescription)}</p>
+                            <div class="asset-card-pills">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
                         </div>
-                        <span class="chip">${escapeHtml(asset.tag)}</span>
                     </div>
-                    <p class="text-sm text-gray-300 leading-relaxed min-h-[44px]">${escapeHtml(asset.description || "No description provided.")}</p>
-                    <div class="flex flex-wrap gap-2">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
-                    <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
-                            <span class="text-xs text-gray-300 truncate">${escapeHtml(creator)}</span>
+                    <div class="asset-card-side">
+                        <div class="asset-card-creator">
+                            <img src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
+                            <span>${escapeHtml(creator)}</span>
                         </div>
-                        <div class="text-right">
-                            <div class="text-xs text-white font-bold">${Number(asset.downloads || 0).toLocaleString()} installs</div>
-                            <div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</div>
+                        <div class="asset-card-stats">
+                            <strong>${Number(asset.downloads || 0).toLocaleString()} installs</strong>
+                            <span>${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</span>
                         </div>
                     </div>
                 </a>
@@ -773,7 +1843,7 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             if (!items.length) {
-                container.innerHTML = `<article class="surface p-5 text-sm text-gray-400 border border-white/10">${escapeHtml(emptyLabel)}</article>`;
+                container.innerHTML = `<article class="home-empty-state">${escapeHtml(emptyLabel)}</article>`;
                 return;
             }
             container.innerHTML = items.map((asset) => renderAssetCard(asset)).join("");
@@ -783,7 +1853,7 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             if (!items.length) {
-                container.innerHTML = `<article class="surface p-5 text-sm text-gray-400 border border-white/10">${escapeHtml(emptyLabel)}</article>`;
+                container.innerHTML = `<article class="home-empty-state">${escapeHtml(emptyLabel)}</article>`;
                 return;
             }
             container.innerHTML = items.map((user) => renderCreatorCard(user)).join("");
@@ -871,7 +1941,7 @@
             searchCount.innerText = `${scored.length} result${scored.length === 1 ? "" : "s"}`;
             searchGrid.innerHTML = scored.length
                 ? scored.map((asset) => renderAssetCard(asset)).join("")
-                : `<article class="surface p-5 text-sm text-gray-400 border border-white/10">No assets matched your search.</article>`;
+                : `<article class="home-empty-state">No assets matched your search.</article>`;
             hydrateMediaImages(searchGrid).catch((err) => console.warn("Media hydration failed:", err));
         }
 
@@ -1033,14 +2103,19 @@
 
         function openAuthModal(mode = "signin") {
             setAuthMode(mode);
-            authModal.classList.add("open");
+            closeAllDropdowns();
+            authModal.classList.add("is-open");
             authModal.setAttribute("aria-hidden", "false");
-            authEmail.focus();
+            document.body.classList.add("overlay-open");
+            window.setTimeout(() => {
+                authEmail.focus();
+            }, 20);
         }
 
         function closeAuthModal() {
-            authModal.classList.remove("open");
+            authModal.classList.remove("is-open");
             authModal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("overlay-open");
             authPass.value = "";
             authSubmit.disabled = false;
             authSubmit.classList.remove("opacity-60", "cursor-not-allowed");
@@ -1245,6 +2320,7 @@
             if (!trigger || !menu) return;
             menu.classList.toggle("active", Boolean(isOpen));
             trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            menu.setAttribute("aria-hidden", isOpen ? "false" : "true");
             if (isOpen) {
                 const first = menu.querySelector("a,button,[tabindex]:not([tabindex='-1'])");
                 if (first) {
@@ -1260,6 +2336,10 @@
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
+                if (authModal.classList.contains("is-open")) {
+                    closeAuthModal();
+                    return;
+                }
                 closeAllDropdowns();
             }
         });
@@ -1373,10 +2453,16 @@
             }
 
             closeAuthModal();
+            if (pendingAuthRedirect) {
+                window.location.href = pendingAuthRedirect;
+            }
         });
 
         setAuthMode("signin");
         renderGuestNav();
+        if (pendingAuthMode) {
+            openAuthModal(pendingAuthMode);
+        }
         subscribeToData();
     </script>
 </body>

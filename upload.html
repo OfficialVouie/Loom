@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loom | Publish</title>
-    <meta name="description" content="Publish an asset to Loom: upload files, set metadata, and submit a release to the registry.">
+    <title>Loom | Release Builder</title>
+    <meta name="description" content="Build and publish a new Loom asset with a guided release flow, live preview, and publish checklist.">
     <meta name="theme-color" content="#050507">
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,70 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
-    <style>
-        .field {
-            padding: 0.95rem 1.1rem;
-            font-size: 0.9rem;
-        }
-
-        .section-title {
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #a1a1aa;
-            font-weight: 800;
-            margin: 0 0 0.65rem;
-        }
-
-        .upload-chip {
-            display: inline-flex;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed rgba(255, 255, 255, 0.22);
-            border-radius: 18px;
-            padding: 0.9rem 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: #ddd;
-            background: rgba(255, 255, 255, 0.04);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .upload-chip:hover {
-            border-color: rgba(255, 121, 198, 0.5);
-            color: #fff;
-        }
-
-        .toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 0.76rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #b4b4c0;
-        }
-
-        .preview-tile {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 26px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.35));
-            padding: 0.85rem;
-        }
-
-        .preview-tile img,
-        .preview-tile video {
-            width: 100%;
-            aspect-ratio: 16 / 10;
-            object-fit: cover;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="upload.css">
 </head>
 <body>
     <div class="mesh-bg"></div>
@@ -83,11 +20,11 @@
     <header class="site-wrap shell-header">
         <a href="index.html" class="shell-brand">
             <img src="logo.png" alt="Loom">
-            <div class="shell-brand-copy">
-                <div class="shell-brand-label">Creator Console</div>
-                <div class="shell-brand-title">Publish</div>
-            </div>
-        </a>
+                <div class="shell-brand-copy">
+                    <div class="shell-brand-label">Creator Console</div>
+                    <div class="shell-brand-title">Release Builder</div>
+                </div>
+            </a>
         <nav class="shell-nav" aria-label="Primary">
             <a href="index.html" class="shell-link"><i class="fas fa-house"></i><span>Home</span></a>
             <a href="assets.html" class="shell-link"><i class="fas fa-grid-2"></i><span>Assets</span></a>
@@ -97,63 +34,110 @@
         </nav>
         <div class="shell-actions">
             <a href="guidelines.html" class="shell-pill"><i class="fas fa-book-open"></i><span>Guidelines</span></a>
-            <a id="review-link" href="review.html" class="shell-pill hidden"><i class="fas fa-shield-halved"></i><span>Review</span></a>
         </div>
     </header>
 
     <main class="site-wrap pb-12 page-stack">
-        <section class="page-hero glass p-8 md:p-12 rounded-[40px]">
-            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-10">
-                <div>
-                    <div class="text-[10px] uppercase tracking-[0.2em] text-white/50 font-black">Creator Console</div>
-                    <h2 class="text-3xl md:text-4xl font-black uppercase italic tracking-tight">Publish New Asset</h2>
-                    <p id="auth-status" class="text-sm text-gray-400 mt-2">Checking authentication...</p>
-                </div>
-                <div class="text-[10px] uppercase tracking-[0.22em] text-white/45 font-black flex items-center gap-2">
-                    <i class="fas fa-cloud-arrow-up"></i>
-                    <span>Draft | Upload | Publish</span>
+        <section class="publish-shell">
+            <div class="publish-intro">
+                <div class="publish-intro-grid">
+                    <div>
+                        <div class="publish-kicker">Creator Console</div>
+                        <h1 class="publish-title">Release Builder</h1>
+                        <p class="publish-subtitle">A cleaner publishing workspace for shipping a new asset. Fill out the release from top to bottom, keep the preview on the right in view, and publish only when the checklist looks ready.</p>
+                    </div>
+                    <div class="publish-route" aria-label="Publish stages">
+                        <span><i class="fas fa-pen-ruler"></i>Draft details</span>
+                        <span><i class="fas fa-photo-film"></i>Add media</span>
+                        <span><i class="fas fa-cloud-arrow-up"></i>Ship release</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="page-shortcuts mb-8">
-                <a href="guidelines.html" class="page-shortcut">
-                    <span>
-                        <strong>Read Guidelines</strong>
-                        <small>Check moderation expectations before you submit a release.</small>
-                    </span>
-                    <i class="fas fa-arrow-right text-white/45"></i>
-                </a>
-                <a href="profile.html" class="page-shortcut">
-                    <span>
-                        <strong>Update Your Profile</strong>
-                        <small>Creators convert better when their page and links are current.</small>
-                    </span>
-                    <i class="fas fa-arrow-right text-white/45"></i>
-                </a>
-                <a href="support.html" class="page-shortcut">
-                    <span>
-                        <strong>Upload Help</strong>
-                        <small>Open the help page if files, previews, or auth are failing.</small>
-                    </span>
-                    <i class="fas fa-arrow-right text-white/45"></i>
-                </a>
-            </div>
+            <form id="publish-form" class="publish-layout">
+                <aside class="publish-rail publish-sticky">
+                    <article class="publish-panel">
+                        <div class="publish-panel-title">Account</div>
+                        <p id="auth-status" class="publish-status-note" aria-live="polite">Checking account access...</p>
+                    </article>
 
-            <form id="publish-form">
-                <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-10 items-start">
-                    <div class="space-y-6 min-w-0">
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-6 space-y-4">
-                            <div class="flex items-center justify-between gap-3">
-                                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Basics</h3>
-                                <span class="text-[10px] uppercase tracking-widest text-white/40 font-black">Required</span>
+                    <article class="publish-panel">
+                        <div class="publish-panel-title">Flow</div>
+                        <nav class="publish-step-list mt-4" aria-label="Upload steps">
+                            <a class="publish-step-link" href="#step-basics">
+                                <strong>1. Release basics</strong>
+                                <span>Name, version, category, summary, and release story.</span>
+                            </a>
+                            <a class="publish-step-link" href="#step-media">
+                                <strong>2. Media and files</strong>
+                                <span>Icon, gallery, trailer, and the asset package people will download.</span>
+                            </a>
+                            <a class="publish-step-link" href="#step-details">
+                                <strong>3. Help and links</strong>
+                                <span>Requirements, setup notes, support, and creator destinations.</span>
+                            </a>
+                        </nav>
+                    </article>
+
+                    <article class="publish-panel">
+                        <div class="publish-panel-title">Before You Submit</div>
+                        <div class="publish-tip-list mt-4">
+                            <div class="publish-tip">
+                                <i class="fas fa-sparkles"></i>
+                                <span>Use the short summary for cards and search. Keep it to one strong sentence.</span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="asset-name" class="field" placeholder="Asset Name" required>
-                                <input type="text" id="asset-version" class="field" placeholder="Version (e.g. v1.0.0)" required>
+                            <div class="publish-tip">
+                                <i class="fas fa-box-open"></i>
+                                <span>Upload a safe archive like a `.zip` for the package. Executables are blocked.</span>
                             </div>
-                            <textarea id="asset-desc" rows="4" class="field resize-none" placeholder="Description" required></textarea>
-                            <textarea id="asset-notes" rows="3" class="field resize-none" placeholder="Release Notes (optional)"></textarea>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="publish-tip">
+                                <i class="fas fa-shield-halved"></i>
+                                <span>Curator-only flags appear automatically when your account has moderation access.</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-col gap-2">
+                            <a href="guidelines.html" class="shell-pill justify-center"><i class="fas fa-book-open"></i><span>Guidelines</span></a>
+                            <a href="support.html" class="shell-pill justify-center"><i class="fas fa-life-ring"></i><span>Need Help</span></a>
+                            <a id="review-link" href="review.html" class="shell-pill justify-center hidden"><i class="fas fa-shield-halved"></i><span>Review Queue</span></a>
+                        </div>
+                    </article>
+                </aside>
+
+                <div class="publish-form-stack min-w-0">
+                    <section id="step-basics" class="publish-section">
+                        <div class="publish-section-head">
+                            <div>
+                                <span class="publish-step-badge">Step 01</span>
+                                <h2 class="publish-section-title">Release Basics</h2>
+                                <p class="publish-section-text">Start with the information people see first: your title, version, core description, and how this asset should be categorized on Loom.</p>
+                            </div>
+                            <span class="live-badge">Required</span>
+                        </div>
+
+                        <div class="publish-grid two">
+                            <label class="field-group">
+                                <span class="field-label">Asset Name</span>
+                                <input type="text" id="asset-name" class="field" placeholder="Studio Mesh Pack" required>
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Version</span>
+                                <input type="text" id="asset-version" class="field" placeholder="v1.0.0" required>
+                            </label>
+                        </div>
+
+                        <label class="field-group mt-4">
+                            <span class="field-label">Full Description</span>
+                            <textarea id="asset-desc" rows="5" class="field resize-none" placeholder="Explain what the asset does, who it is for, and why it is worth downloading." required></textarea>
+                        </label>
+
+                        <label class="field-group mt-4">
+                            <span class="field-label">Release Notes</span>
+                            <textarea id="asset-notes" rows="3" class="field resize-none" placeholder="What changed in this release? New features, fixes, polish, known issues."></textarea>
+                        </label>
+
+                        <div class="publish-grid two mt-4">
+                            <label class="field-group">
+                                <span class="field-label">Category</span>
                                 <select id="asset-tag" class="field" required>
                                     <option value="Visuals">Visuals</option>
                                     <option value="Utility">Utility</option>
@@ -161,82 +145,166 @@
                                     <option value="Gameplay">Gameplay</option>
                                     <option value="QualityOfLife">QualityOfLife</option>
                                 </select>
-                                <input type="text" id="asset-compatibility" class="field" placeholder="Compatibility (ex: Roblox 2026+, Unity 2022)">
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <input type="text" id="asset-summary" class="field md:col-span-2" placeholder="Short summary for cards/search">
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Compatibility</span>
+                                <input type="text" id="asset-compatibility" class="field" placeholder="Roblox 2026+, Unity 2022, UE 5.4, etc.">
+                            </label>
+                        </div>
+
+                        <div class="publish-grid two mt-4">
+                            <label class="field-group">
+                                <span class="field-label">Card Summary</span>
+                                <input type="text" id="asset-summary" class="field" placeholder="One short sentence for cards and search results.">
+                                <span class="field-help">This is the compact line that shows up in smaller card layouts.</span>
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">License</span>
                                 <select id="asset-license" class="field">
-                                    <option value="Custom">License: Custom</option>
+                                    <option value="Custom">Custom</option>
                                     <option value="MIT">MIT</option>
                                     <option value="Apache-2.0">Apache-2.0</option>
                                     <option value="GPL-3.0">GPL-3.0</option>
                                     <option value="Proprietary">Proprietary</option>
                                     <option value="CC0">CC0</option>
                                 </select>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="url" id="asset-icon-url" class="field" placeholder="Asset Icon URL (optional)">
-                                <input type="url" id="asset-support-url" class="field" placeholder="Support URL (optional)">
-                            </div>
-                        </article>
+                            </label>
+                        </div>
 
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-6 space-y-4">
-                            <div class="flex items-center justify-between gap-3">
-                                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Media</h3>
-                                <span class="text-[10px] uppercase tracking-widest text-white/40 font-black">URLs or files</span>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="url" id="asset-video-url" class="field" placeholder="Video URL (YouTube, Vimeo, MP4)">
-                                <textarea id="asset-gallery-urls" rows="3" class="field resize-none" placeholder="Gallery image URLs (one per line or comma-separated)"></textarea>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <label class="upload-chip">Upload Icon<input id="asset-icon-file" type="file" accept="image/*" class="hidden"></label>
-                                <label class="upload-chip">Upload Gallery<input id="asset-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
-                                <label class="upload-chip">Upload Asset File<input id="asset-package-file" type="file" class="hidden"></label>
-                            </div>
-                            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Previews update in the right panel.</p>
-                        </article>
+                    </section>
 
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-6 space-y-4">
-                            <div class="flex items-center justify-between gap-3">
-                                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Documentation</h3>
-                                <span class="text-[10px] uppercase tracking-widest text-white/40 font-black">Optional</span>
+                    <section id="step-media" class="publish-section">
+                        <div class="publish-section-head">
+                            <div>
+                                <span class="publish-step-badge">Step 02</span>
+                                <h2 class="publish-section-title">Media And Files</h2>
+                                <p class="publish-section-text">Give the listing a strong first look, then upload the package people will actually receive after download.</p>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <textarea id="asset-requirements" rows="3" class="field resize-none" placeholder="Requirements (one per line)"></textarea>
-                                <textarea id="asset-install-guide" rows="3" class="field resize-none" placeholder="Quick install guide"></textarea>
-                            </div>
-                        </article>
+                            <span class="live-badge">Preview Ready</span>
+                        </div>
 
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-6 space-y-4">
-                            <div class="flex items-center justify-between gap-3">
-                                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Social Links</h3>
-                                <span class="text-[10px] uppercase tracking-widest text-white/40 font-black">Optional</span>
+                        <div class="publish-grid two">
+                            <label class="field-group">
+                                <span class="field-label">Icon URL</span>
+                                <input type="url" id="asset-icon-url" class="field" placeholder="https://example.com/icon.png">
+                                <span class="field-help">Use this if the icon is already hosted elsewhere.</span>
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Video URL</span>
+                                <input type="url" id="asset-video-url" class="field" placeholder="YouTube, Vimeo, or direct MP4 link">
+                            </label>
+                        </div>
+
+                        <label class="field-group mt-4">
+                            <span class="field-label">Gallery URLs</span>
+                            <textarea id="asset-gallery-urls" rows="3" class="field resize-none" placeholder="Paste gallery image URLs, one per line or comma-separated."></textarea>
+                        </label>
+
+                        <div class="upload-grid mt-4">
+                            <label class="upload-chip">
+                                <strong>Upload Icon</strong>
+                                <span>Drop in the square image that should lead the listing.</span>
+                                <input id="asset-icon-file" type="file" accept="image/*" class="hidden">
+                            </label>
+                            <label class="upload-chip">
+                                <strong>Upload Gallery</strong>
+                                <span>Add screenshots or showcase images. Up to 12 will be processed.</span>
+                                <input id="asset-gallery-files" type="file" accept="image/*" multiple class="hidden">
+                            </label>
+                            <label class="upload-chip">
+                                <strong>Upload Package</strong>
+                                <span>Attach the download archive for the actual asset release.</span>
+                                <input id="asset-package-file" type="file" class="hidden">
+                            </label>
+                        </div>
+                    </section>
+
+                    <section id="step-details" class="publish-section">
+                        <div class="publish-section-head">
+                            <div>
+                                <span class="publish-step-badge">Step 03</span>
+                                <h2 class="publish-section-title">Help, Setup, And Links</h2>
+                                <p class="publish-section-text">Finish with the details that reduce support questions later: requirements, install guidance, and where people can follow your work.</p>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="url" id="social-website" class="field" placeholder="Website URL">
-                                <input type="url" id="social-github" class="field" placeholder="GitHub URL">
-                                <input type="url" id="social-discord" class="field" placeholder="Discord Invite URL">
-                                <input type="url" id="social-docs" class="field" placeholder="Documentation URL">
+                            <span class="live-badge">Optional</span>
+                        </div>
+
+                        <div class="publish-grid two">
+                            <label class="field-group">
+                                <span class="field-label">Requirements</span>
+                                <textarea id="asset-requirements" rows="4" class="field resize-none" placeholder="List engine versions, dependencies, setup tools, or add-ons needed."></textarea>
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Install Guide</span>
+                                <textarea id="asset-install-guide" rows="4" class="field resize-none" placeholder="Give a quick copy-paste setup walkthrough."></textarea>
+                            </label>
+                        </div>
+
+                        <div class="publish-grid two mt-4">
+                            <label class="field-group">
+                                <span class="field-label">Support URL</span>
+                                <input type="url" id="asset-support-url" class="field" placeholder="https://example.com/support">
+                            </label>
+                            <div class="field-group">
+                                <span class="field-label">Useful Creator Links</span>
+                                <span class="field-help">These show up with the asset so people know where to follow or get docs.</span>
                             </div>
-                        </article>
+                        </div>
+
+                        <div class="publish-grid two mt-4">
+                            <label class="field-group">
+                                <span class="field-label">Website</span>
+                                <input type="url" id="social-website" class="field" placeholder="https://yourstudio.com">
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">GitHub</span>
+                                <input type="url" id="social-github" class="field" placeholder="https://github.com/yourstudio">
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Discord</span>
+                                <input type="url" id="social-discord" class="field" placeholder="https://discord.gg/yourserver">
+                            </label>
+                            <label class="field-group">
+                                <span class="field-label">Docs</span>
+                                <input type="url" id="social-docs" class="field" placeholder="https://docs.yourstudio.com">
+                            </label>
+                        </div>
+                    </section>
                     </div>
 
-                    <aside class="space-y-6 lg:sticky lg:top-8 self-start">
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-5">
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Previews</div>
-                                <div class="text-[10px] uppercase tracking-widest text-white/40 font-black">Live</div>
-                            </div>
-                            <div class="mt-4 grid grid-cols-1 gap-3">
-                                <article class="preview-tile">
-                                    <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Icon Preview</p>
-                                    <img id="preview-icon" class="hidden" alt="Icon preview">
-                                    <p id="preview-icon-empty" class="text-xs text-gray-500">No icon selected.</p>
-                                </article>
+                <aside class="publish-summary publish-sticky">
+                    <article class="publish-live-card">
+                        <div class="publish-panel-title">Live Snapshot</div>
+                        <div class="preview-stack mt-4">
+                            <article class="preview-tile">
+                                <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Icon Preview</p>
+                                <img id="preview-icon" class="hidden" alt="Icon preview">
+                                <p id="preview-icon-empty" class="text-xs text-gray-500">No icon selected yet.</p>
+                            </article>
+
+                            <article class="preview-tile">
+                                <div class="live-tag-row">
+                                    <span id="live-tag" class="live-badge">Visuals</span>
+                                    <span id="live-version" class="live-badge">Version pending</span>
+                                </div>
+                                <h3 id="live-name" class="live-title">Untitled asset</h3>
+                                <p id="live-summary" class="live-summary">Add a title, summary, and description to build the public-facing snapshot.</p>
+                                <div class="live-specs">
+                                    <div class="live-spec">
+                                        <span>Compatibility</span>
+                                        <strong id="live-compatibility">Not added yet</strong>
+                                    </div>
+                                    <div class="live-spec">
+                                        <span>License</span>
+                                        <strong id="live-license">Custom</strong>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <div class="publish-grid two">
                                 <article class="preview-tile">
                                     <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2">Asset Package</p>
-                                    <p id="preview-package-name" class="text-xs text-gray-500">No package selected.</p>
+                                    <p id="preview-package-name" class="text-sm text-white/80">No package selected.</p>
                                     <p id="preview-package-size" class="text-[10px] uppercase tracking-widest text-gray-500 mt-1"></p>
                                 </article>
                                 <article class="preview-tile">
@@ -245,29 +313,65 @@
                                     <p class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">Images ready</p>
                                 </article>
                             </div>
-                        </article>
+                        </div>
+                    </article>
 
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-5 space-y-3">
-                            <div class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Curation Flags</div>
-                            <div id="curation-controls" class="grid grid-cols-1 gap-3 hidden">
-                                <label class="toggle"><input id="asset-featured" type="checkbox"> Feature This Asset</label>
-                                <label class="toggle"><input id="asset-dev-choice" type="checkbox"> Mark As Dev Choice</label>
+                    <article class="publish-panel">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="publish-panel-title">Readiness</div>
+                            <span id="publish-readiness" class="live-badge">0/4 parts ready</span>
+                        </div>
+                        <div class="readiness-list mt-4">
+                            <div id="check-basics" class="readiness-item">
+                                <span class="readiness-dot"></span>
+                                <div class="readiness-copy">
+                                    <strong>Release basics</strong>
+                                    <span data-readiness-detail>Add a name, version, and description.</span>
+                                </div>
                             </div>
-                            <p id="curation-note" class="text-[11px] text-gray-400">Featured and Dev Choice are controlled by database permissions (`users/{uid}.canCurate`).</p>
-                        </article>
+                            <div id="check-media" class="readiness-item">
+                                <span class="readiness-dot"></span>
+                                <div class="readiness-copy">
+                                    <strong>Media</strong>
+                                    <span data-readiness-detail>Add an icon, video, or gallery so the listing is not empty.</span>
+                                </div>
+                            </div>
+                            <div id="check-package" class="readiness-item">
+                                <span class="readiness-dot"></span>
+                                <div class="readiness-copy">
+                                    <strong>Package file</strong>
+                                    <span data-readiness-detail>Upload the file people should download.</span>
+                                </div>
+                            </div>
+                            <div id="check-links" class="readiness-item">
+                                <span class="readiness-dot"></span>
+                                <div class="readiness-copy">
+                                    <strong>Help and links</strong>
+                                    <span data-readiness-detail>Add docs, support, or setup notes to cut down on support requests.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-                        <article class="rounded-3xl border border-white/10 bg-black/30 p-5 space-y-4">
-                            <div class="text-[11px] uppercase tracking-[0.22em] text-white/55 font-black">Publish</div>
-                            <div class="space-y-2">
-                                <div class="progress-wrap"><div id="upload-progress-bar" class="progress-bar"></div></div>
-                                <p id="upload-status" class="text-xs text-gray-500">Ready to publish.</p>
-                            </div>
-                            <button id="submit-asset" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-pink-400 transition uppercase text-xs tracking-widest" type="submit">
-                                Publish
-                            </button>
-                        </article>
-                    </aside>
-                </div>
+                    <article class="publish-panel">
+                        <div class="publish-panel-title">Curation Flags</div>
+                        <div id="curation-controls" class="grid grid-cols-1 gap-3 mt-4 hidden">
+                            <label class="toggle"><input id="asset-featured" type="checkbox"> Feature This Asset</label>
+                            <label class="toggle"><input id="asset-dev-choice" type="checkbox"> Mark As Dev Choice</label>
+                        </div>
+                        <p id="curation-note" class="text-[11px] text-gray-400 mt-4">Featured and Dev Choice are controlled by database permissions (`users/{uid}.canCurate`).</p>
+                    </article>
+
+                    <article class="publish-panel publish-submit">
+                        <div class="publish-panel-title">Publish</div>
+                        <div class="space-y-2">
+                            <div class="progress-wrap"><div id="upload-progress-bar" class="progress-bar"></div></div>
+                            <p id="upload-status" class="text-xs text-gray-500" aria-live="polite">Ready to publish.</p>
+                        </div>
+                        <button id="submit-asset" class="publish-primary" type="submit">Publish Asset</button>
+                        <p class="publish-mini">Approved creator releases can automatically feed the Discord release or update channels after publish.</p>
+                    </article>
+                </aside>
             </form>
         </section>
     </main>
@@ -413,19 +517,33 @@
         const previewPackageSize = document.getElementById("preview-package-size");
         const previewGalleryCount = document.getElementById("preview-gallery-count");
         const reviewLink = document.getElementById("review-link");
+        const liveName = document.getElementById("live-name");
+        const liveVersion = document.getElementById("live-version");
+        const liveTag = document.getElementById("live-tag");
+        const liveSummary = document.getElementById("live-summary");
+        const liveCompatibility = document.getElementById("live-compatibility");
+        const liveLicense = document.getElementById("live-license");
+        const publishReadiness = document.getElementById("publish-readiness");
+        const checkBasics = document.getElementById("check-basics");
+        const checkMedia = document.getElementById("check-media");
+        const checkPackage = document.getElementById("check-package");
+        const checkLinks = document.getElementById("check-links");
         let activeUser = null;
         let creatorProfile = null;
         let canCurate = false;
         let presenceTimer = null;
+        let previewIconObjectUrl = "";
         const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
         const MAX_MEDIA_DATAURL_CHARS = 900000;
         const MAX_ASSET_FILE_BYTES = 100 * 1024 * 1024;
         const ASSET_CHUNK_SIZE = 600 * 1024;
+        const submitIdleLabel = submitBtn.innerText.trim() || "Publish Asset";
 
         function setSubmitting(isSubmitting) {
             submitBtn.disabled = isSubmitting;
             submitBtn.classList.toggle("opacity-60", isSubmitting);
             submitBtn.classList.toggle("cursor-not-allowed", isSubmitting);
+            submitBtn.innerText = isSubmitting ? "Publishing..." : submitIdleLabel;
         }
 
         function setUploadStatus(message, tone = "text-gray-500") {
@@ -445,10 +563,25 @@
         function setCurationControls(profile = null) {
             canCurate = Boolean(profile?.canCurate);
             curationControls.classList.toggle("hidden", !canCurate);
-            reviewLink.classList.toggle("hidden", !canCurate);
+            if (reviewLink) {
+                reviewLink.classList.toggle("hidden", !canCurate);
+            }
             curationNote.innerText = canCurate
                 ? "You have curator access. These flags can be changed."
                 : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore to unlock.";
+        }
+
+        function syncSubmitAvailability() {
+            submitBtn.disabled = !activeUser;
+
+            if (!activeUser) {
+                statusEl.innerText = "Sign in from Home before publishing a release.";
+                statusEl.className = "publish-status-note text-red-300";
+                return;
+            }
+
+            statusEl.innerText = `Signed in as ${creatorProfile?.username || "creator"}`;
+            statusEl.className = "publish-status-note text-emerald-300";
         }
 
         function startPresence(uid) {
@@ -819,12 +952,10 @@
         onAuthStateChanged(auth, async (user) => {
             activeUser = user;
             if (!user) {
-                statusEl.innerText = "You must sign in before publishing.";
-                statusEl.className = "text-sm text-red-400 mb-8";
-                submitBtn.disabled = true;
                 creatorProfile = null;
                 setCurationControls(null);
                 stopPresence();
+                syncSubmitAvailability();
                 return;
             }
 
@@ -832,15 +963,17 @@
                 creatorProfile = await ensureUserProfile(user);
             } catch (err) {
                 console.error("Failed to load creator profile:", err);
-                creatorProfile = { username: sanitizeUsername("", user.email || "") };
+                creatorProfile = {
+                    username: sanitizeUsername("", user.email || "")
+                };
             }
 
-            statusEl.innerText = `Signed in as ${creatorProfile.username}`;
-            statusEl.className = "text-sm text-green-400 mb-8";
-            submitBtn.disabled = false;
             setCurationControls(creatorProfile);
             startPresence(user.uid);
+            syncSubmitAvailability();
         });
+
+        syncSubmitAvailability();
 
         function formatFileSize(bytes) {
             if (!Number.isFinite(bytes)) return "";
@@ -849,13 +982,93 @@
             return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
         }
 
+        function compactCopy(value = "", fallback = "", maxLength = 140) {
+            const cleaned = String(value || "").replace(/\s+/g, " ").trim();
+            if (!cleaned) return fallback;
+            return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength - 1).trimEnd()}...` : cleaned;
+        }
+
+        function setReadinessItem(element, ready, message) {
+            if (!element) return;
+            element.classList.toggle("is-ready", Boolean(ready));
+            const detail = element.querySelector("[data-readiness-detail]");
+            if (detail) {
+                detail.innerText = message;
+            }
+        }
+
+        function updateLiveSnapshot() {
+            const name = document.getElementById("asset-name").value.trim();
+            const version = document.getElementById("asset-version").value.trim();
+            const description = document.getElementById("asset-desc").value.trim();
+            const summary = document.getElementById("asset-summary").value.trim();
+            const tag = document.getElementById("asset-tag").value.trim();
+            const compatibility = document.getElementById("asset-compatibility").value.trim();
+            const license = document.getElementById("asset-license").value.trim() || "Custom";
+            const videoUrl = document.getElementById("asset-video-url").value.trim();
+            const iconUrl = document.getElementById("asset-icon-url").value.trim();
+            const galleryUrls = parseUrlList(document.getElementById("asset-gallery-urls").value);
+            const requirements = parseLineList(document.getElementById("asset-requirements").value);
+            const installGuide = document.getElementById("asset-install-guide").value.trim();
+            const supportUrl = document.getElementById("asset-support-url").value.trim();
+            const socials = [
+                document.getElementById("social-website").value.trim(),
+                document.getElementById("social-github").value.trim(),
+                document.getElementById("social-discord").value.trim(),
+                document.getElementById("social-docs").value.trim()
+            ].filter((value) => validUrl(value));
+
+            const galleryFiles = Array.from(galleryFilesInput.files || []);
+            const hasMedia = Boolean(iconFileInput.files[0] || validUrl(iconUrl) || validUrl(videoUrl) || galleryFiles.length || galleryUrls.length);
+            const hasPackage = Boolean(assetPackageInput.files[0]);
+            const hasHelp = Boolean(requirements.length || installGuide || validUrl(supportUrl) || socials.length);
+            const basicsReady = Boolean(name && version && description);
+
+            liveName.innerText = name || "Untitled asset";
+            liveVersion.innerText = version || "Version pending";
+            liveTag.innerText = tag || "No category";
+            liveSummary.innerText = compactCopy(summary || description, "Add a title, summary, and description to build the public-facing snapshot.");
+            liveCompatibility.innerText = compatibility || "Not added yet";
+            liveLicense.innerText = license;
+
+            setReadinessItem(checkBasics, basicsReady, basicsReady
+                ? "Name, version, and description are ready."
+                : "Add a name, version, and description.");
+            setReadinessItem(checkMedia, hasMedia, hasMedia
+                ? "Listing media is present for the public card."
+                : "Add an icon, video, or gallery so the listing is not empty.");
+            setReadinessItem(checkPackage, hasPackage, hasPackage
+                ? "Package file is attached and ready to upload."
+                : "Upload the file people should download.");
+            setReadinessItem(checkLinks, hasHelp, hasHelp
+                ? "Helpful setup info or external links are included."
+                : "Add docs, support, or setup notes to cut down on support requests.");
+
+            const readinessChecks = [basicsReady, hasMedia, hasPackage, hasHelp];
+            const totalChecks = 4;
+            const readyCount = readinessChecks.filter(Boolean).length;
+            publishReadiness.innerText = readyCount === totalChecks ? "Ready to submit" : `${readyCount}/${totalChecks} parts ready`;
+        }
+
         function refreshMediaPreviews() {
             const iconFile = iconFileInput.files[0];
             const galleryFiles = Array.from(galleryFilesInput.files || []);
             const packageFile = assetPackageInput.files[0];
+            const iconUrlValue = document.getElementById("asset-icon-url").value.trim();
+            const galleryUrls = parseUrlList(document.getElementById("asset-gallery-urls").value);
+
+            if (previewIconObjectUrl) {
+                URL.revokeObjectURL(previewIconObjectUrl);
+                previewIconObjectUrl = "";
+            }
 
             if (iconFile) {
-                previewIcon.src = URL.createObjectURL(iconFile);
+                previewIconObjectUrl = URL.createObjectURL(iconFile);
+                previewIcon.src = previewIconObjectUrl;
+                previewIcon.classList.remove("hidden");
+                previewIconEmpty.classList.add("hidden");
+            } else if (validUrl(iconUrlValue)) {
+                previewIcon.src = iconUrlValue;
                 previewIcon.classList.remove("hidden");
                 previewIconEmpty.classList.add("hidden");
             } else {
@@ -872,19 +1085,51 @@
                 previewPackageSize.innerText = "";
             }
 
-            previewGalleryCount.innerText = String(galleryFiles.length);
+            previewGalleryCount.innerText = String(galleryFiles.length + galleryUrls.length);
+            updateLiveSnapshot();
         }
 
         iconFileInput.addEventListener("change", refreshMediaPreviews);
         galleryFilesInput.addEventListener("change", refreshMediaPreviews);
         assetPackageInput.addEventListener("change", refreshMediaPreviews);
+        [
+            "asset-name",
+            "asset-version",
+            "asset-desc",
+            "asset-notes",
+            "asset-tag",
+            "asset-compatibility",
+            "asset-summary",
+            "asset-license",
+            "asset-support-url",
+            "asset-icon-url",
+            "asset-video-url",
+            "asset-gallery-urls",
+            "asset-requirements",
+            "asset-install-guide",
+            "social-website",
+            "social-github",
+            "social-discord",
+            "social-docs"
+        ].forEach((id) => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            const eventName = element.tagName === "SELECT" ? "change" : "input";
+            element.addEventListener(eventName, refreshMediaPreviews);
+        });
+        window.addEventListener("beforeunload", () => {
+            if (previewIconObjectUrl) {
+                URL.revokeObjectURL(previewIconObjectUrl);
+                previewIconObjectUrl = "";
+            }
+        });
 
         publishForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             if (!activeUser) {
                 alert("Please sign in first.");
-                window.location.href = "index.html";
+                window.location.href = "index.html?auth=signin&redirect=/upload.html";
                 return;
             }
 
@@ -972,6 +1217,7 @@
                     tag,
                     compatibility,
                     license,
+                    isFree: true,
                     supportUrl,
                     requirements,
                     installGuide,

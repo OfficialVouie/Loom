@@ -1,0 +1,131 @@
+.resource-page main {
+    position: relative;
+    z-index: 1;
+}
+
+.resource-page .page-hero,
+.resource-page .surface,
+.resource-page .content-panel {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.28)),
+        rgba(6, 6, 9, 0.48);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-page .page-hero:hover,
+.resource-page .surface:hover,
+.resource-page .content-panel:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 22px 52px rgba(0, 0, 0, 0.28);
+}
+
+.resource-page .page-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.resource-page .page-shortcut {
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem 1.1rem;
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.resource-page .page-shortcut:hover {
+    border-color: rgba(255, 121, 198, 0.32);
+    background: rgba(255, 121, 198, 0.08);
+    transform: translateY(-1px);
+}
+
+.resource-page .page-shortcut strong {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.resource-page .page-shortcut small {
+    line-height: 1.55;
+}
+
+.resource-page .toc-link,
+.resource-page .callout,
+.resource-page .dev-card {
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-page .toc-link:hover,
+.resource-page .dev-card:hover {
+    transform: translateY(-1px);
+}
+
+.resource-page .legal-prose h2 {
+    margin-top: 0;
+    margin-bottom: 0.85rem;
+    font-size: 1.45rem;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.resource-page .legal-prose h3 {
+    margin-top: 1.4rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.92rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.resource-page .legal-prose p,
+.resource-page .legal-prose li {
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.resource-page .legal-prose ul {
+    margin-top: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.resource-page :is(a, button, input, textarea, select):focus-visible {
+    outline: 2px solid rgba(255, 184, 222, 0.55);
+    outline-offset: 3px;
+}
+
+body.site-frame-ready.resource-page .page-shortcuts {
+    display: none;
+}
+
+body.site-frame-ready.resource-page .page-hero {
+    padding: 1.05rem 1.15rem !important;
+    border-radius: 28px;
+}
+
+body.site-frame-ready.resource-page main {
+    gap: 1rem;
+}
+
+body.site-frame-ready.resource-page main > section:not(.page-hero) {
+    border-radius: 28px;
+}
+
+@media (max-width: 960px) {
+    .resource-page .page-shortcuts {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+body.site-frame-ready.resource-page .page-hero {
+    padding: 1.15rem 1.25rem !important;
+    border-radius: 32px;
+}
+
+body.site-frame-ready.resource-page main {
+    gap: 1rem;
+}

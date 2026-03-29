@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loom | Profile</title>
-    <meta name="description" content="Your Loom creator profile: edit your bio, links, and showcase published assets.">
+    <title>Loom | Creator Workspace</title>
+    <meta name="description" content="Manage your Loom creator profile, repository, and network from a cleaner workspace.">
     <meta name="theme-color" content="#050507">
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,31 +12,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
-    <style>
-        .menu-item { display:flex; align-items:center; gap:12px; padding:14px 18px; color:inherit; text-decoration:none; border:0; width:100%; background:transparent; cursor:pointer; }
-        .menu-item:hover { background:rgba(255,255,255,.05); }
-        .notif-menu { width:320px; }
-        .profile-banner { height:170px; background:linear-gradient(135deg, rgba(255,121,198,.35), rgba(122,162,255,.25)); background-size:cover; background-position:center; border-bottom:1px solid rgba(255,255,255,.05); }
-        .tab-btn { color:#a1a1aa; border-bottom:2px solid transparent; transition:.2s; }
-        .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
-        .asset-card { border:1px solid rgba(255,255,255,.08); border-radius:26px; padding:20px; text-decoration:none; color:inherit; display:block; transition:.2s; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.35)); }
-        .asset-card:hover { border-color:rgba(255,121,198,.45); transform:translateY(-2px); }
-        #edit-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); z-index:2000; padding:1rem; align-items:center; justify-content:center; }
-        .upload-chip { display:block; text-align:center; padding:.85rem; border-radius:18px; border:1px dashed rgba(255,255,255,.22); background:rgba(255,255,255,.04); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
-        .upload-chip:hover { border-color:rgba(255,121,198,.45); }
-        .social-link { font-size:12px; color:#c8c8d8; text-decoration:none; border:1px solid rgba(255,255,255,.1); padding:6px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; }
-        .social-link:hover { border-color:rgba(255,121,198,.45); color:#fff; }
-        .stat-card { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); border-radius:18px; padding:12px; }
-        .upload-preview { width:100%; border-radius:12px; border:1px solid rgba(255,255,255,.12); aspect-ratio:16/9; object-fit:cover; background:rgba(255,255,255,.03); }
-    </style>
+    <link rel="stylesheet" href="profile.css">
 </head>
 <body>
     <div class="mesh-bg"></div>
 
-    <div id="edit-overlay">
-        <div class="glass p-8 rounded-[30px] w-full max-w-xl">
-            <h2 class="text-2xl font-black italic uppercase">Edit Profile</h2>
-            <div class="space-y-4 mt-6">
+    <div id="edit-overlay" class="site-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="edit-overlay-title">
+        <div class="glass site-overlay-card">
+            <div class="site-overlay-shell">
+                <div class="site-overlay-head">
+                    <div class="site-overlay-copy">
+                        <div class="site-overlay-kicker">Profile Settings</div>
+                        <h2 id="edit-overlay-title" class="site-overlay-title">Edit Profile</h2>
+                        <p class="site-overlay-subtitle">Update your public creator page, links, and media without leaving the dashboard.</p>
+                    </div>
+                    <button id="edit-close" class="site-overlay-close" type="button" aria-label="Close edit profile dialog"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="site-overlay-scroll space-y-4">
                 <input id="edit-name" class="overlay-field" placeholder="Username (letters, numbers, . _ -)">
                 <textarea id="edit-bio" rows="3" class="overlay-field resize-none" placeholder="Bio"></textarea>
                 <input id="edit-avatar-url" class="overlay-field" placeholder="Avatar URL (optional)">
@@ -67,6 +59,7 @@
                 <p id="edit-upload-status" class="text-[10px] uppercase tracking-widest text-gray-500">No uploads in progress.</p>
                 <button id="save-profile" class="w-full bg-white text-black font-black py-3 rounded-xl hover:bg-pink-400 transition uppercase text-xs">Save Changes</button>
                 <button id="cancel-edit" class="w-full text-[10px] font-bold text-gray-500 uppercase">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -75,8 +68,8 @@
         <a href="index.html" class="shell-brand">
             <img src="logo.png" alt="Loom">
             <div class="shell-brand-copy">
-                <div class="shell-brand-label">Account</div>
-                <div class="shell-brand-title">Profile</div>
+                <div class="shell-brand-label">Creator Workspace</div>
+                <div class="shell-brand-title">Profile Dashboard</div>
             </div>
         </a>
         <nav class="shell-nav" aria-label="Primary">
@@ -92,7 +85,7 @@
                     <i class="fas fa-bell"></i>
                     <span id="notif-count" class="notif-badge hidden">0</span>
                 </button>
-                <div id="notif-menu" class="dropdown-menu notif-menu" role="menu" aria-labelledby="notif-trigger">
+                <div id="notif-menu" class="dropdown-menu notif-menu" role="menu" aria-labelledby="notif-trigger" aria-hidden="true">
                     <div class="p-4 border-b border-white/5 flex items-center justify-between">
                         <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Notifications</span>
                         <button id="notif-mark-read" class="text-[10px] uppercase tracking-widest text-pink-400 font-black" type="button">Mark all read</button>
@@ -106,7 +99,7 @@
                     <span id="nav-user-name" class="text-sm font-bold">Guest</span>
                     <img id="nav-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-9 h-9 rounded-full border border-white/10" alt="Profile avatar">
                 </button>
-                <div id="account-menu" class="dropdown-menu" role="menu" aria-labelledby="profile-trigger">
+                <div id="account-menu" class="dropdown-menu" role="menu" aria-labelledby="profile-trigger" aria-hidden="true">
                     <div class="p-6 border-b border-white/5 text-center">
                         <img id="dropdown-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-16 h-16 rounded-full border border-white/10 mx-auto mb-3" alt="Dropdown avatar">
                         <div id="dropdown-name" class="font-black lowercase">guest</div>
@@ -121,92 +114,124 @@
     </header>
 
     <main class="site-wrap pb-10 page-stack">
-        <section class="page-shortcuts">
-            <a href="upload.html" class="page-shortcut">
-                <span>
-                    <strong>Publish From Here</strong>
-                    <small>Jump into the publish flow once your profile is ready.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-            <a href="developers.html" class="page-shortcut">
-                <span>
-                    <strong>See Creator Directory</strong>
-                    <small>Compare your public page with the rest of the creator network.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-            <a href="friends.html" class="page-shortcut">
-                <span>
-                    <strong>Manage Network</strong>
-                    <small>Handle follows, requests, and blocks without leaving the account flow.</small>
-                </span>
-                <i class="fas fa-arrow-right text-white/45"></i>
-            </a>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-8 lg:gap-12 items-start">
-            <aside class="space-y-6 order-2 lg:order-1 lg:sticky lg:top-8 self-start">
-                <div class="glass rounded-[24px] p-6 space-y-6 text-center">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="stat-card">
-                            <span id="follower-count" class="block text-2xl font-black italic">0</span>
-                            <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Followers</span>
-                        </div>
-                        <div class="stat-card">
-                            <span id="following-count" class="block text-2xl font-black italic">0</span>
-                            <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Following</span>
-                        </div>
-                        <div class="stat-card">
-                            <span id="asset-count" class="block text-2xl font-black italic">0</span>
-                            <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Assets</span>
-                        </div>
-                        <div class="stat-card">
-                            <span id="install-count" class="block text-2xl font-black italic">0</span>
-                            <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Installs</span>
-                        </div>
-                    </div>
-                    <div id="self-actions" class="hidden space-y-3">
-                        <button id="open-edit" class="w-full p-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-pink-400 transition">Edit Profile</button>
-                        <a href="upload.html" class="block w-full p-3 bg-pink-500 text-black rounded-xl font-black text-[10px] uppercase tracking-widest border border-pink-400">Upload Asset</a>
-                    </div>
-                    <div id="other-actions" class="hidden space-y-3">
-                        <button id="follow-btn" class="w-full p-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest">Follow User</button>
-                        <button id="friend-btn" class="w-full p-3 border border-white/10 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-pink-400/60">Add Friend</button>
-                    </div>
+        <section class="profile-shell">
+            <div class="profile-intro">
+                <div>
+                    <div class="profile-kicker">Creator Workspace</div>
+                    <h1 class="profile-title">Profile Dashboard</h1>
+                    <p class="profile-subtitle">Keep your public creator page updated, manage your repository, and move between profile work and community actions from one calmer workspace.</p>
                 </div>
-            </aside>
+                <div class="profile-route" aria-label="Profile spaces">
+                    <span><i class="fas fa-user"></i>Identity</span>
+                    <span><i class="fas fa-box-archive"></i>Repository</span>
+                    <span><i class="fas fa-user-group"></i>Network</span>
+                </div>
+            </div>
 
-            <section class="space-y-8 order-1 lg:order-2">
-                <article class="page-hero glass rounded-[30px] overflow-hidden">
-                    <div id="profile-banner" class="profile-banner"></div>
-                    <div class="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-                        <div class="w-40 h-40 rounded-[30px] overflow-hidden border border-white/10 -mt-16 bg-black/40">
-                            <img id="main-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-full h-full object-cover" alt="Main avatar">
-                        </div>
-                        <div class="text-center md:text-left flex-grow">
-                            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-4">
-                                <span id="role-pill" class="inline-block text-[10px] px-3 py-1 rounded-full border border-pink-500/30 text-pink-400 font-black uppercase tracking-widest">LOADING</span>
-                                <span id="known-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-blue-500/30 text-blue-300 font-black uppercase tracking-widest">Known Creator</span>
-                                <span id="featured-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-yellow-500/30 text-yellow-300 font-black uppercase tracking-widest">Featured Creator</span>
-                                <div id="badge-row" class="hidden flex flex-wrap items-center gap-2"></div>
+            <div class="profile-layout">
+                <aside class="profile-column profile-sticky">
+                    <article class="profile-panel">
+                        <div class="profile-panel-title">Account Snapshot</div>
+                        <p class="profile-panel-copy">These counters give a fast read on how the creator page is performing at a glance.</p>
+                        <div class="profile-stat-grid">
+                            <div class="stat-card">
+                                <span id="follower-count" class="block text-2xl font-black italic">0</span>
+                                <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Followers</span>
                             </div>
-                            <h2 id="prof-name" class="text-4xl md:text-5xl font-black lowercase">...</h2>
-                            <p id="prof-bio" class="text-gray-400 italic mt-3">Fetching profile data...</p>
-                            <div id="profile-socials" class="mt-4 flex flex-wrap gap-2 justify-center md:justify-start"></div>
+                            <div class="stat-card">
+                                <span id="following-count" class="block text-2xl font-black italic">0</span>
+                                <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Following</span>
+                            </div>
+                            <div class="stat-card">
+                                <span id="asset-count" class="block text-2xl font-black italic">0</span>
+                                <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Assets</span>
+                            </div>
+                            <div class="stat-card">
+                                <span id="install-count" class="block text-2xl font-black italic">0</span>
+                                <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Installs</span>
+                            </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
 
-                <article class="glass rounded-[30px] p-6 md:p-8">
-                    <div class="flex items-center gap-8 border-b border-white/5 pb-3">
-                        <button id="tab-repository" class="tab-btn active text-xs font-black uppercase tracking-[0.3em]" type="button">Repository</button>
-                        <button id="tab-network" class="tab-btn text-xs font-black uppercase tracking-[0.3em]" type="button">Network</button>
-                    </div>
-                    <div id="role-content" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"></div>
-                </article>
-            </section>
-        </div>
+                    <article class="profile-panel">
+                        <div class="profile-panel-title">Actions</div>
+                        <p class="profile-panel-copy">The controls here switch depending on whether you are viewing your own page or someone else's.</p>
+                        <div id="self-actions" class="hidden profile-actions">
+                            <button id="open-edit" class="profile-action-primary" type="button">Edit Profile</button>
+                            <a href="upload.html" class="profile-action-secondary">Upload Asset</a>
+                        </div>
+                        <div id="other-actions" class="hidden profile-actions">
+                            <button id="follow-btn" class="profile-action-primary" type="button">Follow User</button>
+                            <button id="friend-btn" class="profile-action-secondary" type="button">Add Friend</button>
+                        </div>
+                    </article>
+
+                </aside>
+
+                <section class="profile-main">
+                    <article class="profile-hero-card">
+                        <div id="profile-banner" class="profile-banner"></div>
+                        <div class="profile-hero-body">
+                            <div class="profile-avatar-frame">
+                                <img id="main-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" alt="Main avatar">
+                            </div>
+                            <div class="profile-hero-copy">
+                                <div class="profile-badge-row">
+                                    <span id="role-pill" class="inline-block text-[10px] px-3 py-1 rounded-full border border-pink-500/30 text-pink-400 font-black uppercase tracking-widest">LOADING</span>
+                                    <span id="known-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-blue-500/30 text-blue-300 font-black uppercase tracking-widest">Known Creator</span>
+                                    <span id="featured-pill" class="hidden text-[10px] px-3 py-1 rounded-full border border-yellow-500/30 text-yellow-300 font-black uppercase tracking-widest">Featured Creator</span>
+                                    <div id="badge-row" class="hidden flex flex-wrap items-center gap-2"></div>
+                                </div>
+                                <h2 id="prof-name" class="profile-name">...</h2>
+                                <p id="prof-bio" class="profile-bio">Fetching profile data...</p>
+                                <div id="profile-socials" class="mt-4 flex flex-wrap gap-2"></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="profile-content-card">
+                        <div class="profile-content-head">
+                            <div>
+                                <div class="profile-panel-title">Profile Spaces</div>
+                                <h3 class="profile-content-title">Repository And Network</h3>
+                                <p class="profile-content-copy">Switch between the creator repository view and the community/network view without leaving the page.</p>
+                            </div>
+                        </div>
+                        <div class="profile-tabs">
+                            <button id="tab-repository" class="tab-btn active text-xs font-black uppercase tracking-[0.3em]" type="button">Repository</button>
+                            <button id="tab-network" class="tab-btn text-xs font-black uppercase tracking-[0.3em]" type="button">Network</button>
+                        </div>
+                        <div id="role-content" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                    </article>
+                </section>
+
+                <aside class="profile-column profile-sticky">
+                    <article class="profile-panel">
+                        <div class="profile-panel-title">Workspace Paths</div>
+                        <p class="profile-panel-copy">Jump into the next creator task without digging through extra buttons.</p>
+                        <div class="profile-link-list mt-4">
+                            <a href="upload.html" class="profile-link-card">
+                                <strong>Publish Asset</strong>
+                                <span>Open the release flow once the profile looks ready.</span>
+                            </a>
+                            <a href="developers.html" class="profile-link-card">
+                                <strong>Creator Directory</strong>
+                                <span>See how your page sits in the wider creator network.</span>
+                            </a>
+                            <a href="friends.html" class="profile-link-card">
+                                <strong>Friends And Requests</strong>
+                                <span>Handle follows, friendships, and community activity in one place.</span>
+                            </a>
+                        </div>
+                    </article>
+
+                    <article class="profile-panel">
+                        <div class="profile-panel-title">Public Page Notes</div>
+                        <p class="profile-panel-copy">A strong bio, clear links, and an updated banner make the public page easier to trust and easier to browse.</p>
+                    </article>
+                </aside>
+            </div>
+        </section>
     </main>
 
     <footer id="site-footer" class="mt-16 border-t border-white/10 bg-gradient-to-b from-white/5 via-[#050507] to-[#050507] text-white/90">
@@ -861,13 +886,21 @@
             document.getElementById("edit-avatar-file").value = "";
             document.getElementById("edit-banner-file").value = "";
             refreshOverlayPreviews(viewedProfile).catch(() => {});
-            editOverlay.style.display = "flex";
+            closeAllDropdowns();
+            editOverlay.classList.add("is-open");
+            editOverlay.setAttribute("aria-hidden", "false");
+            document.body.classList.add("overlay-open");
+            window.setTimeout(() => {
+                document.getElementById("edit-name").focus();
+            }, 20);
         }
 
         function closeEditOverlay() {
             resetAvatarRequested = false;
             resetBannerRequested = false;
-            editOverlay.style.display = "none";
+            editOverlay.classList.remove("is-open");
+            editOverlay.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("overlay-open");
         }
 
         async function refreshPendingPreview() {
@@ -1100,6 +1133,12 @@
             roleContent.innerHTML = snap.docs.map((assetDoc) => {
                 const asset = assetDoc.data();
                 const moderation = String(asset.moderationStatus || "approved");
+                const cardDescriptionSource = String(asset.summary || asset.description || "").replace(/\s+/g, " ").trim();
+                const cardDescription = !cardDescriptionSource
+                    ? "No description"
+                    : cardDescriptionSource.length > 78
+                        ? `${cardDescriptionSource.slice(0, 75).trim()}...`
+                        : cardDescriptionSource;
                 const moderationChip = moderation === "approved"
                     ? ""
                     : moderation === "pending"
@@ -1110,7 +1149,7 @@
                         <span class="text-[9px] font-black text-pink-500 uppercase italic">${escapeHtml(asset.version || "v1.0.0")}</span>
                         ${moderationChip}
                         <h4 class="text-xl font-black lowercase mt-2">${escapeHtml(asset.name || "untitled")}</h4>
-                        <p class="text-xs text-gray-500 mt-2">${escapeHtml(asset.description || "No description")}</p>
+                        <p class="text-xs text-gray-500 mt-2">${escapeHtml(cardDescription)}</p>
                     </a>
                 `;
             }).join("");
@@ -1477,6 +1516,7 @@
         }));
 
         document.getElementById("open-edit").addEventListener("click", openEditOverlay);
+        document.getElementById("edit-close").addEventListener("click", closeEditOverlay);
         document.getElementById("cancel-edit").addEventListener("click", closeEditOverlay);
         document.getElementById("save-profile").addEventListener("click", () => saveProfileChanges().catch(() => {
             alert("Unable to save profile right now.");
@@ -1548,6 +1588,7 @@
             if (!trigger || !menu) return;
             menu.classList.toggle("active", Boolean(isOpen));
             trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            menu.setAttribute("aria-hidden", isOpen ? "false" : "true");
             if (isOpen) {
                 const first = menu.querySelector("a,button,[tabindex]:not([tabindex='-1'])");
                 if (first) {
@@ -1562,7 +1603,13 @@
         }
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closeAllDropdowns();
+            if (event.key === "Escape") {
+                if (editOverlay.classList.contains("is-open")) {
+                    closeEditOverlay();
+                    return;
+                }
+                closeAllDropdowns();
+            }
         });
 
         notifTrigger.addEventListener("click", (event) => {
@@ -1625,7 +1672,7 @@
 
             const uid = targetId || currentUser?.uid;
             if (!uid) {
-                window.location.href = "index.html";
+                window.location.href = "index.html?auth=signin&redirect=/profile.html";
                 return;
             }
 

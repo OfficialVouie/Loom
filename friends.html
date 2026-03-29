@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="loom.css">
+    <link rel="stylesheet" href="workflow.css">
     <style>
         .friend-card { border:1px solid rgba(255,255,255,.08); border-radius:26px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.35)); transition:.2s; }
         .friend-card:hover { transform:translateY(-2px); border-color:rgba(255,121,198,.35); }
@@ -20,11 +21,11 @@
         .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
     </style>
 </head>
-<body class="scroll-smooth">
+<body class="scroll-smooth workflow-page">
     <div class="mesh-bg"></div>
-    <div id="mobile-overlay" class="hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"></div>
+    <div id="mobile-overlay" class="hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-[320px] flex flex-col border-r border-white/10 bg-black/60 backdrop-blur-xl transform -translate-x-full transition-transform duration-200 ease-out lg:hidden">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-[320px] flex flex-col border-r border-white/10 bg-black/60 backdrop-blur-xl transform -translate-x-full transition-transform duration-200 ease-out lg:hidden" aria-hidden="true">
         <div class="p-4 flex items-center justify-between gap-3 border-b border-white/10">
             <a class="flex items-center gap-3 text-inherit no-underline" href="index.html">
                 <img src="logo.png" class="w-8 h-8 object-contain" alt="Loom">
@@ -59,8 +60,8 @@
         <a href="index.html" class="shell-brand">
             <img src="logo.png" alt="Loom">
             <div class="shell-brand-copy">
-                <div class="shell-brand-label">Social</div>
-                <div class="shell-brand-title">Friends</div>
+                <div class="shell-brand-label">Community Workspace</div>
+                <div class="shell-brand-title">Friends Hub</div>
             </div>
         </a>
 
@@ -593,6 +594,9 @@
             sidebar.classList.toggle("-translate-x-full", !open);
             sidebar.classList.toggle("translate-x-0", open);
             mobileOverlay.classList.toggle("hidden", !open);
+            sidebar.setAttribute("aria-hidden", open ? "false" : "true");
+            mobileOverlay.setAttribute("aria-hidden", open ? "false" : "true");
+            document.body.classList.toggle("overlay-open", open);
         }
 
         async function startPresence() {
@@ -992,14 +996,14 @@
             tabBtns.forEach((btn) => btn.addEventListener("click", () => setTab(btn.dataset.tab)));
             addBtn.addEventListener("click", () => {
                 if (!currentUser) {
-                    window.location.href = "index.html";
+                    window.location.href = "index.html?auth=signin&redirect=/friends.html";
                     return;
                 }
                 setAddOpen(addPanel.classList.contains("hidden"));
             });
             emptyAdd.addEventListener("click", () => {
                 if (!currentUser) {
-                    window.location.href = "index.html";
+                    window.location.href = "index.html?auth=signin&redirect=/friends.html";
                     return;
                 }
                 setAddOpen(true);
@@ -1011,6 +1015,11 @@
             if (mobileOverlay) mobileOverlay.addEventListener("click", () => setSidebarOpen(false));
             window.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") setSidebarOpen(false);
+            });
+            window.addEventListener("resize", () => {
+                if (window.innerWidth >= 1024) {
+                    setSidebarOpen(false);
+                }
             });
 
             addInput.addEventListener("keydown", (e) => {
