@@ -45,16 +45,19 @@ function getConfiguredWebhookUrl() {
         return injected;
     }
 
+    const isLocalDevHost = window.location.protocol.startsWith("http")
+        && ["127.0.0.1", "localhost"].includes(window.location.hostname);
+
     try {
         const stored = cleanString(window.localStorage?.getItem("loom.discordWebhookUrl") || "");
-        if (stored) {
+        if (stored && isLocalDevHost) {
             return stored;
         }
     } catch (_) {
         // Ignore storage access issues.
     }
 
-    if (window.location.protocol.startsWith("http") && ["127.0.0.1", "localhost"].includes(window.location.hostname)) {
+    if (isLocalDevHost) {
         return "http://127.0.0.1:3000/webhooks/assets";
     }
 

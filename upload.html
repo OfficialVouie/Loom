@@ -92,7 +92,7 @@
                             </div>
                             <div class="publish-tip">
                                 <i class="fas fa-shield-halved"></i>
-                                <span>Curator-only flags appear automatically when your account has moderation access.</span>
+                                <span>Marketplace flags appear automatically when your account has marketplace access.</span>
                             </div>
                         </div>
                         <div class="mt-4 flex flex-col gap-2">
@@ -139,16 +139,45 @@
                             <label class="field-group">
                                 <span class="field-label">Category</span>
                                 <select id="asset-tag" class="field" required>
-                                    <option value="Visuals">Visuals</option>
-                                    <option value="Utility">Utility</option>
-                                    <option value="Multiplayer">Multiplayer</option>
-                                    <option value="Gameplay">Gameplay</option>
-                                    <option value="QualityOfLife">QualityOfLife</option>
+                                    <optgroup label="Creative Assets">
+                                        <option value="3D Models">3D Models</option>
+                                        <option value="Materials & Shaders">Materials &amp; Shaders</option>
+                                        <option value="Textures">Textures</option>
+                                        <option value="Animation & Rigging">Animation &amp; Rigging</option>
+                                        <option value="VFX & Particles">VFX &amp; Particles</option>
+                                        <option value="Audio & Music">Audio &amp; Music</option>
+                                        <option value="UI & Icons">UI &amp; Icons</option>
+                                        <option value="Characters">Characters</option>
+                                        <option value="Environments">Environments</option>
+                                        <option value="Templates & Scenes">Templates &amp; Scenes</option>
+                                    </optgroup>
+                                    <optgroup label="Tools & Pipelines">
+                                        <option value="Plugins & Add-ons">Plugins &amp; Add-ons</option>
+                                        <option value="Scripts & Automation">Scripts &amp; Automation</option>
+                                        <option value="Developer Tools">Developer Tools</option>
+                                        <option value="Docs & Learning">Docs &amp; Learning</option>
+                                    </optgroup>
+                                    <optgroup label="Platforms & Hosts">
+                                        <option value="Blender">Blender</option>
+                                        <option value="Maya">Maya</option>
+                                        <option value="Houdini">Houdini</option>
+                                        <option value="Cinema 4D">Cinema 4D</option>
+                                        <option value="Unity">Unity</option>
+                                        <option value="Unreal">Unreal</option>
+                                        <option value="Godot">Godot</option>
+                                        <option value="Roblox">Roblox</option>
+                                        <option value="Minecraft">Minecraft</option>
+                                        <option value="VRChat">VRChat</option>
+                                    </optgroup>
+                                    <optgroup label="General">
+                                        <option value="General">General</option>
+                                        <option value="Other">Other</option>
+                                    </optgroup>
                                 </select>
                             </label>
                             <label class="field-group">
                                 <span class="field-label">Compatibility</span>
-                                <input type="text" id="asset-compatibility" class="field" placeholder="Roblox 2026+, Unity 2022, UE 5.4, etc.">
+                                <input type="text" id="asset-compatibility" class="field" placeholder="Blender 4.1, Maya 2026, Unity 6, UE 5.4, Roblox Studio, etc.">
                             </label>
                         </div>
 
@@ -232,7 +261,7 @@
                         <div class="publish-grid two">
                             <label class="field-group">
                                 <span class="field-label">Requirements</span>
-                                <textarea id="asset-requirements" rows="4" class="field resize-none" placeholder="List engine versions, dependencies, setup tools, or add-ons needed."></textarea>
+                                <textarea id="asset-requirements" rows="4" class="field resize-none" placeholder="List host app versions, dependencies, setup tools, plug-ins, or add-ons needed."></textarea>
                             </label>
                             <label class="field-group">
                                 <span class="field-label">Install Guide</span>
@@ -354,12 +383,12 @@
                     </article>
 
                     <article class="publish-panel">
-                        <div class="publish-panel-title">Curation Flags</div>
+                        <div class="publish-panel-title">Marketplace Flags</div>
                         <div id="curation-controls" class="grid grid-cols-1 gap-3 mt-4 hidden">
                             <label class="toggle"><input id="asset-featured" type="checkbox"> Feature This Asset</label>
                             <label class="toggle"><input id="asset-dev-choice" type="checkbox"> Mark As Dev Choice</label>
                         </div>
-                        <p id="curation-note" class="text-[11px] text-gray-400 mt-4">Featured and Dev Choice are controlled by database permissions (`users/{uid}.canCurate`).</p>
+                        <p id="curation-note" class="text-[11px] text-gray-400 mt-4">Featured and Dev Choice are controlled by Marketplace Manager and CEO roles.</p>
                     </article>
 
                     <article class="publish-panel publish-submit">
@@ -476,32 +505,19 @@
 
     <script type="module">
         import { queueAssetDiscordAnnouncement } from "./discord-sync.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { canAccessReviewQueue, canManageMarketplace, canVerifyAssets, isBanned, validateCleanTextGroup } from "./loom-access.js";
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             addDoc,
             collection,
             deleteField,
             doc,
             getDoc,
-            getFirestore,
             serverTimestamp,
             setDoc,
             updateDoc
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
         const publishForm = document.getElementById("publish-form");
         const submitBtn = document.getElementById("submit-asset");
         const statusEl = document.getElementById("auth-status");
@@ -531,7 +547,8 @@
         const checkLinks = document.getElementById("check-links");
         let activeUser = null;
         let creatorProfile = null;
-        let canCurate = false;
+        let canVerifyAssetsAccess = false;
+        let canManageMarketplaceAccess = false;
         let presenceTimer = null;
         let previewIconObjectUrl = "";
         const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -563,6 +580,7 @@
         }
 
         const WEBSITE_ROLE_KEYS = new Set([
+            "ceo",
             "marketplace_manager",
             "asset_verifier",
             "moderator",
@@ -578,6 +596,9 @@
                 .replace(/[\s-]+/g, "_");
             const compact = normalized.replace(/[^a-z0-9_]/g, "");
             const aliases = {
+                ceo: "ceo",
+                chiefexecutiveofficer: "ceo",
+                chief_executive_officer: "ceo",
                 marketplacemanager: "marketplace_manager",
                 marketplace_manager: "marketplace_manager",
                 assetverifier: "asset_verifier",
@@ -699,7 +720,7 @@
             const accountMode = normalizeAccountMode(
                 raw.accountMode,
                 raw.role,
-                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || raw.canCurate)
+                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || siteRoles.includes("verified_creator"))
             );
             return {
                 ...raw,
@@ -707,26 +728,40 @@
                 role: accountMode === "creator" ? "Creator" : "Consumer",
                 accountMode,
                 siteRoles,
-                canCurate: Boolean(raw.canCurate),
-                creatorActivatedAt: raw.creatorActivatedAt || null
+                creatorActivatedAt: raw.creatorActivatedAt || null,
+                accountStatus: String(raw.accountStatus || "active").toLowerCase() === "banned" ? "banned" : "active",
+                banReason: typeof raw.banReason === "string" ? raw.banReason : "",
+                bannedAt: raw.bannedAt || null,
+                bannedBy: typeof raw.bannedBy === "string" ? raw.bannedBy : ""
             };
         }
 
         function setCurationControls(profile = null) {
-            canCurate = Boolean(profile?.canCurate);
-            curationControls.classList.toggle("hidden", !canCurate);
+            const allowedProfile = isBanned(profile) ? null : profile;
+            canVerifyAssetsAccess = canVerifyAssets(allowedProfile);
+            canManageMarketplaceAccess = canManageMarketplace(allowedProfile);
+            curationControls.classList.toggle("hidden", !canManageMarketplaceAccess);
             if (reviewLink) {
-                reviewLink.classList.toggle("hidden", !canCurate);
+                reviewLink.classList.toggle("hidden", !canAccessReviewQueue(allowedProfile));
             }
-            curationNote.innerText = canCurate
-                ? "You have curator access. These flags can be changed."
-                : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore to unlock.";
+            curationNote.innerText = canManageMarketplaceAccess
+                ? "Marketplace access enabled. You can control Featured and Dev Choice."
+                : "Featured and Dev Choice are controlled by Marketplace Manager and CEO roles.";
         }
 
         function syncSubmitAvailability() {
             if (!activeUser) {
                 submitBtn.disabled = true;
                 statusEl.innerText = "Sign in from Home before publishing a release.";
+                statusEl.className = "publish-status-note text-red-300";
+                return;
+            }
+
+            if (isBanned(creatorProfile)) {
+                submitBtn.disabled = true;
+                statusEl.innerText = creatorProfile?.banReason
+                    ? `This account is banned: ${creatorProfile.banReason}`
+                    : "This account is banned from publishing.";
                 statusEl.className = "publish-status-note text-red-300";
                 return;
             }
@@ -913,14 +948,12 @@
             const constraints = imageConstraintsFor(meta);
             const compressed = await compressImageToDataUrl(file, constraints);
             const dataUrl = compressed.dataUrl;
-            const moderation = canCurate
-                ? {
-                    moderationStatus: "approved",
-                    moderationReviewedAt: serverTimestamp(),
-                    moderationReviewedBy: activeUser.uid,
-                    moderationReason: ""
-                }
-                : { moderationStatus: "pending" };
+            const moderation = {
+                moderationStatus: "approved",
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: activeUser.uid,
+                moderationReason: ""
+            };
             const ref = await addDoc(collection(db, "media"), {
                 ownerId: activeUser.uid,
                 dataUrl,
@@ -1046,7 +1079,7 @@
               }
 
             let finalUpdate = { status: "pending_review" };
-            if (canCurate) {
+            if (canVerifyAssetsAccess) {
                 const confirmed = confirm("Virus check: confirm you scanned this file locally and it is clean.\n\nOK = mark ready now\nCancel = send to review queue");
                 if (confirmed) {
                     finalUpdate = {
@@ -1086,7 +1119,10 @@
                     siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
-                    canCurate: false,
+                    accountStatus: "active",
+                    banReason: "",
+                    bannedAt: null,
+                    bannedBy: "",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 };
@@ -1098,11 +1134,14 @@
             const data = profileSnap.data();
             const patch = {};
             if (typeof data.role !== "string") patch.role = "Consumer";
-            if (typeof data.accountMode !== "string") patch.accountMode = normalizeAccountMode(data.accountMode, data.role, Boolean(data.isKnownCreator || data.isFeaturedCreator || data.canCurate));
+            if (typeof data.accountMode !== "string") patch.accountMode = normalizeAccountMode(data.accountMode, data.role, Boolean(data.isKnownCreator || data.isFeaturedCreator || collectWebsiteRoles(data).includes("verified_creator")));
             if (!Array.isArray(data.siteRoles)) patch.siteRoles = normalizeCreatorProfile(data, user).siteRoles;
-            if (typeof data.canCurate !== "boolean") patch.canCurate = false;
             if (typeof data.avatarMediaId !== "string") patch.avatarMediaId = "";
             if (typeof data.bannerMediaId !== "string") patch.bannerMediaId = "";
+            if (typeof data.accountStatus !== "string") patch.accountStatus = "active";
+            if (typeof data.banReason !== "string") patch.banReason = "";
+            if (typeof data.bannedBy !== "string") patch.bannedBy = "";
+            if (!("bannedAt" in data)) patch.bannedAt = null;
             if (Object.keys(patch).length) {
                 patch.updatedAt = serverTimestamp();
                 await setDoc(profileRef, patch, { merge: true });
@@ -1297,6 +1336,10 @@
                 window.location.href = "index.html?auth=signin&redirect=/upload.html";
                 return;
             }
+            if (isBanned(creatorProfile)) {
+                alert(creatorProfile?.banReason ? `This account is banned: ${creatorProfile.banReason}` : "This account is banned from publishing.");
+                return;
+            }
             if ((creatorProfile?.accountMode || "consumer") !== "creator") {
                 alert("Switch your account to Creator mode before publishing.");
                 window.location.href = "profile.html?open=account";
@@ -1323,11 +1366,23 @@
             const socialDiscord = document.getElementById("social-discord").value.trim();
             const socialDocs = document.getElementById("social-docs").value.trim();
 
-            const isFeatured = canCurate ? document.getElementById("asset-featured").checked : false;
-            const isDevChoice = canCurate ? document.getElementById("asset-dev-choice").checked : false;
+            const isFeatured = canManageMarketplaceAccess ? document.getElementById("asset-featured").checked : false;
+            const isDevChoice = canManageMarketplaceAccess ? document.getElementById("asset-dev-choice").checked : false;
 
             if (!name || !version || !description) {
                 alert("Please complete required fields.");
+                return;
+            }
+            const textSafetyError = validateCleanTextGroup([
+                { label: "Asset name", value: name, options: { required: true, maxLength: 80 } },
+                { label: "Summary", value: summary, options: { maxLength: 180 } },
+                { label: "Description", value: description, options: { required: true, maxLength: 4000 } },
+                { label: "Release notes", value: releaseNotes, options: { maxLength: 3000 } },
+                { label: "Tag", value: tag, options: { maxLength: 40 } },
+                { label: "Compatibility", value: compatibility, options: { maxLength: 120 } }
+            ]);
+            if (textSafetyError) {
+                alert(textSafetyError);
                 return;
             }
             if (iconUrlInput && !validUrl(iconUrlInput)) {
@@ -1396,8 +1451,8 @@
                     downloads: 0,
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                    moderationStatus: canCurate ? "approved" : "pending",
-                    ...(canCurate ? {
+                    moderationStatus: canVerifyAssetsAccess ? "approved" : "pending",
+                    ...(canVerifyAssetsAccess ? {
                         moderationReviewedAt: serverTimestamp(),
                         moderationReviewedBy: activeUser.uid,
                         moderationReason: ""
@@ -1423,8 +1478,8 @@
                     await uploadAssetPackage(packageFile, assetRef.id);
                 }
 
-                let publishMessage = canCurate ? "Asset published." : "Asset submitted for review.";
-                if (canCurate) {
+                let publishMessage = canVerifyAssetsAccess ? "Asset published." : "Asset submitted for review.";
+                if (canVerifyAssetsAccess) {
                     try {
                         const syncResult = await queueAssetDiscordAnnouncement({
                             db,

@@ -62,6 +62,64 @@
             border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
+
+        .community-metric {
+            display: grid;
+            gap: 0.2rem;
+            min-width: 88px;
+            padding: 0.85rem 1rem;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            text-align: center;
+        }
+
+        .community-metric strong {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .community-metric span {
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 800;
+        }
+
+        .rating-chip {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.7);
+            transition: 0.2s;
+        }
+
+        .rating-chip:hover,
+        .rating-chip.is-active {
+            border-color: rgba(255, 121, 198, 0.4);
+            background: rgba(255, 121, 198, 0.12);
+            color: #fff;
+        }
+
+        .comment-card {
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 1rem;
+        }
+
+        .comment-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body class="workflow-page">
@@ -180,6 +238,81 @@
                     Initializing...
                 </article>
 
+                <article class="glass rounded-[28px] p-6 space-y-6">
+                    <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
+                        <div>
+                            <h3 class="text-xs uppercase tracking-[0.2em] font-black text-gray-500">Community</h3>
+                            <p id="community-summary" class="mt-2 text-sm text-gray-300">See how people are responding to this asset.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <div class="community-metric">
+                                <strong id="community-like-count">0</strong>
+                                <span>Likes</span>
+                            </div>
+                            <div class="community-metric">
+                                <strong id="community-rating-average">0.0</strong>
+                                <span>Avg Rating</span>
+                            </div>
+                            <div class="community-metric">
+                                <strong id="community-comment-count">0</strong>
+                                <span>Comments</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-[220px_1fr] gap-4">
+                        <div class="space-y-3">
+                            <button id="like-asset-btn" class="w-full border border-white/10 bg-white/5 text-white font-black py-3 rounded-2xl hover:border-pink-400/40 hover:bg-pink-400/10 transition uppercase text-xs tracking-[0.16em]" type="button">
+                                <i class="fas fa-heart mr-2"></i>
+                                <span>Like Asset</span>
+                            </button>
+                            <p id="like-status" class="text-xs text-gray-500 leading-relaxed">Sign in to like this asset.</p>
+                        </div>
+
+                        <div class="rounded-[22px] border border-white/10 bg-white/[0.03] p-4">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <div class="text-[10px] uppercase tracking-[0.18em] font-black text-gray-500">Rate This Asset</div>
+                                    <p id="rating-status" class="mt-2 text-xs text-gray-400">Pick a star rating from 1 to 5.</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <div id="rating-actions" class="flex flex-wrap gap-2" role="group" aria-label="Rate asset">
+                                        <button class="rating-chip" type="button" data-rating="1" aria-label="Rate 1 star"><i class="fas fa-star"></i></button>
+                                        <button class="rating-chip" type="button" data-rating="2" aria-label="Rate 2 stars"><i class="fas fa-star"></i></button>
+                                        <button class="rating-chip" type="button" data-rating="3" aria-label="Rate 3 stars"><i class="fas fa-star"></i></button>
+                                        <button class="rating-chip" type="button" data-rating="4" aria-label="Rate 4 stars"><i class="fas fa-star"></i></button>
+                                        <button class="rating-chip" type="button" data-rating="5" aria-label="Rate 5 stars"><i class="fas fa-star"></i></button>
+                                    </div>
+                                    <button id="clear-rating-btn" class="border border-white/10 bg-white/5 text-white/80 font-black px-3 py-2 rounded-xl hover:border-white/20 hover:bg-white/10 transition uppercase text-[10px] tracking-[0.16em] hidden" type="button">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-[24px] border border-white/10 bg-black/20 p-4 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div>
+                                <div class="text-[10px] uppercase tracking-[0.18em] font-black text-gray-500">Comment Thread</div>
+                                <p id="comment-status" class="mt-2 text-xs text-gray-400">Share setup tips, feedback, or installation notes.</p>
+                            </div>
+                            <button id="comment-submit" class="border border-white/10 bg-white text-black font-black px-4 py-3 rounded-2xl hover:bg-pink-400 transition uppercase text-xs tracking-[0.16em]" type="button">Post Comment</button>
+                        </div>
+                        <textarea id="comment-input" rows="4" maxlength="800" class="field resize-none" placeholder="Write a helpful comment about this asset..."></textarea>
+                        <div class="flex items-center justify-between gap-3 text-[11px] text-gray-500">
+                            <span>Keep it useful, respectful, and on-topic.</span>
+                            <span id="comment-length">0 / 800</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <h4 class="text-[10px] uppercase tracking-[0.18em] font-black text-gray-500">Recent Comments</h4>
+                            <span id="community-comment-meta" class="text-[11px] text-gray-500">Loading discussion...</span>
+                        </div>
+                        <div id="comment-list" class="space-y-3"></div>
+                    </div>
+                </article>
+
                 <article id="owner-editor" class="glass rounded-[28px] p-6 hidden">
                     <h3 class="text-sm uppercase tracking-[0.2em] font-black text-pink-400 mb-4">Owner Controls</h3>
                     <form id="owner-form" class="space-y-4">
@@ -191,9 +324,9 @@
                         <textarea id="edit-description" rows="3" class="field resize-none" placeholder="Description" required></textarea>
                         <textarea id="edit-notes" rows="2" class="field resize-none" placeholder="Release notes"></textarea>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <input id="edit-tag" class="field" placeholder="Tag">
+                            <input id="edit-tag" class="field" placeholder="Category or host app">
                             <input id="edit-icon-url" class="field" placeholder="Icon URL">
-                            <input id="edit-compatibility" class="field" placeholder="Compatibility">
+                            <input id="edit-compatibility" class="field" placeholder="Blender 4.1, Maya 2026, Unity 6, UE 5.4, etc.">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <input id="edit-video-url" class="field" placeholder="Video URL">
@@ -215,7 +348,7 @@
                             <label class="flex items-center gap-2 text-xs uppercase tracking-[0.13em] text-gray-300"><input id="edit-featured" type="checkbox"> Featured</label>
                             <label class="flex items-center gap-2 text-xs uppercase tracking-[0.13em] text-gray-300"><input id="edit-dev-choice" type="checkbox"> Dev Choice</label>
                         </div>
-                        <p id="owner-curation-note" class="text-[11px] text-gray-400">Curation flags are database-controlled. Set users/{uid}.canCurate to true.</p>
+                        <p id="owner-curation-note" class="text-[11px] text-gray-400">Featured and Dev Choice are controlled by Marketplace Manager and CEO roles.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <label class="upload-chip">Upload Icon<input id="edit-icon-file" type="file" accept="image/*" class="hidden"></label>
                             <label class="upload-chip">Upload Gallery<input id="edit-gallery-files" type="file" accept="image/*" multiple class="hidden"></label>
@@ -359,8 +492,9 @@
 
     <script type="module">
         import { queueAssetDiscordAnnouncement } from "./discord-sync.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { canAccessReviewQueue, canManageMarketplace, canModerateUsers, canVerifyAssets, isBanned, validateCleanTextGroup } from "./loom-access.js";
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             addDoc,
             collection,
@@ -368,7 +502,6 @@
             doc,
             getDoc,
             getDocs,
-            getFirestore,
             increment,
             query,
             runTransaction,
@@ -377,19 +510,6 @@
             updateDoc,
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
         const installBtn = document.getElementById("install-btn");
         const statusEl = document.getElementById("asset-status");
         const assetAccessNoteEl = document.getElementById("asset-access-note");
@@ -405,6 +525,21 @@
         const deleteOwnerAssetBtn = document.getElementById("delete-owner-asset");
         const resetIconBtn = document.getElementById("reset-icon-btn");
         const clearGalleryBtn = document.getElementById("clear-gallery-btn");
+        const communitySummaryEl = document.getElementById("community-summary");
+        const communityLikeCountEl = document.getElementById("community-like-count");
+        const communityRatingAverageEl = document.getElementById("community-rating-average");
+        const communityCommentCountEl = document.getElementById("community-comment-count");
+        const communityCommentMetaEl = document.getElementById("community-comment-meta");
+        const likeAssetBtn = document.getElementById("like-asset-btn");
+        const likeStatusEl = document.getElementById("like-status");
+        const ratingStatusEl = document.getElementById("rating-status");
+        const ratingActionsEl = document.getElementById("rating-actions");
+        const clearRatingBtn = document.getElementById("clear-rating-btn");
+        const commentInput = document.getElementById("comment-input");
+        const commentSubmitBtn = document.getElementById("comment-submit");
+        const commentStatusEl = document.getElementById("comment-status");
+        const commentLengthEl = document.getElementById("comment-length");
+        const commentListEl = document.getElementById("comment-list");
         const params = new URLSearchParams(window.location.search);
         const assetId = params.get("id");
 
@@ -413,11 +548,17 @@
         let currentUser = null;
         let currentAsset = null;
         let currentCreatorProfile = null;
-        let canCurate = false;
+        let currentUserProfile = null;
+        let canVerifyAssetsAccess = false;
+        let canManageMarketplaceAccess = false;
+        let canModerateUsersAccess = false;
         let resetIconRequested = false;
         let clearGalleryRequested = false;
         let presenceTimer = null;
         let assetFiles = [];
+        let assetLikes = [];
+        let assetRatings = [];
+        let assetComments = [];
         const mediaCache = new Map();
         const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
         const MAX_MEDIA_DATAURL_CHARS = 900000;
@@ -456,8 +597,8 @@
                 .filter(Boolean);
         }
 
-        function isCreatorOrCurator() {
-            return Boolean(currentUser && currentAsset && (currentUser.uid === currentAsset.creatorId || canCurate));
+        function isCreatorOrReviewer() {
+            return Boolean(currentUser && currentAsset && (currentUser.uid === currentAsset.creatorId || canVerifyAssetsAccess));
         }
 
         function safeRedirectPath(rawValue = "") {
@@ -584,14 +725,12 @@
             const constraints = imageConstraintsFor(meta);
             const compressed = await compressImageToDataUrl(file, constraints);
             const dataUrl = compressed.dataUrl;
-            const moderation = canCurate
-                ? {
-                    moderationStatus: "approved",
-                    moderationReviewedAt: serverTimestamp(),
-                    moderationReviewedBy: currentUser.uid,
-                    moderationReason: ""
-                }
-                : { moderationStatus: "pending" };
+            const moderation = {
+                moderationStatus: "approved",
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: currentUser.uid,
+                moderationReason: ""
+            };
             const ref = await addDoc(collection(db, "media"), {
                 ownerId: currentUser.uid,
                 dataUrl,
@@ -740,7 +879,7 @@
               }
 
             let finalUpdate = { status: "pending_review" };
-            if (canCurate) {
+            if (canVerifyAssetsAccess) {
                 const confirmed = confirm("Virus check: confirm you scanned this file locally and it is clean.\n\nOK = mark ready now\nCancel = send to review queue");
                 if (confirmed) {
                     finalUpdate = {
@@ -764,10 +903,10 @@
         }
 
         function syncCurationUi() {
-            ownerCurationControls.classList.toggle("hidden", !canCurate);
-            ownerCurationNote.innerText = canCurate
-                ? "You have curator access. Featured and Dev Choice can be edited."
-                : "Featured and Dev Choice are database-controlled. Set users/{uid}.canCurate to true in Firestore.";
+            ownerCurationControls.classList.toggle("hidden", !canManageMarketplaceAccess);
+            ownerCurationNote.innerText = canManageMarketplaceAccess
+                ? "Marketplace access enabled. Featured and Dev Choice can be edited."
+                : "Featured and Dev Choice are controlled by Marketplace Manager and CEO roles.";
         }
 
         function startPresence(uid) {
@@ -819,6 +958,176 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#39;");
+        }
+
+        function escapeHtmlWithBreaks(value = "") {
+            return escapeHtml(value).replace(/\n/g, "<br>");
+        }
+
+        function usernameFromCurrentUser() {
+            const fromProfile = normalizeUsername(currentUserProfile?.username, "");
+            if (fromProfile) return fromProfile;
+            const fromEmail = String(currentUser?.email || "").split("@")[0];
+            return normalizeUsername(fromEmail, "user");
+        }
+
+        function canUseCommunity() {
+            return Boolean(
+                currentAsset
+                && !isBanned(currentUserProfile)
+                && (currentAsset.moderationStatus === "approved" || isCreatorOrReviewer())
+            );
+        }
+
+        function currentUserHasLiked() {
+            if (!currentUser) return false;
+            return assetLikes.some((entry) => entry.userId === currentUser.uid);
+        }
+
+        function currentUserRatingValue() {
+            if (!currentUser) return 0;
+            const entry = assetRatings.find((item) => item.userId === currentUser.uid);
+            const rating = Number(entry?.rating || 0);
+            return Number.isFinite(rating) ? rating : 0;
+        }
+
+        function averageAssetRating() {
+            if (!assetRatings.length) return 0;
+            const total = assetRatings.reduce((sum, entry) => sum + Number(entry.rating || 0), 0);
+            return total / assetRatings.length;
+        }
+
+        function syncCommentLength() {
+            if (!commentInput || !commentLengthEl) return;
+            commentLengthEl.innerText = `${String(commentInput.value || "").length} / 800`;
+        }
+
+        function renderCommunity() {
+            const likeCount = assetLikes.length;
+            const commentCount = assetComments.length;
+            const ratingAverage = averageAssetRating();
+            const ratingCount = assetRatings.length;
+            const myRating = currentUserRatingValue();
+            const liked = currentUserHasLiked();
+            const signedIn = Boolean(currentUser);
+            const banned = isBanned(currentUserProfile);
+            const communityEnabled = canUseCommunity();
+
+            if (communityLikeCountEl) communityLikeCountEl.innerText = String(likeCount);
+            if (communityCommentCountEl) communityCommentCountEl.innerText = String(commentCount);
+            if (communityRatingAverageEl) communityRatingAverageEl.innerText = ratingCount ? ratingAverage.toFixed(1) : "0.0";
+            if (communitySummaryEl) {
+                communitySummaryEl.innerText = ratingCount
+                    ? `${ratingCount} rating${ratingCount === 1 ? "" : "s"}, ${likeCount} like${likeCount === 1 ? "" : "s"}, and ${commentCount} comment${commentCount === 1 ? "" : "s"} so far.`
+                    : `No ratings yet. ${likeCount} like${likeCount === 1 ? "" : "s"} and ${commentCount} comment${commentCount === 1 ? "" : "s"} so far.`;
+            }
+
+            if (likeAssetBtn) {
+                likeAssetBtn.disabled = !communityEnabled;
+                likeAssetBtn.classList.toggle("opacity-60", !communityEnabled);
+                likeAssetBtn.classList.toggle("cursor-not-allowed", !communityEnabled);
+                likeAssetBtn.innerHTML = liked
+                    ? `<i class="fas fa-heart mr-2 text-pink-300"></i><span>Liked</span>`
+                    : `<i class="fas fa-heart mr-2"></i><span>${!signedIn ? "Sign In To Like" : banned ? "Account Restricted" : "Like Asset"}</span>`;
+            }
+            if (likeStatusEl) {
+                likeStatusEl.innerText = banned
+                    ? "Banned accounts cannot react or comment."
+                    : !communityEnabled
+                    ? "Community reactions are available once the asset is approved."
+                    : liked
+                        ? "You already liked this asset. Click again to remove it."
+                        : signedIn
+                            ? "Save this asset as something you recommend."
+                            : "Sign in to like this asset.";
+            }
+
+            if (ratingStatusEl) {
+                ratingStatusEl.innerText = banned
+                    ? "Banned accounts cannot leave ratings."
+                    : !communityEnabled
+                    ? "Ratings open when the asset is approved."
+                    : myRating
+                        ? `Your rating: ${myRating}/5 stars.`
+                        : signedIn
+                            ? "Pick a star rating from 1 to 5."
+                            : "Sign in to leave a rating.";
+            }
+            ratingActionsEl?.querySelectorAll("[data-rating]")?.forEach((button) => {
+                const rating = Number(button.dataset.rating || 0);
+                button.disabled = !communityEnabled || !signedIn;
+                button.classList.toggle("opacity-60", !communityEnabled || !signedIn);
+                button.classList.toggle("cursor-not-allowed", !communityEnabled || !signedIn);
+                button.classList.toggle("is-active", myRating >= rating && myRating > 0);
+            });
+            if (clearRatingBtn) {
+                clearRatingBtn.classList.toggle("hidden", !signedIn || !myRating || !communityEnabled);
+            }
+
+            if (commentInput) {
+                commentInput.disabled = !communityEnabled || !signedIn;
+                if (!signedIn) {
+                    commentInput.placeholder = "Sign in to join the discussion.";
+                } else if (banned) {
+                    commentInput.placeholder = "This account cannot post comments.";
+                } else if (!communityEnabled) {
+                    commentInput.placeholder = "Comments open when the asset is approved.";
+                } else {
+                    commentInput.placeholder = "Write a helpful comment about this asset...";
+                }
+            }
+            if (commentSubmitBtn) {
+                commentSubmitBtn.disabled = !communityEnabled || !signedIn;
+                commentSubmitBtn.classList.toggle("opacity-60", !communityEnabled || !signedIn);
+                commentSubmitBtn.classList.toggle("cursor-not-allowed", !communityEnabled || !signedIn);
+            }
+            if (commentStatusEl) {
+                commentStatusEl.innerText = banned
+                    ? "Banned accounts cannot post comments."
+                    : !communityEnabled
+                    ? "Comments are disabled until the asset is approved."
+                    : signedIn
+                        ? "Share setup tips, feedback, or installation notes."
+                        : "Sign in to comment on this asset.";
+            }
+            if (communityCommentMetaEl) {
+                communityCommentMetaEl.innerText = commentCount
+                    ? `${commentCount} comment${commentCount === 1 ? "" : "s"} loaded`
+                    : "No comments yet";
+            }
+
+            if (!commentListEl) return;
+            if (!assetComments.length) {
+                commentListEl.innerHTML = `<div class="comment-card text-sm text-gray-400">No comments yet. Be the first person to leave something useful.</div>`;
+                return;
+            }
+
+            commentListEl.innerHTML = assetComments.map((comment) => {
+                const canDelete = Boolean(currentUser && (
+                    comment.userId === currentUser.uid
+                    || canVerifyAssetsAccess
+                    || canModerateUsersAccess
+                    || currentAsset?.creatorId === currentUser.uid
+                ));
+                const avatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(comment.userId || comment.username || "comment")}`;
+                return `
+                    <article class="comment-card">
+                        <div class="flex items-start gap-3">
+                            <img class="comment-avatar" src="${avatar}" alt="${escapeHtml(comment.username || "user")}">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-black text-white break-all">${escapeHtml(comment.username || "user")}</div>
+                                        <div class="text-[11px] uppercase tracking-[0.18em] text-gray-500">${escapeHtml(formatTimestamp(comment.updatedAt || comment.createdAt))}</div>
+                                    </div>
+                                    ${canDelete ? `<button class="text-[11px] uppercase tracking-[0.18em] font-black text-red-300 hover:text-red-200" type="button" data-comment-id="${escapeHtml(comment.id)}">Delete</button>` : ""}
+                                </div>
+                                <p class="mt-3 text-sm text-gray-300 leading-relaxed">${escapeHtmlWithBreaks(comment.body || "")}</p>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
         }
 
         function pickYouTubeEmbed(url) {
@@ -889,9 +1198,9 @@
             if (asset.videoUrl) {
                 const ytEmbed = pickYouTubeEmbed(asset.videoUrl);
                 if (ytEmbed) {
-                    videoContainer.innerHTML = `<iframe class="w-full aspect-video rounded-2xl border border-white/10" src="${ytEmbed}" allowfullscreen></iframe>`;
+                    videoContainer.innerHTML = `<iframe class="w-full aspect-video rounded-2xl border border-white/10" src="${escapeHtml(ytEmbed)}" allowfullscreen></iframe>`;
                 } else {
-                    videoContainer.innerHTML = `<video class="w-full rounded-2xl border border-white/10" controls src="${asset.videoUrl}"></video>`;
+                    videoContainer.innerHTML = `<video class="w-full rounded-2xl border border-white/10" controls src="${escapeHtml(asset.videoUrl)}"></video>`;
                 }
                 videoPanel.classList.remove("hidden");
             } else {
@@ -906,7 +1215,7 @@
 
             if (gallerySources.length) {
                 galleryGrid.innerHTML = gallerySources
-                    .map((img) => `<img src="${img}" alt="Asset gallery image">`)
+                    .map((img) => `<img src="${escapeHtml(img)}" alt="Asset gallery image">`)
                     .join("");
                 galleryPanel.classList.remove("hidden");
             } else {
@@ -929,7 +1238,7 @@
             }
 
             document.getElementById("asset-socials").innerHTML = socials
-                .map((entry) => `<a class="block hover:text-pink-400" href="${entry.value}" target="_blank" rel="noopener"><i class="fas ${entry.icon} mr-2"></i>${entry.label}</a>`)
+                .map((entry) => `<a class="block hover:text-pink-400" href="${escapeHtml(entry.value)}" target="_blank" rel="noopener"><i class="fas ${entry.icon} mr-2"></i>${entry.label}</a>`)
                 .join("");
         }
 
@@ -947,6 +1256,16 @@
                     buttonLabel: "Sign In To Download",
                     disabled: false,
                     note: "Sign in to download this asset and keep your library in sync."
+                };
+            }
+
+            if (isBanned(currentUserProfile)) {
+                return {
+                    buttonLabel: "Account Restricted",
+                    disabled: true,
+                    note: currentUserProfile?.banReason
+                        ? `This account is banned: ${currentUserProfile.banReason}`
+                        : "This account is banned from downloading or interacting."
                 };
             }
 
@@ -1039,6 +1358,50 @@
             await renderMedia(asset);
             renderSocialLinks(asset);
             syncInstallUi();
+            renderCommunity();
+        }
+
+        async function loadCommunityActivity() {
+            if (!assetId || !currentAsset) {
+                assetLikes = [];
+                assetRatings = [];
+                assetComments = [];
+                renderCommunity();
+                return;
+            }
+
+            if (!canUseCommunity()) {
+                assetLikes = [];
+                assetRatings = [];
+                assetComments = [];
+                renderCommunity();
+                return;
+            }
+
+            try {
+                const [likesSnap, ratingsSnap, commentsSnap] = await Promise.all([
+                    getDocs(query(collection(db, "assetLikes"), where("assetId", "==", assetId))),
+                    getDocs(query(collection(db, "assetRatings"), where("assetId", "==", assetId))),
+                    getDocs(query(collection(db, "assetComments"), where("assetId", "==", assetId)))
+                ]);
+
+                assetLikes = likesSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+                assetRatings = ratingsSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+                assetComments = commentsSnap.docs
+                    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+                    .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt))
+                    .slice(0, 50);
+            } catch (err) {
+                console.error("Failed to load asset community activity:", err);
+                assetLikes = [];
+                assetRatings = [];
+                assetComments = [];
+                if (communityCommentMetaEl) {
+                    communityCommentMetaEl.innerText = "Unable to load discussion";
+                }
+            }
+
+            renderCommunity();
         }
 
         async function loadCreatorName(asset) {
@@ -1081,7 +1444,7 @@
         }
 
         function syncOwnerVisibility() {
-            const canEdit = Boolean(currentUser && currentAsset && currentUser.uid === currentAsset.creatorId);
+            const canEdit = Boolean(currentUser && currentAsset && currentUser.uid === currentAsset.creatorId && !isBanned(currentUserProfile));
             ownerEditor.classList.toggle("hidden", !canEdit);
             if (canEdit) {
                 fillOwnerForm(currentAsset);
@@ -1111,8 +1474,9 @@
             await renderAsset(currentAsset, creatorName);
             syncOwnerVisibility();
             await loadAssetFiles();
+            await loadCommunityActivity();
             if (currentAsset.moderationStatus === "pending") {
-                setStatus("This asset is pending review. Only the creator and curators can see it.", "text-yellow-300");
+                setStatus("This asset is pending review. Only the creator and asset review staff can see it.", "text-yellow-300");
             } else if (currentAsset.moderationStatus === "rejected") {
                 setStatus("This asset was rejected by moderation.", "text-red-400");
             } else {
@@ -1129,7 +1493,7 @@
                 return;
             }
             try {
-                const canSeeAll = isCreatorOrCurator();
+                const canSeeAll = isCreatorOrReviewer();
                 const baseQuery = canSeeAll
                     ? query(collection(db, "assetFiles"), where("assetId", "==", assetId))
                     : query(collection(db, "assetFiles"), where("assetId", "==", assetId), where("status", "==", "ready"));
@@ -1152,7 +1516,7 @@
 
         function renderAssetFiles() {
             if (!assetFilesList) return;
-            const canSeeAll = isCreatorOrCurator();
+            const canSeeAll = isCreatorOrReviewer();
             const readyFiles = assetFiles.filter((file) => file.status === "ready");
             if (!assetFiles.length) {
                 assetFilesList.innerHTML = `<p class="text-sm text-gray-500">No downloadable files available yet.</p>`;
@@ -1171,7 +1535,7 @@
                         <div class="text-[11px] text-gray-500 mt-1">${formatFileSize(Number(file.size || 0))}</div>
                     </div>
                     ${file.status === "ready" || canSeeAll
-                        ? `<button class="text-xs uppercase tracking-widest font-black text-pink-400 hover:text-pink-300" type="button" data-file-id="${file.id}">Download</button>`
+                        ? `<button class="text-xs uppercase tracking-widest font-black text-pink-400 hover:text-pink-300" type="button" data-file-id="${escapeHtml(file.id)}">Download</button>`
                         : `<button class="text-xs uppercase tracking-widest font-black text-gray-500 cursor-not-allowed" type="button" disabled>Pending</button>`
                     }
                 </div>
@@ -1196,7 +1560,7 @@
                     setStatus("Sign in to download this asset.", "text-yellow-300");
                     return;
                 }
-                const canSeeAll = isCreatorOrCurator();
+                const canSeeAll = isCreatorOrReviewer();
                 if (fileMeta.status !== "ready" && !canSeeAll) {
                     setStatus("This file is pending review.", "text-yellow-300");
                     return;
@@ -1255,6 +1619,174 @@
             }
         }
 
+        function redirectToAssetSignIn() {
+            const redirectPath = safeRedirectPath(`${window.location.pathname}${window.location.search}`) || `/asset.html?id=${encodeURIComponent(assetId)}`;
+            window.location.href = `index.html?auth=signin&redirect=${encodeURIComponent(redirectPath)}`;
+        }
+
+        async function toggleAssetLike() {
+            if (!currentAsset) return;
+            if (!currentUser) {
+                redirectToAssetSignIn();
+                return;
+            }
+            if (!canUseCommunity()) {
+                renderCommunity();
+                return;
+            }
+
+            try {
+                likeAssetBtn.disabled = true;
+                const likeRef = doc(db, "assetLikes", `${assetId}_${currentUser.uid}`);
+                const existing = await getDoc(likeRef);
+                if (existing.exists()) {
+                    await deleteDoc(likeRef);
+                    if (likeStatusEl) likeStatusEl.innerText = "Like removed.";
+                } else {
+                    await setDoc(likeRef, {
+                        assetId,
+                        userId: currentUser.uid,
+                        createdAt: serverTimestamp()
+                    });
+                    if (likeStatusEl) likeStatusEl.innerText = "Asset liked.";
+                }
+                await loadCommunityActivity();
+            } catch (err) {
+                console.error("Like toggle failed:", err);
+                if (likeStatusEl) likeStatusEl.innerText = "Unable to update like right now.";
+            } finally {
+                renderCommunity();
+            }
+        }
+
+        async function submitAssetRating(ratingValue) {
+            const rating = Math.max(1, Math.min(5, Number(ratingValue || 0)));
+            if (!rating || !currentAsset) return;
+            if (!currentUser) {
+                redirectToAssetSignIn();
+                return;
+            }
+            if (!canUseCommunity()) {
+                renderCommunity();
+                return;
+            }
+
+            try {
+                ratingActionsEl?.classList.add("opacity-60");
+                const ratingRef = doc(db, "assetRatings", `${assetId}_${currentUser.uid}`);
+                const existing = await getDoc(ratingRef);
+                const payload = {
+                    assetId,
+                    userId: currentUser.uid,
+                    username: usernameFromCurrentUser(),
+                    rating,
+                    updatedAt: serverTimestamp()
+                };
+                if (existing.exists()) {
+                    await updateDoc(ratingRef, {
+                        username: payload.username,
+                        rating: payload.rating,
+                        updatedAt: payload.updatedAt
+                    });
+                } else {
+                    await setDoc(ratingRef, {
+                        ...payload,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                if (ratingStatusEl) ratingStatusEl.innerText = `Saved your ${rating}/5 rating.`;
+                await loadCommunityActivity();
+            } catch (err) {
+                console.error("Rating submit failed:", err);
+                if (ratingStatusEl) ratingStatusEl.innerText = "Unable to save rating right now.";
+            } finally {
+                ratingActionsEl?.classList.remove("opacity-60");
+                renderCommunity();
+            }
+        }
+
+        async function clearAssetRating() {
+            if (!currentUser || !currentAsset) return;
+            try {
+                clearRatingBtn.disabled = true;
+                await deleteDoc(doc(db, "assetRatings", `${assetId}_${currentUser.uid}`));
+                if (ratingStatusEl) ratingStatusEl.innerText = "Your rating was cleared.";
+                await loadCommunityActivity();
+            } catch (err) {
+                console.error("Failed to clear rating:", err);
+                if (ratingStatusEl) ratingStatusEl.innerText = "Unable to clear rating right now.";
+            } finally {
+                clearRatingBtn.disabled = false;
+                renderCommunity();
+            }
+        }
+
+        async function submitAssetComment() {
+            if (!currentAsset) return;
+            if (!currentUser) {
+                redirectToAssetSignIn();
+                return;
+            }
+            if (!canUseCommunity()) {
+                renderCommunity();
+                return;
+            }
+
+            const body = String(commentInput?.value || "").trim().slice(0, 800);
+            if (!body) {
+                if (commentStatusEl) commentStatusEl.innerText = "Write something before posting.";
+                return;
+            }
+            const commentSafetyError = validateCleanTextGroup([
+                { label: "Comment", value: body, options: { required: true, maxLength: 800 } }
+            ]);
+            if (commentSafetyError) {
+                if (commentStatusEl) commentStatusEl.innerText = commentSafetyError;
+                return;
+            }
+
+            try {
+                commentSubmitBtn.disabled = true;
+                commentSubmitBtn.classList.add("opacity-60", "cursor-not-allowed");
+                await addDoc(collection(db, "assetComments"), {
+                    assetId,
+                    userId: currentUser.uid,
+                    username: usernameFromCurrentUser(),
+                    body,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                commentInput.value = "";
+                syncCommentLength();
+                if (commentStatusEl) commentStatusEl.innerText = "Comment posted.";
+                await loadCommunityActivity();
+            } catch (err) {
+                console.error("Comment submit failed:", err);
+                if (commentStatusEl) commentStatusEl.innerText = "Unable to post comment right now.";
+            } finally {
+                commentSubmitBtn.disabled = false;
+                commentSubmitBtn.classList.remove("opacity-60", "cursor-not-allowed");
+                renderCommunity();
+            }
+        }
+
+        async function deleteAssetComment(commentId) {
+            if (!commentId || !currentUser) return;
+            const target = assetComments.find((comment) => comment.id === commentId);
+            if (!target) return;
+            const canDelete = target.userId === currentUser.uid || canVerifyAssetsAccess || canModerateUsersAccess || currentAsset?.creatorId === currentUser.uid;
+            if (!canDelete) return;
+
+            try {
+                await deleteDoc(doc(db, "assetComments", commentId));
+                if (commentStatusEl) commentStatusEl.innerText = "Comment deleted.";
+                await loadCommunityActivity();
+            } catch (err) {
+                console.error("Comment delete failed:", err);
+                if (commentStatusEl) commentStatusEl.innerText = "Unable to delete comment right now.";
+            }
+        }
+
         async function deleteDocumentsFromSnapshot(snapshot) {
             for (const docSnap of snapshot.docs) {
                 await deleteDoc(docSnap.ref);
@@ -1291,6 +1823,21 @@
             await deleteDocumentsFromSnapshot(downloadsSnap);
         }
 
+        async function deleteAssetLikeRecords() {
+            const likesSnap = await getDocs(query(collection(db, "assetLikes"), where("assetId", "==", assetId)));
+            await deleteDocumentsFromSnapshot(likesSnap);
+        }
+
+        async function deleteAssetRatingRecords() {
+            const ratingsSnap = await getDocs(query(collection(db, "assetRatings"), where("assetId", "==", assetId)));
+            await deleteDocumentsFromSnapshot(ratingsSnap);
+        }
+
+        async function deleteAssetCommentRecords() {
+            const commentsSnap = await getDocs(query(collection(db, "assetComments"), where("assetId", "==", assetId)));
+            await deleteDocumentsFromSnapshot(commentsSnap);
+        }
+
         async function deletePendingDiscordQueueRecord() {
             try {
                 await deleteDoc(doc(db, "discordAssetSyncQueue", assetId));
@@ -1318,6 +1865,9 @@
                 setOwnerStatus("Deleting asset and related records...", "text-red-300");
 
                 await deleteAssetDownloadRecords();
+                await deleteAssetLikeRecords();
+                await deleteAssetRatingRecords();
+                await deleteAssetCommentRecords();
                 await deletePendingDiscordQueueRecord();
                 await deleteOwnedAssetFiles();
                 await deleteOwnedAssetMedia();
@@ -1376,6 +1926,31 @@
             await downloadAssetFile(fileMeta);
         });
 
+        likeAssetBtn?.addEventListener("click", () => toggleAssetLike().catch(() => {
+            if (likeStatusEl) likeStatusEl.innerText = "Unable to update like right now.";
+        }));
+        ratingActionsEl?.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-rating]");
+            if (!button) return;
+            submitAssetRating(button.dataset.rating).catch(() => {
+                if (ratingStatusEl) ratingStatusEl.innerText = "Unable to save rating right now.";
+            });
+        });
+        clearRatingBtn?.addEventListener("click", () => clearAssetRating().catch(() => {
+            if (ratingStatusEl) ratingStatusEl.innerText = "Unable to clear rating right now.";
+        }));
+        commentInput?.addEventListener("input", syncCommentLength);
+        commentSubmitBtn?.addEventListener("click", () => submitAssetComment().catch(() => {
+            if (commentStatusEl) commentStatusEl.innerText = "Unable to post comment right now.";
+        }));
+        commentListEl?.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-comment-id]");
+            if (!button) return;
+            deleteAssetComment(button.dataset.commentId).catch(() => {
+                if (commentStatusEl) commentStatusEl.innerText = "Unable to delete comment right now.";
+            });
+        });
+
         resetIconBtn?.addEventListener("click", () => {
             resetIconRequested = true;
             document.getElementById("edit-icon-url").value = "";
@@ -1407,6 +1982,10 @@
             if (!currentUser || !currentAsset || currentUser.uid !== currentAsset.creatorId) {
                 return;
             }
+            if (isBanned(currentUserProfile)) {
+                alert(currentUserProfile?.banReason ? `This account is banned: ${currentUserProfile.banReason}` : "This account is banned from editing assets.");
+                return;
+            }
 
             const name = document.getElementById("edit-name").value.trim();
             const version = document.getElementById("edit-version").value.trim();
@@ -1436,6 +2015,18 @@
 
             if (!name || !version || !description) {
                 alert("Name, version, and description are required.");
+                return;
+            }
+            const textSafetyError = validateCleanTextGroup([
+                { label: "Asset name", value: name, options: { required: true, maxLength: 80 } },
+                { label: "Summary", value: summary, options: { maxLength: 180 } },
+                { label: "Description", value: description, options: { required: true, maxLength: 4000 } },
+                { label: "Release notes", value: releaseNotes, options: { maxLength: 3000 } },
+                { label: "Tag", value: tag, options: { maxLength: 40 } },
+                { label: "Compatibility", value: compatibility, options: { maxLength: 120 } }
+            ]);
+            if (textSafetyError) {
+                alert(textSafetyError);
                 return;
             }
             if (iconUrl && !validUrl(iconUrl)) {
@@ -1510,12 +2101,12 @@
                         discord: document.getElementById("edit-social-discord").value.trim(),
                         docs: document.getElementById("edit-social-docs").value.trim()
                     },
-                    featured: canCurate ? document.getElementById("edit-featured").checked : Boolean(currentAsset.featured),
-                    devChoice: canCurate ? document.getElementById("edit-dev-choice").checked : Boolean(currentAsset.devChoice),
+                    featured: canManageMarketplaceAccess ? document.getElementById("edit-featured").checked : Boolean(currentAsset.featured),
+                    devChoice: canManageMarketplaceAccess ? document.getElementById("edit-dev-choice").checked : Boolean(currentAsset.devChoice),
                     creatorName,
                     updatedAt: serverTimestamp(),
                     ...(shouldBackfillLastVersion ? { discordLastAnnouncedVersion: currentAsset.version } : {}),
-                    ...(canCurate ? {} : { moderationStatus: "pending" })
+                    ...(canVerifyAssetsAccess ? {} : { moderationStatus: "pending" })
                 };
 
                 await setDoc(assetRef, updates, { merge: true });
@@ -1529,11 +2120,11 @@
                 const mergedAsset = {
                     ...currentAsset,
                     ...updates,
-                    moderationStatus: canCurate ? (currentAsset?.moderationStatus || "approved") : "pending"
+                    moderationStatus: canVerifyAssetsAccess ? (currentAsset?.moderationStatus || "approved") : "pending"
                 };
-                let ownerNotice = canCurate ? "Asset updated." : "Asset changes saved and sent for review.";
+                let ownerNotice = canVerifyAssetsAccess ? "Asset updated." : "Asset changes saved and sent for review.";
 
-                if (canCurate) {
+                if (canVerifyAssetsAccess) {
                     try {
                         const syncResult = await queueAssetDiscordAnnouncement({
                             db,
@@ -1593,29 +2184,43 @@
             if (user) {
                 try {
                     const snap = await getDoc(doc(db, "users", user.uid));
-                    canCurate = snap.exists() ? Boolean(snap.data().canCurate) : false;
+                    currentUserProfile = snap.exists() ? snap.data() : null;
+                    const allowedProfile = isBanned(currentUserProfile) ? null : currentUserProfile;
+                    canVerifyAssetsAccess = canVerifyAssets(allowedProfile);
+                    canManageMarketplaceAccess = canManageMarketplace(allowedProfile);
+                    canModerateUsersAccess = canModerateUsers(allowedProfile);
                 } catch (err) {
-                    console.warn("Failed to read curator permission:", err);
-                    canCurate = false;
+                    console.warn("Failed to read role permissions:", err);
+                    currentUserProfile = null;
+                    canVerifyAssetsAccess = false;
+                    canManageMarketplaceAccess = false;
+                    canModerateUsersAccess = false;
                 }
                 startPresence(user.uid);
             } else {
-                canCurate = false;
+                currentUserProfile = null;
+                canVerifyAssetsAccess = false;
+                canManageMarketplaceAccess = false;
+                canModerateUsersAccess = false;
                 stopPresence();
             }
             syncCurationUi();
             syncOwnerVisibility();
-            reviewLink.classList.toggle("hidden", !canCurate);
+            reviewLink.classList.toggle("hidden", !canAccessReviewQueue(currentUserProfile));
             if (currentAsset) {
                 loadAssetFiles().catch((err) => console.warn("Reload asset files failed:", err));
+                loadCommunityActivity().catch((err) => console.warn("Reload community failed:", err));
             } else {
                 syncInstallUi();
+                renderCommunity();
             }
         });
 
         setOwnerProgress(0);
         syncCurationUi();
         syncInstallUi();
+        syncCommentLength();
+        renderCommunity();
 
         loadAsset().catch((err) => {
             console.error("Asset load failed:", err);

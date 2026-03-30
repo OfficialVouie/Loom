@@ -63,7 +63,7 @@
                                 <span class="browse-field-label">Search</span>
                                 <div class="relative">
                                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                                    <input id="asset-search" class="field pl-10" placeholder="Search name, tag, creator, compatibility">
+                                    <input id="asset-search" class="field pl-10" placeholder="Search name, category, creator, compatibility">
                                 </div>
                             </label>
                             <label class="browse-field-group">
@@ -83,9 +83,9 @@
                         <p class="browse-panel-copy">Use just the few filters you need instead of opening a wall of controls.</p>
                         <div class="filter-stack mt-4">
                             <label class="browse-field-group">
-                                <span class="browse-field-label">Tag</span>
+                                <span class="browse-field-label">Category</span>
                                 <select id="filter-tag" class="field">
-                                    <option value="">All tags</option>
+                                    <option value="">All categories</option>
                                 </select>
                             </label>
                             <label class="browse-field-group">
@@ -96,7 +96,7 @@
                             </label>
                             <label class="browse-field-group">
                                 <span class="browse-field-label">Compatibility</span>
-                                <input id="filter-compat" class="field" placeholder="Example: Unity 2022, Roblox 2026">
+                                <input id="filter-compat" class="field" placeholder="Example: Blender 4.1, Maya 2026, Unity 6, Roblox Studio">
                             </label>
                         </div>
                         <div class="filter-checks mt-4">
@@ -303,28 +303,16 @@
 
     <!-- SCRIPT -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { isBanned } from "./loom-access.js";
+        import { db } from "./firebase-config.js";
         import {
             collection,
             doc,
             getDoc,
-            getFirestore,
             onSnapshot,
             query,
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
 
         const searchInput = document.getElementById("asset-search");
         const sortBy = document.getElementById("sort-by");
@@ -355,9 +343,11 @@
         const mediaCache = new Map();
         const urlParams = new URLSearchParams(window.location.search);
         let assets = [];
+        let creatorProfiles = new Map();
         let weeklyFreeSelection = [];
         let weeklyFreeIds = new Set();
-        let unsubscribe = null;
+        let unsubscribeAssets = null;
+        let unsubscribeUsers = null;
 
         function escapeHtml(value = "") {
             return String(value)
@@ -425,6 +415,13 @@
                 .slice(0, limitCount);
         }
 
+        function visibleAssets() {
+            return assets.filter((asset) => {
+                const creator = creatorProfiles.get(asset.creatorId);
+                return !creator || !isBanned(creator);
+            });
+        }
+
         function normalizeAsset(id, raw = {}) {
             const name = String(raw.name || "Untitled");
             const version = String(raw.version || "v1.0.0");
@@ -466,8 +463,10 @@
         function renderAssetCard(asset) {
             const iconFallback = asset.iconUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=loom-asset";
             const iconMediaId = asset.iconMediaId || "";
-            const creator = asset.creatorName || "unknown";
-            const creatorAvatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(asset.creatorId || creator)}`;
+            const creatorProfile = creatorProfiles.get(asset.creatorId) || null;
+            const creator = String(creatorProfile?.username || asset.creatorName || "unknown");
+            const creatorAvatar = String(creatorProfile?.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(asset.creatorId || creator)}`);
+            const creatorAvatarMediaId = String(creatorProfile?.avatarMediaId || "");
 
             const pills = [
                 weeklyFreeIds.has(asset.id)
@@ -506,7 +505,7 @@
                     <div class="mt-4">${compatLine}</div>
                     <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2 min-w-0">
-                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" alt="Creator avatar">
+                            <img class="w-6 h-6 rounded-full border border-white/10 object-cover" src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
                             <span class="text-xs text-white/75 truncate">${escapeHtml(creator)}</span>
                         </div>
                         <div class="text-right">
@@ -533,13 +532,14 @@
         }
 
         function rebuildFilterOptions() {
-            const tagCounts = computeOptionCounts(assets, "tag");
-            const licenseCounts = computeOptionCounts(assets, "license");
+            const catalog = visibleAssets();
+            const tagCounts = computeOptionCounts(catalog, "tag");
+            const licenseCounts = computeOptionCounts(catalog, "license");
 
             const keepTag = filterTag.value;
             const keepLicense = filterLicense.value;
 
-            filterTag.innerHTML = `<option value="">All tags</option>` + tagCounts.map(([tag, count]) => {
+            filterTag.innerHTML = `<option value="">All categories</option>` + tagCounts.map(([tag, count]) => {
                 return `<option value="${escapeHtml(tag)}">${escapeHtml(tag)} (${count})</option>`;
             }).join("");
 
@@ -558,7 +558,7 @@
             const license = String(filterLicense.value || "");
             const compat = String(filterCompat.value || "").trim();
             if (q) parts.push(`Search: "${q}"`);
-            if (tag) parts.push(`Tag: ${tag}`);
+            if (tag) parts.push(`Category: ${tag}`);
             if (license) parts.push(`License: ${license}`);
             if (compat) parts.push(`Compat: ${compat}`);
             if (filterWeeklyFree.checked) parts.push("Weekly Free 10");
@@ -577,10 +577,11 @@
             const freeOnly = Boolean(filterFree.checked);
             const featuredOnly = Boolean(filterFeatured.checked);
             const supportOnly = Boolean(filterSupport.checked);
-            weeklyFreeSelection = getWeeklyFreeAssets(assets, 10);
+            const catalog = visibleAssets();
+            weeklyFreeSelection = getWeeklyFreeAssets(catalog, 10);
             weeklyFreeIds = new Set(weeklyFreeSelection.map((asset) => asset.id));
 
-            let filtered = weeklyFreeOnly ? weeklyFreeSelection.slice() : assets.slice();
+            let filtered = weeklyFreeOnly ? weeklyFreeSelection.slice() : catalog.slice();
 
             if (queryText) {
                 filtered = filtered.filter((asset) => asset.searchText.includes(queryText));
@@ -619,10 +620,11 @@
         }
 
         function render(filtered) {
+            const catalog = visibleAssets();
             const totals = {
-                assets: assets.length,
-                creators: new Set(assets.map((a) => a.creatorId || a.creatorName)).size,
-                installs: assets.reduce((sum, a) => sum + Number(a.downloads || 0), 0)
+                assets: catalog.length,
+                creators: new Set(catalog.map((a) => a.creatorId || a.creatorName)).size,
+                installs: catalog.reduce((sum, a) => sum + Number(a.downloads || 0), 0)
             };
 
             metricAssets.textContent = `${totals.assets.toLocaleString()} assets`;
@@ -634,12 +636,14 @@
             const summaryParts = currentFilterSummary();
             const filtersActive = summaryParts.length > 0;
             resultsNote.classList.toggle("hidden", !filtersActive);
-            const separator = String.fromCharCode(183);
             activeFilters.textContent = filtersActive
                 ? `Showing ${filtered.length.toLocaleString()} of ${assets.length.toLocaleString()} assets. ${summaryParts.join(" · ")}`
                 : "Showing all approved assets.";
 
-            activeFilters.textContent = activeFilters.textContent.replace(/\u00c2\u00b7/g, separator);
+            activeFilters.textContent = activeFilters.textContent.replace(/\u00c2\u00b7/g, "|");
+            if (filtersActive) {
+                activeFilters.textContent = `Showing ${filtered.length.toLocaleString()} of ${catalog.length.toLocaleString()} assets. ${summaryParts.join(" | ")}`;
+            }
 
             if (!filtered.length) {
                 emptyState.classList.remove("hidden");
@@ -710,8 +714,9 @@
 
         function subscribe() {
             setStatus("Loading...");
-            unsubscribe?.();
-            unsubscribe = onSnapshot(
+            unsubscribeAssets?.();
+            unsubscribeUsers?.();
+            unsubscribeAssets = onSnapshot(
                 query(collection(db, "assets"), where("moderationStatus", "==", "approved")),
                 (snapshot) => {
                     assets = snapshot.docs.map((docSnap) => normalizeAsset(docSnap.id, docSnap.data()));
@@ -722,6 +727,27 @@
                 (err) => {
                     console.error("Assets subscription failed:", err);
                     setStatus("Could not load assets. Check Firestore rules.");
+                }
+            );
+            unsubscribeUsers = onSnapshot(
+                collection(db, "users"),
+                (snapshot) => {
+                    creatorProfiles = new Map(
+                        snapshot.docs.map((docSnap) => [
+                            docSnap.id,
+                            {
+                                username: String(docSnap.data()?.username || ""),
+                                avatarUrl: String(docSnap.data()?.avatarUrl || ""),
+                                avatarMediaId: String(docSnap.data()?.avatarMediaId || ""),
+                                accountStatus: String(docSnap.data()?.accountStatus || "active")
+                            }
+                        ])
+                    );
+                    rebuildFilterOptions();
+                    applyFilters();
+                },
+                (err) => {
+                    console.warn("Users subscription failed:", err);
                 }
             );
         }

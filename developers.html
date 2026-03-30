@@ -126,20 +126,8 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         function escapeHtml(value = "") {
             return String(value)
@@ -158,6 +146,7 @@
         }
 
         const WEBSITE_ROLE_META = {
+            ceo: { label: "CEO", className: "chip border-red-500/45 text-red-100" },
             marketplace_manager: { label: "Marketplace Manager", className: "chip border-fuchsia-500/35 text-fuchsia-200" },
             asset_verifier: { label: "Asset Verifier", className: "chip border-emerald-500/35 text-emerald-200" },
             moderator: { label: "Moderator", className: "chip border-rose-500/35 text-rose-200" },
@@ -173,6 +162,9 @@
                 .replace(/[\s-]+/g, "_");
             const compact = normalized.replace(/[^a-z0-9_]/g, "");
             const aliases = {
+                ceo: "ceo",
+                chiefexecutiveofficer: "ceo",
+                chief_executive_officer: "ceo",
                 marketplacemanager: "marketplace_manager",
                 marketplace_manager: "marketplace_manager",
                 assetverifier: "asset_verifier",
@@ -236,7 +228,9 @@
                     return;
                 }
 
-                grid.innerHTML = snap.docs.map((docSnap) => {
+                grid.innerHTML = snap.docs
+                    .filter((docSnap) => String(docSnap.data()?.accountStatus || "active").toLowerCase() !== "banned")
+                    .map((docSnap) => {
                     const user = docSnap.data() || {};
                     const userId = docSnap.id;
                     const username = user.username || "creator";

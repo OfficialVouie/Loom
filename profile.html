@@ -71,14 +71,15 @@
                         <p class="mt-2 text-xs text-white/65 leading-relaxed">Assign official Loom role labels. These are staff-controlled and separate from consumer or creator mode.</p>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="ceo" type="checkbox"> CEO</label>
                         <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="marketplace_manager" type="checkbox"> Marketplace Manager</label>
                         <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="asset_verifier" type="checkbox"> Asset Verifier</label>
                         <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="moderator" type="checkbox"> Moderator</label>
                         <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="support_agent" type="checkbox"> Support Agent</label>
-                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2 sm:col-span-2"><input data-site-role="verified_creator" type="checkbox"> Verified Creator</label>
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="verified_creator" type="checkbox"> Verified Creator</label>
                     </div>
                 </div>
-                <p id="edit-curation-note" class="text-[10px] uppercase tracking-widest text-gray-500">Creator spotlight flags are database-controlled (`users/{uid}.canCurate`).</p>
+                <p id="edit-curation-note" class="text-[10px] uppercase tracking-widest text-gray-500">Creator spotlight flags and staff roles are role-controlled.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="upload-chip">Upload Avatar<input id="edit-avatar-file" type="file" accept="image/*" class="hidden"></label>
                     <label class="upload-chip">Upload Banner<input id="edit-banner-file" type="file" accept="image/*" class="hidden"></label>
@@ -271,6 +272,48 @@
                         </div>
                     </article>
 
+                    <article id="staff-controls-panel" class="profile-panel hidden">
+                        <div class="profile-panel-title">Staff Controls</div>
+                        <p id="staff-controls-copy" class="profile-panel-copy">Manage roles, creator spotlight flags, and account moderation from this panel.</p>
+                        <div class="mt-4 space-y-4">
+                            <div class="rounded-[20px] border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <span id="staff-account-status" class="chip border-white/15 text-white/80">Active</span>
+                                    <span id="staff-role-summary" class="text-[11px] uppercase tracking-[0.16em] text-gray-500 font-black">No staff roles</span>
+                                </div>
+                                <p id="staff-ban-summary" class="text-xs text-gray-400 leading-relaxed">This account is active.</p>
+                            </div>
+
+                            <div id="staff-role-editor" class="rounded-[20px] border border-white/10 bg-white/[0.03] p-4 space-y-3 hidden">
+                                <div class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Roles And Spotlight</div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="ceo" type="checkbox"> CEO</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="marketplace_manager" type="checkbox"> Marketplace Manager</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="asset_verifier" type="checkbox"> Asset Verifier</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="moderator" type="checkbox"> Moderator</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="support_agent" type="checkbox"> Support Agent</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-staff-role="verified_creator" type="checkbox"> Verified Creator</label>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input id="staff-known-creator" type="checkbox"> Known Creator</label>
+                                    <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input id="staff-featured-creator" type="checkbox"> Featured Creator</label>
+                                </div>
+                                <button id="staff-save-roles" class="profile-action-secondary w-full" type="button">Save Roles And Flags</button>
+                            </div>
+
+                            <div id="staff-ban-editor" class="rounded-[20px] border border-white/10 bg-white/[0.03] p-4 space-y-3 hidden">
+                                <div class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Moderation</div>
+                                <textarea id="staff-ban-reason" rows="3" class="overlay-field resize-none" placeholder="Reason shown to the user (optional)"></textarea>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <button id="staff-ban-btn" class="profile-action-primary w-full" type="button">Ban User</button>
+                                    <button id="staff-unban-btn" class="profile-action-secondary w-full" type="button">Remove Ban</button>
+                                </div>
+                            </div>
+
+                            <p id="staff-controls-status" class="text-xs text-gray-500">Staff tools are hidden until a permitted role is signed in.</p>
+                        </div>
+                    </article>
+
                     <article class="profile-panel">
                         <div class="profile-panel-title">Workspace Paths</div>
                         <p class="profile-panel-copy">Jump into the next creator task without digging through extra buttons.</p>
@@ -398,8 +441,9 @@
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { canAccessReviewQueue, canAssignWebsiteRoles, canManageMarketplace, canModerateUsers, isBanned, validateCleanTextGroup } from "./loom-access.js";
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             addDoc,
             collection,
@@ -408,7 +452,6 @@
             doc,
             getDoc,
             getDocs,
-            getFirestore,
             limit,
             onSnapshot,
             query,
@@ -417,19 +460,6 @@
             updateDoc,
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
         const targetId = new URLSearchParams(window.location.search).get("id");
         const pageParams = new URLSearchParams(window.location.search);
         const pendingOpenPanel = pageParams.get("open");
@@ -467,6 +497,21 @@
         const ownAccountDiscordCopy = document.getElementById("own-account-discord-copy");
         const ownAccountToggle = document.getElementById("own-account-toggle");
         const ownAccountSettings = document.getElementById("own-account-settings");
+        const staffControlsPanel = document.getElementById("staff-controls-panel");
+        const staffControlsCopy = document.getElementById("staff-controls-copy");
+        const staffAccountStatus = document.getElementById("staff-account-status");
+        const staffRoleSummary = document.getElementById("staff-role-summary");
+        const staffBanSummary = document.getElementById("staff-ban-summary");
+        const staffRoleEditor = document.getElementById("staff-role-editor");
+        const staffBanEditor = document.getElementById("staff-ban-editor");
+        const staffControlsStatus = document.getElementById("staff-controls-status");
+        const staffRoleInputs = Array.from(document.querySelectorAll("[data-staff-role]"));
+        const staffKnownCreator = document.getElementById("staff-known-creator");
+        const staffFeaturedCreator = document.getElementById("staff-featured-creator");
+        const staffBanReason = document.getElementById("staff-ban-reason");
+        const staffSaveRolesBtn = document.getElementById("staff-save-roles");
+        const staffBanBtn = document.getElementById("staff-ban-btn");
+        const staffUnbanBtn = document.getElementById("staff-unban-btn");
         const myProfileLink = document.getElementById("my-profile-link");
         const followBtn = document.getElementById("follow-btn");
         const friendBtn = document.getElementById("friend-btn");
@@ -525,6 +570,10 @@
             if (value.length < 3) return "Username must be at least 3 characters.";
             if (!/^[a-z0-9._-]{3,24}$/.test(value)) return "Username can only use letters, numbers, . _ -";
             if (isReservedUsername(value)) return "That username is reserved. Please choose another.";
+            const cleanTextError = validateCleanTextGroup([
+                { label: "Username", value, options: { required: true, maxLength: 24 } }
+            ]);
+            if (cleanTextError) return cleanTextError;
             return "";
         }
 
@@ -532,6 +581,7 @@
             let base = sanitizeUsername(preferredUsername) || usernameFromEmail(email);
             if (base.length < 3) base = "user";
             if (isReservedUsername(base)) base = "user";
+            if (validateCleanTextGroup([{ label: "Username", value: base, options: { maxLength: 24 } }])) base = "user";
             return base.slice(0, 18);
         }
 
@@ -550,6 +600,7 @@
         }
 
         const WEBSITE_ROLE_DEFINITIONS = [
+            { key: "ceo", label: "CEO", badgeClass: "border-red-500/45 text-red-100" },
             { key: "marketplace_manager", label: "Marketplace Manager", badgeClass: "border-fuchsia-500/35 text-fuchsia-200" },
             { key: "asset_verifier", label: "Asset Verifier", badgeClass: "border-emerald-500/35 text-emerald-200" },
             { key: "moderator", label: "Moderator", badgeClass: "border-rose-500/35 text-rose-200" },
@@ -566,6 +617,9 @@
                 .replace(/[\s-]+/g, "_");
             const compact = normalized.replace(/[^a-z0-9_]/g, "");
             const aliases = {
+                ceo: "ceo",
+                chiefexecutiveofficer: "ceo",
+                chief_executive_officer: "ceo",
                 marketplacemanager: "marketplace_manager",
                 marketplace_manager: "marketplace_manager",
                 assetverifier: "asset_verifier",
@@ -809,7 +863,7 @@
             const accountMode = normalizeAccountMode(
                 rawData.accountMode,
                 rawData.role,
-                Boolean(rawData.isKnownCreator || rawData.isFeaturedCreator || rawData.canCurate)
+                Boolean(rawData.isKnownCreator || rawData.isFeaturedCreator || siteRoles.includes("verified_creator"))
             );
             return {
                 username,
@@ -844,7 +898,10 @@
                 creatorActivatedAt: rawData.creatorActivatedAt || null,
                 isKnownCreator: Boolean(rawData.isKnownCreator),
                 isFeaturedCreator: Boolean(rawData.isFeaturedCreator),
-                canCurate: Boolean(rawData.canCurate)
+                accountStatus: String(rawData.accountStatus || "active").toLowerCase() === "banned" ? "banned" : "active",
+                banReason: typeof rawData.banReason === "string" ? rawData.banReason : "",
+                bannedAt: rawData.bannedAt || null,
+                bannedBy: typeof rawData.bannedBy === "string" ? rawData.bannedBy : ""
             };
         }
 
@@ -870,12 +927,88 @@
         }
 
         function syncCurationAccess(profile = null) {
-            const allowed = Boolean(profile?.canCurate);
-            curationRow.classList.toggle("hidden", !allowed);
-            siteRolePanel?.classList.toggle("hidden", !allowed);
-            curationNote.innerText = allowed
-                ? "Curator access enabled. You can edit creator spotlight flags and official website roles."
-                : "Creator spotlight flags are database-controlled. Set users/{uid}.canCurate to true.";
+            const allowedProfile = isBanned(profile) ? null : profile;
+            const canEditMarketplace = canManageMarketplace(allowedProfile) || canAssignWebsiteRoles(allowedProfile);
+            const canEditRoles = canAssignWebsiteRoles(allowedProfile);
+            curationRow.classList.toggle("hidden", !canEditMarketplace);
+            siteRolePanel?.classList.toggle("hidden", !canEditRoles);
+            curationNote.innerText = canEditRoles
+                ? "CEO access enabled. You can edit staff roles and creator spotlight flags."
+                : canEditMarketplace
+                    ? "Marketplace access enabled. You can edit creator spotlight flags."
+                    : "Creator spotlight flags and staff roles are controlled by staff roles.";
+        }
+
+        function applyStaffRoleInputs(roleKeys = []) {
+            const selected = new Set(normalizeWebsiteRoles(roleKeys));
+            staffRoleInputs.forEach((input) => {
+                input.checked = selected.has(String(input.dataset.staffRole || ""));
+            });
+        }
+
+        function readSelectedStaffRoles() {
+            return normalizeWebsiteRoles(
+                staffRoleInputs
+                    .filter((input) => input.checked)
+                    .map((input) => input.dataset.staffRole || "")
+            );
+        }
+
+        function renderStaffControls() {
+            const allowedProfile = isBanned(signedInProfile) ? null : signedInProfile;
+            const canEditRoles = canAssignWebsiteRoles(allowedProfile);
+            const canEditMarketplace = canManageMarketplace(allowedProfile) || canEditRoles;
+            const canBanUsers = canModerateUsers(allowedProfile);
+            const shouldShow = Boolean(viewedProfile && signedInUser && (canEditRoles || canEditMarketplace || canBanUsers));
+
+            staffControlsPanel.classList.toggle("hidden", !shouldShow);
+            if (!shouldShow || !viewedProfile) {
+                if (staffControlsStatus) {
+                    staffControlsStatus.innerText = "Staff tools are hidden until a permitted role is signed in.";
+                }
+                return;
+            }
+
+            const viewingSelf = Boolean(signedInUser && activeProfileUid === signedInUser.uid);
+            const roleLabels = normalizeWebsiteRoles(viewedProfile.siteRoles || [])
+                .map((roleKey) => websiteRoleLabel(roleKey))
+                .filter(Boolean);
+
+            staffRoleEditor.classList.toggle("hidden", !canEditRoles && !canEditMarketplace);
+            staffBanEditor.classList.toggle("hidden", !canBanUsers);
+            staffControlsCopy.innerText = viewingSelf
+                ? "You are viewing your own account. Roles and moderation tools still follow your current permissions."
+                : "Manage roles, creator spotlight flags, and account moderation for this profile.";
+            staffAccountStatus.innerText = viewedProfile.accountStatus === "banned" ? "Banned" : "Active";
+            staffAccountStatus.className = viewedProfile.accountStatus === "banned"
+                ? "chip border-red-500/35 text-red-200"
+                : "chip border-emerald-500/35 text-emerald-200";
+            staffRoleSummary.innerText = roleLabels.length ? roleLabels.join(" • ") : "No staff roles";
+            staffBanSummary.innerText = viewedProfile.accountStatus === "banned"
+                ? (viewedProfile.banReason ? `This account is banned: ${viewedProfile.banReason}` : "This account is currently banned.")
+                : "This account is active.";
+            staffKnownCreator.checked = Boolean(viewedProfile.isKnownCreator);
+            staffFeaturedCreator.checked = Boolean(viewedProfile.isFeaturedCreator);
+            staffKnownCreator.disabled = !canEditMarketplace;
+            staffFeaturedCreator.disabled = !canEditMarketplace;
+            staffBanReason.value = viewedProfile.banReason || "";
+            staffBanReason.disabled = !canBanUsers;
+            staffBanBtn.disabled = !canBanUsers || viewingSelf;
+            staffUnbanBtn.disabled = !canBanUsers || viewingSelf;
+            applyStaffRoleInputs(viewedProfile.siteRoles || []);
+            staffRoleInputs.forEach((input) => {
+                input.disabled = !canEditRoles;
+            });
+
+            if (staffControlsStatus) {
+                if (viewingSelf && canBanUsers) {
+                    staffControlsStatus.innerText = "Moderators cannot ban the account they are currently using.";
+                } else if (canEditRoles || canEditMarketplace || canBanUsers) {
+                    staffControlsStatus.innerText = "Staff controls ready.";
+                } else {
+                    staffControlsStatus.innerText = "Staff tools unavailable.";
+                }
+            }
         }
 
         function refreshDiscordEditStatus() {
@@ -895,6 +1028,7 @@
             const mode = normalized?.accountMode || "consumer";
             const discord = normalized?.linkedAccounts?.discord || normalizeDiscordAccount();
             const hasDiscord = Boolean(discord.handle || discord.url);
+            const banned = isBanned(normalized);
             const modeText = accountModeLabel(mode);
             const guestState = !signedInUser;
             const toggleText = guestState ? "Sign In To Start" : mode === "creator" ? "Switch To Consumer" : "Switch To Creator";
@@ -906,8 +1040,10 @@
             const discordText = discordAccountSummary(discord);
 
             if (accountModePill) {
-                accountModePill.innerText = guestState ? "Guest Account" : modeText;
-                accountModePill.className = !guestState && mode === "creator"
+                accountModePill.innerText = guestState ? "Guest Account" : banned ? "Banned Account" : modeText;
+                accountModePill.className = banned
+                    ? "chip border-red-500/35 text-red-200"
+                    : !guestState && mode === "creator"
                     ? "chip border-pink-500/30 text-pink-300"
                     : "chip border-white/15 text-white/80";
             }
@@ -920,6 +1056,8 @@
             if (accountMenuCopy) {
                 accountMenuCopy.innerText = guestState
                     ? "Sign in to link your Discord account and choose whether Loom should behave like a consumer account or a creator workspace."
+                    : banned
+                        ? (normalized?.banReason ? `This account is banned: ${normalized.banReason}` : "This account is currently banned from using creator tools.")
                     : hasDiscord
                         ? `${accountModeDescription(mode)} ${discord.url ? "Discord link saved to your account." : "Discord handle saved to your account."}`
                         : `${accountModeDescription(mode)} Add Discord details when you want your account setup in one place.`;
@@ -932,11 +1070,15 @@
                 ownAccountPanel.classList.toggle("hidden", !viewingOwnProfile);
             }
             if (ownAccountCopy) {
-                ownAccountCopy.innerText = `${accountModeDescription(mode)} ${hasDiscord ? "Discord is linked on this account." : "Discord is not linked yet."}`;
+                ownAccountCopy.innerText = banned
+                    ? (normalized?.banReason ? `This account is banned: ${normalized.banReason}` : "This account is currently banned from profile changes.")
+                    : `${accountModeDescription(mode)} ${hasDiscord ? "Discord is linked on this account." : "Discord is not linked yet."}`;
             }
             if (ownAccountModePill) {
-                ownAccountModePill.innerText = modeText;
-                ownAccountModePill.className = mode === "creator"
+                ownAccountModePill.innerText = banned ? "Banned Account" : modeText;
+                ownAccountModePill.className = banned
+                    ? "chip border-red-500/35 text-red-200"
+                    : mode === "creator"
                     ? "chip border-pink-500/30 text-pink-300"
                     : "chip border-white/15 text-white/80";
             }
@@ -958,7 +1100,79 @@
                 ownAccountSettings.innerText = hasDiscord ? "Update Discord + Mode" : "Link Discord + Mode";
             }
             if (selfModeAction) {
-                selfModeAction.innerText = mode === "creator" ? "Upload Asset" : "Switch To Creator";
+                selfModeAction.innerText = banned ? "Account Restricted" : mode === "creator" ? "Upload Asset" : "Switch To Creator";
+            }
+
+            renderStaffControls();
+        }
+
+        async function saveStaffRoleControls() {
+            if (!signedInUser || !activeProfileUid || !viewedProfile) return;
+            const allowedProfile = isBanned(signedInProfile) ? null : signedInProfile;
+            const canEditRoles = canAssignWebsiteRoles(allowedProfile);
+            const canEditMarketplace = canManageMarketplace(allowedProfile) || canEditRoles;
+            if (!canEditRoles && !canEditMarketplace) return;
+
+            const updates = {
+                updatedAt: serverTimestamp()
+            };
+            if (canEditRoles) {
+                updates.siteRoles = readSelectedStaffRoles();
+            }
+            if (canEditMarketplace) {
+                updates.isKnownCreator = Boolean(staffKnownCreator.checked);
+                updates.isFeaturedCreator = Boolean(staffFeaturedCreator.checked);
+            }
+
+            try {
+                staffControlsStatus.innerText = "Saving staff changes...";
+                await setDoc(doc(db, "users", activeProfileUid), updates, { merge: true });
+                viewedProfile = normalizeProfile({ ...(viewedProfile || {}), ...updates }, viewingOwnProfile ? signedInUser?.email || "" : "");
+                if (signedInUser.uid === activeProfileUid) {
+                    signedInProfile = viewedProfile;
+                    await renderTopNav(viewedProfile, signedInUser.uid, signedInUser.email || "");
+                }
+                await renderViewedProfile(activeProfileUid, viewedProfile);
+                staffControlsStatus.innerText = "Staff changes saved.";
+            } catch (err) {
+                console.error("Failed to save staff changes:", err);
+                staffControlsStatus.innerText = "Unable to save staff changes right now.";
+            }
+        }
+
+        async function setViewedUserBanState(nextStatus = "active") {
+            const allowedProfile = isBanned(signedInProfile) ? null : signedInProfile;
+            if (!signedInUser || !activeProfileUid || !viewedProfile || signedInUser.uid === activeProfileUid || !canModerateUsers(allowedProfile)) {
+                return;
+            }
+
+            const normalizedStatus = nextStatus === "banned" ? "banned" : "active";
+            const reason = String(staffBanReason?.value || "").trim().slice(0, 280);
+            const updates = normalizedStatus === "banned"
+                ? {
+                    accountStatus: "banned",
+                    banReason: reason,
+                    bannedAt: serverTimestamp(),
+                    bannedBy: signedInUser.uid,
+                    updatedAt: serverTimestamp()
+                }
+                : {
+                    accountStatus: "active",
+                    banReason: "",
+                    bannedAt: null,
+                    bannedBy: "",
+                    updatedAt: serverTimestamp()
+                };
+
+            try {
+                staffControlsStatus.innerText = normalizedStatus === "banned" ? "Banning account..." : "Removing ban...";
+                await setDoc(doc(db, "users", activeProfileUid), updates, { merge: true });
+                viewedProfile = normalizeProfile({ ...(viewedProfile || {}), ...updates }, viewingOwnProfile ? signedInUser?.email || "" : "");
+                await renderViewedProfile(activeProfileUid, viewedProfile);
+                staffControlsStatus.innerText = normalizedStatus === "banned" ? "User banned." : "Ban removed.";
+            } catch (err) {
+                console.error("Failed to update ban state:", err);
+                staffControlsStatus.innerText = "Unable to update ban state right now.";
             }
         }
 
@@ -980,6 +1194,10 @@
         async function updateOwnAccountMode(nextModeInput = "") {
             if (!signedInUser) {
                 window.location.href = "index.html?auth=signin&redirect=/profile.html?open=account";
+                return;
+            }
+            if (isBanned(signedInProfile)) {
+                alert(signedInProfile?.banReason ? `This account is banned: ${signedInProfile.banReason}` : "This account is banned from switching modes.");
                 return;
             }
             const nextMode = nextModeInput === "creator" ? "creator" : "consumer";
@@ -1116,15 +1334,12 @@
             const constraints = imageConstraintsFor(meta);
             const compressed = await compressImageToDataUrl(file, constraints);
             const dataUrl = compressed.dataUrl;
-            const isCurator = Boolean(signedInProfile?.canCurate);
-            const moderation = isCurator
-                ? {
-                    moderationStatus: "approved",
-                    moderationReviewedAt: serverTimestamp(),
-                    moderationReviewedBy: signedInUser.uid,
-                    moderationReason: ""
-                }
-                : { moderationStatus: "pending" };
+            const moderation = {
+                moderationStatus: "approved",
+                moderationReviewedAt: serverTimestamp(),
+                moderationReviewedBy: signedInUser.uid,
+                moderationReason: ""
+            };
             const ref = await addDoc(collection(db, "media"), {
                 ownerId: signedInUser.uid,
                 dataUrl,
@@ -1256,7 +1471,7 @@
             document.getElementById("nav-user-name").innerText = username;
             document.getElementById("dropdown-name").innerText = username;
             document.getElementById("logout-btn").classList.remove("hidden");
-            document.getElementById("review-link").classList.toggle("hidden", !profile?.canCurate);
+            document.getElementById("review-link").classList.toggle("hidden", isBanned(profile) || !canAccessReviewQueue(profile));
             myProfileLink.href = "profile.html";
             await applyAvatarImage(document.getElementById("nav-avatar"), profile, uid);
             await applyAvatarImage(document.getElementById("dropdown-avatar"), profile, uid);
@@ -1321,7 +1536,10 @@
                     siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
-                    canCurate: false,
+                    accountStatus: "active",
+                    banReason: "",
+                    bannedAt: null,
+                    bannedBy: "",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 };
@@ -1348,7 +1566,10 @@
             if (!Array.isArray(raw.siteRoles)) patch.siteRoles = normalized.siteRoles;
             if (typeof raw.isKnownCreator !== "boolean") patch.isKnownCreator = false;
             if (typeof raw.isFeaturedCreator !== "boolean") patch.isFeaturedCreator = false;
-            if (typeof raw.canCurate !== "boolean") patch.canCurate = false;
+            if (typeof raw.accountStatus !== "string") patch.accountStatus = "active";
+            if (typeof raw.banReason !== "string") patch.banReason = "";
+            if (typeof raw.bannedBy !== "string") patch.bannedBy = "";
+            if (!("bannedAt" in raw)) patch.bannedAt = null;
             let publicProfile = normalized;
             if (Object.keys(patch).length) {
                 patch.updatedAt = serverTimestamp();
@@ -1607,7 +1828,7 @@
                 return;
             }
 
-            const showAllAssets = viewingOwnProfile || Boolean(signedInProfile?.canCurate);
+            const showAllAssets = viewingOwnProfile || canAccessReviewQueue(signedInProfile) || canManageMarketplace(signedInProfile);
             const assetQuery = showAllAssets
                 ? query(collection(db, "assets"), where("creatorId", "==", uid))
                 : query(collection(db, "assets"), where("creatorId", "==", uid), where("moderationStatus", "==", "approved"));
@@ -1861,6 +2082,10 @@
 
         async function saveProfileChanges() {
             if (!viewingOwnProfile || !activeProfileUid || !signedInUser) return;
+            if (isBanned(signedInProfile)) {
+                alert(signedInProfile?.banReason ? `This account is banned: ${signedInProfile.banReason}` : "This account is banned from editing the profile.");
+                return;
+            }
 
             const requestedUsername = sanitizeUsername(document.getElementById("edit-name").value);
             const newBio = document.getElementById("edit-bio").value.trim().slice(0, 220);
@@ -1882,17 +2107,29 @@
                 handle: editDiscordHandle?.value || "",
                 url: editDiscordProfileUrl?.value || ""
             });
-            const siteRoles = Boolean(signedInProfile?.canCurate)
+            const siteRoles = canAssignWebsiteRoles(signedInProfile)
                 ? readSelectedSiteRoles()
                 : normalizeWebsiteRoles(viewedProfile?.siteRoles || []);
-            const isKnownCreator = Boolean(signedInProfile?.canCurate) ? document.getElementById("edit-known-creator").checked : Boolean(viewedProfile?.isKnownCreator);
-            const isFeaturedCreator = Boolean(signedInProfile?.canCurate) ? document.getElementById("edit-featured-creator").checked : Boolean(viewedProfile?.isFeaturedCreator);
+            const isKnownCreator = canManageMarketplace(signedInProfile) || canAssignWebsiteRoles(signedInProfile)
+                ? document.getElementById("edit-known-creator").checked
+                : Boolean(viewedProfile?.isKnownCreator);
+            const isFeaturedCreator = canManageMarketplace(signedInProfile) || canAssignWebsiteRoles(signedInProfile)
+                ? document.getElementById("edit-featured-creator").checked
+                : Boolean(viewedProfile?.isFeaturedCreator);
             const avatarFile = document.getElementById("edit-avatar-file").files[0];
             const bannerFile = document.getElementById("edit-banner-file").files[0];
 
             const usernameError = validateUsername(requestedUsername);
             if (usernameError) {
                 alert(usernameError);
+                return;
+            }
+            const textSafetyError = validateCleanTextGroup([
+                { label: "Username", value: requestedUsername, options: { required: true, maxLength: 24 } },
+                { label: "Bio", value: newBio, options: { maxLength: 220 } }
+            ]);
+            if (textSafetyError) {
+                alert(textSafetyError);
                 return;
             }
             if (requestedUsername !== viewedProfile?.usernameLower) {
@@ -2107,6 +2344,10 @@
                 window.location.href = "index.html?auth=signin&redirect=/profile.html?open=account";
                 return;
             }
+            if (isBanned(signedInProfile)) {
+                alert(signedInProfile?.banReason ? `This account is banned: ${signedInProfile.banReason}` : "This account is banned from using creator tools.");
+                return;
+            }
             const currentMode = normalizeAccountMode(signedInProfile?.accountMode, signedInProfile?.role, false);
             if (currentMode === "creator") {
                 window.location.href = "upload.html";
@@ -2151,6 +2392,24 @@
             window.setTimeout(() => {
                 try { editAccountMode.focus(); } catch {}
             }, 20);
+        });
+        staffSaveRolesBtn?.addEventListener("click", () => {
+            saveStaffRoleControls().catch((err) => {
+                console.error("Staff role save failed:", err);
+                staffControlsStatus.innerText = "Unable to save staff changes right now.";
+            });
+        });
+        staffBanBtn?.addEventListener("click", () => {
+            setViewedUserBanState("banned").catch((err) => {
+                console.error("Ban action failed:", err);
+                staffControlsStatus.innerText = "Unable to ban this account right now.";
+            });
+        });
+        staffUnbanBtn?.addEventListener("click", () => {
+            setViewedUserBanState("active").catch((err) => {
+                console.error("Unban action failed:", err);
+                staffControlsStatus.innerText = "Unable to remove the ban right now.";
+            });
         });
 
         roleContent.addEventListener("click", async (event) => {

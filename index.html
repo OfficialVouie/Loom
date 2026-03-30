@@ -360,15 +360,17 @@
             grid-template-columns: minmax(0, 1fr) auto;
             gap: 1rem 1.5rem;
             align-items: center;
-            padding: 1.2rem 0;
+            padding: 1rem 1.1rem;
             color: inherit;
             text-decoration: none;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            background: transparent;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .asset-card:hover {
-            transform: translateX(6px);
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .asset-card:hover .asset-card-art {
@@ -413,7 +415,7 @@
 
         .asset-card-copy {
             display: grid;
-            gap: 0.7rem;
+            gap: 0.62rem;
         }
 
         .asset-card-overline {
@@ -451,8 +453,8 @@
             margin: 0;
             max-width: 62ch;
             color: rgba(248, 248, 242, 0.68);
-            font-size: 0.94rem;
-            line-height: 1.68;
+            font-size: 0.9rem;
+            line-height: 1.58;
         }
 
         .asset-card-pills {
@@ -461,49 +463,46 @@
             gap: 0.45rem;
         }
 
-        .asset-card-side {
-            display: grid;
-            gap: 0.9rem;
-            min-width: 190px;
-            justify-items: end;
-            text-align: right;
+        .asset-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem 0.85rem;
+            align-items: center;
         }
 
-        .asset-card-creator {
+        .asset-card-meta-item {
             display: inline-flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.45rem;
             min-width: 0;
-            color: rgba(248, 248, 242, 0.72);
-            font-size: 0.82rem;
+            color: rgba(248, 248, 242, 0.6);
+            font-size: 0.76rem;
             font-weight: 700;
         }
 
-        .asset-card-creator img {
-            width: 30px;
-            height: 30px;
+        .asset-card-meta-item img {
+            width: 26px;
+            height: 26px;
             border-radius: 999px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             object-fit: cover;
         }
 
-        .asset-card-creator span {
-            max-width: 132px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .asset-card-side {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
 
-        .asset-card-stats strong {
-            display: block;
-            font-size: 0.84rem;
-            font-weight: 800;
-        }
-
-        .asset-card-stats span {
-            display: block;
-            margin-top: 0.22rem;
-            color: rgba(248, 248, 242, 0.44);
+        .asset-card-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.72rem 0.88rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.18);
+            color: rgba(248, 248, 242, 0.82);
             font-size: 10px;
             font-weight: 900;
             letter-spacing: 0.14em;
@@ -590,8 +589,7 @@
 
             .asset-card-side {
                 min-width: 0;
-                justify-items: start;
-                text-align: left;
+                justify-content: flex-start;
             }
         }
 
@@ -1537,7 +1535,7 @@
                     <p class="home-search-dock-copy">Start with an asset, tag, or creator and drop straight into the catalog.</p>
                     <div class="relative">
                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                        <input id="search-input" class="field pl-10" placeholder="Search assets, tags, creators">
+                        <input id="search-input" class="field pl-10" placeholder="Search assets, categories, creators">
                     </div>
                 </div>
 
@@ -1770,10 +1768,10 @@
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { canAccessReviewQueue, isBanned, validateCleanTextGroup } from "./loom-access.js";
+        import { auth, db } from "./firebase-config.js";
         import {
             createUserWithEmailAndPassword,
-            getAuth,
             onAuthStateChanged,
             signInWithEmailAndPassword,
             signOut
@@ -1782,7 +1780,6 @@
             collection,
             deleteField,
             doc,
-            getFirestore,
             getDoc,
             getDocs,
             limit,
@@ -1793,19 +1790,6 @@
             updateDoc,
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClmE36o3vkujTdpSS84gBf-0DQIVlWrPQ",
-            authDomain: "loom-ef2c8.firebaseapp.com",
-            projectId: "loom-ef2c8",
-            storageBucket: "loom-ef2c8.firebasestorage.app",
-            messagingSenderId: "774949013487",
-            appId: "1:774949013487:web:cf464b6b9db7d93cd7981a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
 
         const guestAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=guest";
         const guestBanner = "";
@@ -1911,6 +1895,10 @@
             if (value.length < 3) return "Username must be at least 3 characters.";
             if (!/^[a-z0-9._-]{3,24}$/.test(value)) return "Username can only use letters, numbers, . _ -";
             if (isReservedUsername(value)) return "That username is reserved. Please choose another.";
+            const cleanTextError = validateCleanTextGroup([
+                { label: "Username", value, options: { required: true, maxLength: 24 } }
+            ]);
+            if (cleanTextError) return cleanTextError;
             return "";
         }
 
@@ -1918,6 +1906,7 @@
             let base = sanitizeUsername(preferredUsername) || usernameFromEmail(email);
             if (base.length < 3) base = "user";
             if (isReservedUsername(base)) base = "user";
+            if (validateCleanTextGroup([{ label: "Username", value: base, options: { maxLength: 24 } }])) base = "user";
             return base.slice(0, 18);
         }
 
@@ -1935,6 +1924,7 @@
         }
 
         const WEBSITE_ROLE_DEFINITIONS = [
+            { key: "ceo", label: "CEO", badgeClass: "chip border-red-500/45 text-red-100" },
             { key: "marketplace_manager", label: "Marketplace Manager", badgeClass: "chip border-fuchsia-500/35 text-fuchsia-200" },
             { key: "asset_verifier", label: "Asset Verifier", badgeClass: "chip border-emerald-500/35 text-emerald-200" },
             { key: "moderator", label: "Moderator", badgeClass: "chip border-rose-500/35 text-rose-200" },
@@ -1951,6 +1941,9 @@
                 .replace(/[\s-]+/g, "_");
             const compact = normalized.replace(/[^a-z0-9_]/g, "");
             const aliases = {
+                ceo: "ceo",
+                chiefexecutiveofficer: "ceo",
+                chief_executive_officer: "ceo",
                 marketplacemanager: "marketplace_manager",
                 marketplace_manager: "marketplace_manager",
                 assetverifier: "asset_verifier",
@@ -2268,7 +2261,7 @@
             const accountMode = normalizeAccountMode(
                 raw.accountMode,
                 raw.role,
-                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || raw.canCurate)
+                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || siteRoles.includes("verified_creator"))
             );
             return {
                 id,
@@ -2291,7 +2284,10 @@
                     : [],
                 isKnownCreator: Boolean(raw.isKnownCreator),
                 isFeaturedCreator: Boolean(raw.isFeaturedCreator),
-                canCurate: Boolean(raw.canCurate),
+                accountStatus: String(raw.accountStatus || "active").toLowerCase() === "banned" ? "banned" : "active",
+                banReason: typeof raw.banReason === "string" ? raw.banReason : "",
+                bannedAt: raw.bannedAt || null,
+                bannedBy: typeof raw.bannedBy === "string" ? raw.bannedBy : "",
                 followers: Number.isFinite(raw.followers) ? raw.followers : Number(raw.followers || 0),
                 following: Number.isFinite(raw.following) ? raw.following : Number(raw.following || 0),
                 linkedAccounts: normalizePrivateAccount().linkedAccounts,
@@ -2348,19 +2344,20 @@
                                 </div>
                                 <h3 class="asset-card-title">${escapeHtml(asset.name)}</h3>
                             </div>
+                            <div class="asset-card-meta">
+                                <span class="asset-card-meta-item">
+                                    <img src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
+                                    <span>${escapeHtml(creator)}</span>
+                                </span>
+                                <span class="asset-card-meta-item"><i class="fas fa-download text-white/35"></i><span>${Number(asset.downloads || 0).toLocaleString()} installs</span></span>
+                                <span class="asset-card-meta-item"><i class="fas fa-clock text-white/35"></i><span>${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</span></span>
+                            </div>
                             <p class="asset-card-description">${escapeHtml(cardDescription)}</p>
                             <div class="asset-card-pills">${pills || `<span class="chip border-white/15 text-gray-400">Community</span>`}</div>
                         </div>
                     </div>
                     <div class="asset-card-side">
-                        <div class="asset-card-creator">
-                            <img src="${escapeHtml(creatorAvatar)}" data-media-id="${escapeHtml(creatorAvatarMediaId)}" alt="Creator avatar">
-                            <span>${escapeHtml(creator)}</span>
-                        </div>
-                        <div class="asset-card-stats">
-                            <strong>${Number(asset.downloads || 0).toLocaleString()} installs</strong>
-                            <span>${escapeHtml(formatShortDate(asset.updatedMs || asset.createdMs))}</span>
-                        </div>
+                        <span class="asset-card-open">Open Asset <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
             `;
@@ -2373,6 +2370,17 @@
                 assetCount: owned.length,
                 installCount: installs
             };
+        }
+
+        function visibleUsers() {
+            return users.filter((user) => !isBanned(user));
+        }
+
+        function visibleAssets() {
+            return assets.filter((asset) => {
+                const creator = getUserById(asset.creatorId);
+                return !creator || !isBanned(creator);
+            });
         }
 
         function renderCreatorCard(user) {
@@ -2432,25 +2440,25 @@
 
         function renderMetrics() {
             const creatorIds = new Set();
-            for (const asset of assets) {
+            for (const asset of visibleAssets()) {
                 if (asset.creatorId) {
                     creatorIds.add(asset.creatorId);
                 }
             }
-            for (const user of users) {
+            for (const user of visibleUsers()) {
                 if (user.id) {
                     creatorIds.add(user.id);
                 }
             }
 
-            const installs = assets.reduce((sum, asset) => sum + Number(asset.downloads || 0), 0);
-            metricAssets.innerText = String(assets.length);
+            const installs = visibleAssets().reduce((sum, asset) => sum + Number(asset.downloads || 0), 0);
+            metricAssets.innerText = String(visibleAssets().length);
             metricCreators.innerText = String(creatorIds.size);
             metricDownloads.innerText = installs.toLocaleString();
         }
 
         function rankedCreators() {
-            return [...users]
+            return [...visibleUsers()]
                 .map((user) => {
                     const stats = creatorStats(user.id);
                     return {
@@ -2462,13 +2470,14 @@
         }
 
         function renderCuratedSections() {
-            const weeklyFree = getWeeklyFreeAssets(assets, 10);
+            const catalog = visibleAssets();
+            const weeklyFree = getWeeklyFreeAssets(catalog, 10);
             weeklyFreeAssetIds = new Set(weeklyFree.map((asset) => asset.id));
-            const featured = assets.filter((asset) => asset.featured).slice(0, 6);
-            const popular = [...assets]
+            const featured = catalog.filter((asset) => asset.featured).slice(0, 6);
+            const popular = [...catalog]
                 .sort((a, b) => (b.downloads - a.downloads) || ((b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs)))
                 .slice(0, 6);
-            const newReleases = [...assets]
+            const newReleases = [...catalog]
                 .sort((a, b) => (b.updatedMs || b.createdMs) - (a.updatedMs || a.createdMs))
                 .slice(0, 6);
 
@@ -2497,10 +2506,10 @@
             }
 
             const matchedCreatorIds = new Set(
-                users.filter((user) => user.searchText.includes(queryText)).map((user) => user.id)
+                visibleUsers().filter((user) => user.searchText.includes(queryText)).map((user) => user.id)
             );
 
-            const scored = assets
+            const scored = visibleAssets()
                 .map((asset) => ({ asset, score: computeSearchScore(asset, queryText, matchedCreatorIds) }))
                 .filter((entry) => entry.score > 0)
                 .sort((a, b) => b.score - a.score || b.asset.downloads - a.asset.downloads)
@@ -2570,12 +2579,15 @@
                 ? normalizePrivateAccount(activePrivateAccount || {}).linkedAccounts.discord
                 : normalizeDiscordAccount();
             const hasDiscord = Boolean(discord.handle || discord.url);
+            const banned = isBanned(normalized);
             const modeText = accountModeLabel(mode);
             const guestState = !activeUser;
 
             if (menuAccountModePill) {
-                menuAccountModePill.innerText = guestState ? "Guest Account" : modeText;
-                menuAccountModePill.className = !guestState && mode === "creator"
+                menuAccountModePill.innerText = guestState ? "Guest Account" : banned ? "Banned Account" : modeText;
+                menuAccountModePill.className = banned
+                    ? "chip border-red-500/35 text-red-200"
+                    : !guestState && mode === "creator"
                     ? "chip border-pink-500/30 text-pink-300"
                     : "chip border-white/15 text-white/80";
             }
@@ -2587,15 +2599,19 @@
             }
             if (menuAccountCopy) {
                 menuAccountCopy.innerText = activeUser
-                    ? `${accountModeDescription(mode)} ${hasDiscord ? "Discord is already linked on this account." : "Add your Discord details in account settings when you are ready."}`
+                    ? banned
+                        ? (normalized?.banReason ? `This account is banned: ${normalized.banReason}` : "This account is currently banned from using creator tools.")
+                        : `${accountModeDescription(mode)} ${hasDiscord ? "Discord is already linked on this account." : "Add your Discord details in account settings when you are ready."}`
                     : "Sign in to save your Discord handle and switch between consumer and creator mode.";
             }
             if (menuAccountToggle) {
                 if (!activeUser) {
                     menuAccountToggle.innerHTML = `<i class="fas fa-right-to-bracket text-pink-400"></i><span>Sign In To Start</span>`;
                 } else {
-                    const toggleText = mode === "creator" ? "Switch To Consumer" : "Switch To Creator";
-                    const toggleIcon = mode === "creator"
+                    const toggleText = banned ? "Account Restricted" : mode === "creator" ? "Switch To Consumer" : "Switch To Creator";
+                    const toggleIcon = banned
+                        ? "fas fa-ban text-red-300"
+                        : mode === "creator"
                         ? "fas fa-arrow-rotate-left text-blue-300"
                         : "fas fa-wand-magic-sparkles text-pink-400";
                     menuAccountToggle.innerHTML = `<i class="${toggleIcon}"></i><span>${toggleText}</span>`;
@@ -2714,7 +2730,7 @@
             await applyAvatarImage(navAvatar, profile, user.uid);
             await applyAvatarImage(menuAvatar, profile, user.uid);
             await applyMenuBanner(profile);
-            reviewLink.classList.toggle("hidden", !profile?.canCurate);
+            reviewLink.classList.toggle("hidden", isBanned(profile) || !canAccessReviewQueue(profile));
             logoutBtn.classList.remove("hidden");
             renderAccountMenu(profile);
         }
@@ -2722,6 +2738,10 @@
         async function updateUserAccountMode(nextModeInput = "") {
             if (!activeUser) {
                 openAuthModal("signin");
+                return;
+            }
+            if (isBanned(activeProfile)) {
+                alert(activeProfile?.banReason ? `This account is banned: ${activeProfile.banReason}` : "This account is banned from switching modes.");
                 return;
             }
             const nextMode = nextModeInput === "creator" ? "creator" : "consumer";
@@ -2849,7 +2869,10 @@
                     siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
-                    canCurate: false,
+                    accountStatus: "active",
+                    banReason: "",
+                    bannedAt: null,
+                    bannedBy: "",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 };
@@ -2876,7 +2899,10 @@
             if (!Array.isArray(raw.siteRoles)) patch.siteRoles = normalized.siteRoles;
             if (typeof raw.isKnownCreator !== "boolean") patch.isKnownCreator = false;
             if (typeof raw.isFeaturedCreator !== "boolean") patch.isFeaturedCreator = false;
-            if (typeof raw.canCurate !== "boolean") patch.canCurate = false;
+            if (typeof raw.accountStatus !== "string") patch.accountStatus = "active";
+            if (typeof raw.banReason !== "string") patch.banReason = "";
+            if (typeof raw.bannedBy !== "string") patch.bannedBy = "";
+            if (!("bannedAt" in raw)) patch.bannedAt = null;
             let publicProfile = normalized;
             if (Object.keys(patch).length) {
                 patch.updatedAt = serverTimestamp();
