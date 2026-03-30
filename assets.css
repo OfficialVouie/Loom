@@ -552,3 +552,241 @@ body.site-frame-ready.page-assets .browse-weekly-grid {
         padding: 1rem;
     }
 }
+
+/* Simple browse pass */
+body.site-frame-ready.page-assets .browse-shell {
+    padding: 1rem;
+    border-radius: 24px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        rgba(10, 10, 14, 0.78);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+body.site-frame-ready.page-assets .browse-intro {
+    display: none;
+}
+
+body.site-frame-ready.page-assets .browse-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+body.site-frame-ready.page-assets .browse-sticky,
+body.site-frame-ready.page-assets .browse-side.browse-sticky {
+    position: static;
+}
+
+body.site-frame-ready.page-assets .browse-rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-assets .browse-results,
+body.site-frame-ready.page-assets .browse-side {
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-assets .browse-side {
+    grid-template-columns: 1fr;
+}
+
+body.site-frame-ready.page-assets .browse-panel,
+body.site-frame-ready.page-assets .browse-results-card {
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(12, 12, 16, 0.74);
+    box-shadow: none;
+}
+
+body.site-frame-ready.page-assets #assets-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-assets #weeklyfree-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-assets #assets-grid > a,
+body.site-frame-ready.page-assets #weeklyfree-grid > a {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+@media (max-width: 1040px) {
+    body.site-frame-ready.page-assets .browse-rail,
+    body.site-frame-ready.page-assets .browse-side,
+    body.site-frame-ready.page-assets #weeklyfree-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    body.site-frame-ready.page-assets .browse-shell {
+        padding: 0.85rem;
+    }
+}
+
+/* Section clarity pass */
+body.site-frame-ready.page-assets .browse-rail,
+body.site-frame-ready.page-assets .browse-results,
+body.site-frame-ready.page-assets .browse-side {
+    padding: 0.9rem;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-assets .browse-rail {
+    background:
+        linear-gradient(180deg, rgba(255, 121, 198, 0.06), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-assets .browse-side {
+    background:
+        linear-gradient(180deg, rgba(122, 162, 255, 0.05), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-assets .browse-panel,
+body.site-frame-ready.page-assets .browse-results-card {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+body.site-frame-ready.page-assets .browse-panel-title,
+body.site-frame-ready.page-assets .browse-results-title {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+body.site-frame-ready.page-assets .browse-panel-title::after,
+body.site-frame-ready.page-assets .browse-results-title::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent);
+}
+
+body.site-frame-ready.page-assets .browse-panel-copy,
+body.site-frame-ready.page-assets .browse-results-copy {
+    max-width: 62ch;
+}
+
+/* Final organization pass */
+body.site-frame-ready.page-assets .browse-shell {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+}
+
+body.site-frame-ready.page-assets .browse-shell::before {
+    display: none;
+}
+
+body.site-frame-ready.page-assets .browse-intro {
+    margin-bottom: 0;
+    padding: 0 0 0.35rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.site-frame-ready.page-assets .browse-title {
+    font-size: clamp(1.55rem, 2.6vw, 2.4rem);
+}
+
+body.site-frame-ready.page-assets .browse-subtitle {
+    margin-top: 0.6rem;
+    max-width: 56ch;
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+body.site-frame-ready.page-assets .browse-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-assets .browse-sticky,
+body.site-frame-ready.page-assets .browse-side.browse-sticky {
+    position: static;
+    top: auto;
+}
+
+body.site-frame-ready.page-assets .browse-rail,
+body.site-frame-ready.page-assets .browse-results {
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-assets .browse-side {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-assets .browse-panel,
+body.site-frame-ready.page-assets .browse-results-card {
+    padding: 0.82rem 0.88rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: none;
+}
+
+body.site-frame-ready.page-assets .browse-panel-copy,
+body.site-frame-ready.page-assets .browse-results-copy {
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+body.site-frame-ready.page-assets .filter-stack,
+body.site-frame-ready.page-assets .filter-checks,
+body.site-frame-ready.page-assets .browse-links,
+body.site-frame-ready.page-assets .browse-metric-grid {
+    gap: 0.65rem;
+}
+
+body.site-frame-ready.page-assets .filter-check,
+body.site-frame-ready.page-assets .browse-link-card,
+body.site-frame-ready.page-assets .browse-metric {
+    border-radius: 14px;
+    padding: 0.75rem 0.8rem;
+}
+
+body.site-frame-ready.page-assets .browse-results-head {
+    gap: 0.75rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.site-frame-ready.page-assets #assets-grid,
+body.site-frame-ready.page-assets #weeklyfree-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+@media (max-width: 1100px) {
+    body.site-frame-ready.page-assets .browse-intro,
+    body.site-frame-ready.page-assets .browse-layout,
+    body.site-frame-ready.page-assets .browse-side {
+        grid-template-columns: 1fr;
+    }
+
+    body.site-frame-ready.page-assets .browse-route {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 760px) {
+    body.site-frame-ready.page-assets #assets-grid,
+    body.site-frame-ready.page-assets #weeklyfree-grid {
+        grid-template-columns: 1fr;
+    }
+}

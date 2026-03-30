@@ -628,3 +628,312 @@ body.site-frame-ready.page-upload .publish-grid.two {
         padding: 1rem;
     }
 }
+
+/* Simple publish pass */
+body.site-frame-ready.page-upload .publish-shell {
+    padding: 1rem;
+    border-radius: 24px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        rgba(10, 10, 14, 0.78);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+body.site-frame-ready.page-upload .publish-intro {
+    display: none;
+}
+
+body.site-frame-ready.page-upload .publish-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+body.site-frame-ready.page-upload .publish-sticky {
+    position: static;
+}
+
+body.site-frame-ready.page-upload .publish-rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-upload .publish-form-stack,
+body.site-frame-ready.page-upload .publish-summary {
+    gap: 1rem;
+}
+
+body.site-frame-ready.page-upload .publish-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-upload .publish-panel,
+body.site-frame-ready.page-upload .publish-section,
+body.site-frame-ready.page-upload .publish-live-card {
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(12, 12, 16, 0.74);
+    box-shadow: none;
+}
+
+body.site-frame-ready.page-upload .publish-grid.two,
+body.site-frame-ready.page-upload .upload-grid,
+body.site-frame-ready.page-upload .live-specs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.site-frame-ready.page-upload .publish-submit {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 1040px) {
+    body.site-frame-ready.page-upload .publish-rail,
+    body.site-frame-ready.page-upload .publish-summary,
+    body.site-frame-ready.page-upload .publish-grid.two,
+    body.site-frame-ready.page-upload .upload-grid,
+    body.site-frame-ready.page-upload .live-specs {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    body.site-frame-ready.page-upload .publish-shell {
+        padding: 0.85rem;
+    }
+}
+
+/* Section clarity pass */
+body.site-frame-ready.page-upload .publish-rail,
+body.site-frame-ready.page-upload .publish-form-stack,
+body.site-frame-ready.page-upload .publish-summary {
+    padding: 0.9rem;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-upload .publish-rail {
+    background:
+        linear-gradient(180deg, rgba(255, 121, 198, 0.06), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-upload .publish-summary {
+    background:
+        linear-gradient(180deg, rgba(122, 162, 255, 0.05), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.page-upload .publish-panel,
+body.site-frame-ready.page-upload .publish-section,
+body.site-frame-ready.page-upload .publish-live-card {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Final organization pass */
+body.site-frame-ready.page-upload .publish-shell {
+    display: grid;
+    gap: 1rem;
+}
+
+body.site-frame-ready.page-upload .publish-intro {
+    display: block;
+    margin-bottom: 0;
+    padding: 0.15rem 0.1rem 0;
+}
+
+body.site-frame-ready.page-upload .publish-intro-grid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+    gap: 0.9rem;
+    align-items: end;
+}
+
+body.site-frame-ready.page-upload .publish-title {
+    font-size: clamp(1.45rem, 2.4vw, 2.2rem);
+    line-height: 0.98;
+}
+
+body.site-frame-ready.page-upload .publish-subtitle {
+    margin-top: 0.65rem;
+    max-width: 60ch;
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+body.site-frame-ready.page-upload .publish-route {
+    justify-content: flex-end;
+    align-self: end;
+}
+
+body.site-frame-ready.page-upload .publish-layout {
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.8fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+body.site-frame-ready.page-upload .publish-form-stack {
+    order: 1;
+    min-width: 0;
+}
+
+body.site-frame-ready.page-upload .publish-rail {
+    order: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    align-self: start;
+}
+
+body.site-frame-ready.page-upload .publish-summary {
+    order: 3;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-upload .publish-panel,
+body.site-frame-ready.page-upload .publish-section,
+body.site-frame-ready.page-upload .publish-live-card {
+    padding: 0.95rem;
+    border-radius: 18px;
+}
+
+body.site-frame-ready.page-upload .publish-grid.two,
+body.site-frame-ready.page-upload .upload-grid,
+body.site-frame-ready.page-upload .live-specs {
+    gap: 0.75rem;
+}
+
+@media (max-width: 1100px) {
+    body.site-frame-ready.page-upload .publish-intro-grid,
+    body.site-frame-ready.page-upload .publish-layout,
+    body.site-frame-ready.page-upload .publish-summary {
+        grid-template-columns: 1fr;
+    }
+
+    body.site-frame-ready.page-upload .publish-route {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 720px) {
+    body.site-frame-ready.page-upload .publish-intro {
+        padding-top: 0;
+    }
+
+    body.site-frame-ready.page-upload .publish-title {
+        font-size: 1.35rem;
+    }
+}
+
+body.site-frame-ready.page-upload .publish-panel-title,
+body.site-frame-ready.page-upload .publish-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+body.site-frame-ready.page-upload .publish-panel-title::after,
+body.site-frame-ready.page-upload .publish-section-title::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent);
+}
+
+body.site-frame-ready.page-upload .publish-section-head {
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Final compact organization pass */
+body.site-frame-ready.page-upload .publish-shell {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+}
+
+body.site-frame-ready.page-upload .publish-shell::before {
+    display: none;
+}
+
+body.site-frame-ready.page-upload .publish-intro {
+    padding: 0 0 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.site-frame-ready.page-upload .publish-intro-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-upload .publish-title {
+    font-size: clamp(1.5rem, 2.5vw, 2.3rem);
+}
+
+body.site-frame-ready.page-upload .publish-subtitle {
+    margin-top: 0.55rem;
+    max-width: 56ch;
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+body.site-frame-ready.page-upload .publish-layout {
+    grid-template-columns: minmax(0, 1fr) 296px;
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.page-upload .publish-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+body.site-frame-ready.page-upload .publish-panel,
+body.site-frame-ready.page-upload .publish-section,
+body.site-frame-ready.page-upload .publish-live-card {
+    padding: 0.82rem 0.88rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: none;
+}
+
+body.site-frame-ready.page-upload .publish-step-link,
+body.site-frame-ready.page-upload .publish-tip,
+body.site-frame-ready.page-upload .preview-tile,
+body.site-frame-ready.page-upload .readiness-item {
+    border-radius: 14px;
+    padding: 0.75rem 0.8rem;
+}
+
+body.site-frame-ready.page-upload .publish-section-head {
+    gap: 0.75rem;
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
+}
+
+@media (max-width: 1100px) {
+    body.site-frame-ready.page-upload .publish-intro-grid,
+    body.site-frame-ready.page-upload .publish-layout {
+        grid-template-columns: 1fr;
+    }
+
+    body.site-frame-ready.page-upload .publish-route {
+        justify-content: flex-start;
+    }
+
+    body.site-frame-ready.page-upload .publish-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    body.site-frame-ready.page-upload .publish-summary {
+        grid-template-columns: 1fr;
+    }
+}

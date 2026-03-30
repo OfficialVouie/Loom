@@ -129,3 +129,111 @@ body.site-frame-ready.resource-page .page-hero {
 body.site-frame-ready.resource-page main {
     gap: 1rem;
 }
+
+/* Simple resource pass */
+.resource-page .page-hero,
+.resource-page .surface,
+.resource-page .content-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        rgba(10, 10, 14, 0.76);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(10px);
+}
+
+.resource-page .page-hero:hover,
+.resource-page .surface:hover,
+.resource-page .content-panel:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+}
+
+.resource-page .page-shortcuts {
+    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.resource-page .page-shortcut {
+    border-radius: 20px;
+    padding: 0.95rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.resource-page .page-shortcut:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.resource-page .legal-prose h2 {
+    font-size: 1.3rem;
+    text-transform: none;
+    font-style: normal;
+}
+
+.resource-page .legal-prose h3 {
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+}
+
+body.site-frame-ready.resource-page .page-hero,
+body.site-frame-ready.resource-page main > section:not(.page-hero) {
+    border-radius: 24px;
+}
+
+@media (max-width: 900px) {
+    .resource-page .page-shortcuts {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Section clarity pass */
+body.site-frame-ready.resource-page .page-shortcuts {
+    display: grid;
+    padding: 0.9rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(180deg, rgba(255, 121, 198, 0.05), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.resource-page .page-shortcut {
+    border-left: 3px solid rgba(255, 121, 198, 0.22);
+}
+
+body.site-frame-ready.resource-page main > section:not(.page-hero):not(.page-shortcuts) {
+    border-left: 3px solid rgba(122, 162, 255, 0.18);
+}
+
+/* Final organization pass */
+body.site-frame-ready.resource-page main {
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.resource-page .page-hero,
+body.site-frame-ready.resource-page main > section:not(.page-hero) {
+    padding: 0.9rem 0.95rem !important;
+    border-radius: 18px;
+    box-shadow: none;
+}
+
+body.site-frame-ready.resource-page .page-shortcuts {
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+body.site-frame-ready.resource-page .page-shortcut {
+    padding: 0.78rem 0.84rem;
+    border-radius: 14px;
+    border-left: 0;
+    border-top: 2px solid rgba(255, 121, 198, 0.22);
+}
+
+body.site-frame-ready.resource-page main > section:not(.page-hero):not(.page-shortcuts) {
+    border-left: 0;
+    border-top: 2px solid rgba(122, 162, 255, 0.16);
+}

@@ -1088,6 +1088,342 @@
                 gap: 1.35rem;
             }
         }
+
+        /* Simple homepage pass */
+        body.site-frame-ready.page-index .site-frame {
+            width: min(1500px, calc(100% - 1.2rem));
+            gap: 1rem;
+        }
+
+        body.site-frame-ready.page-index .shell-header {
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            padding: 0.95rem 1rem;
+            border-radius: 24px;
+        }
+
+        body.page-index .home-canvas {
+            gap: 1.5rem;
+        }
+
+        body.page-index .home-stage {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1.2rem 0 0;
+        }
+
+        body.page-index .home-stage::before,
+        body.page-index .home-band::before,
+        body.page-index .home-band::after,
+        body.page-index .home-panorama-link::before {
+            display: none;
+        }
+
+        body.page-index .home-stage-radar {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.85rem;
+            padding-left: 0;
+            border-left: 0;
+            padding-top: 0;
+        }
+
+        body.page-index .home-stage-title {
+            max-width: 12ch;
+            font-size: clamp(2.8rem, 6vw, 4.8rem);
+        }
+
+        body.page-index .home-stage-summary {
+            max-width: 62ch;
+        }
+
+        body.page-index .home-panorama {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+
+        body.page-index .home-panorama-link {
+            min-height: 0;
+            padding: 1rem;
+            border-radius: 20px;
+            background: rgba(10, 10, 14, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+        }
+
+        body.page-index .home-panorama-link:hover {
+            transform: none;
+        }
+
+        body.page-index .home-bands {
+            gap: 1.5rem;
+        }
+
+        body.page-index .home-band,
+        body.page-index .home-band:nth-child(2n) {
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+        }
+
+        body.page-index .home-band-copy,
+        body.page-index .home-band:nth-child(2n) .home-band-copy {
+            position: static;
+            order: 0;
+            padding: 0;
+        }
+
+        body.page-index .home-band:nth-child(2n) .home-release-stack {
+            order: 0;
+        }
+
+        @media (max-width: 900px) {
+            body.page-index .home-stage-radar,
+            body.page-index .home-panorama {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section clarity pass */
+        body.page-index .home-stage,
+        body.page-index .home-panorama,
+        body.page-index .home-search-panel,
+        body.page-index .home-band {
+            position: relative;
+            padding: 1.1rem;
+            border-radius: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+                rgba(10, 10, 14, 0.72);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        body.page-index .home-stage::after,
+        body.page-index .home-panorama::after,
+        body.page-index .home-search-panel::after,
+        body.page-index .home-band::after {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 121, 198, 0.45), rgba(122, 162, 255, 0.18), transparent 70%);
+            pointer-events: none;
+        }
+
+        body.page-index .home-stage {
+            grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+            gap: 1.2rem;
+            padding: 1.2rem;
+        }
+
+        body.page-index .home-stage-radar {
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.page-index .home-panorama {
+            padding: 1rem;
+        }
+
+        body.page-index .home-panorama-link {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid rgba(255, 121, 198, 0.22);
+        }
+
+        body.page-index .home-search-panel {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        body.page-index .home-search-head {
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.page-index .home-band {
+            gap: 1rem;
+        }
+
+        body.page-index .home-band-copy {
+            padding-right: 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.page-index .home-band:nth-child(2n) .home-band-copy {
+            padding-left: 1rem;
+            padding-right: 0;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 0;
+        }
+
+        body.page-index .home-band:nth-child(2n)::after {
+            background: linear-gradient(90deg, rgba(122, 162, 255, 0.45), rgba(255, 121, 198, 0.18), transparent 70%);
+        }
+
+        body.page-index .home-band:nth-child(2n) .home-band-label {
+            color: rgba(122, 162, 255, 0.92);
+        }
+
+        @media (max-width: 1020px) {
+            body.page-index .home-stage,
+            body.page-index .home-band,
+            body.page-index .home-band:nth-child(2n) {
+                grid-template-columns: 1fr;
+            }
+
+            body.page-index .home-stage-radar,
+            body.page-index .home-band-copy,
+            body.page-index .home-band:nth-child(2n) .home-band-copy {
+                padding-left: 0;
+                padding-right: 0;
+                border-left: 0;
+                border-right: 0;
+            }
+        }
+
+        @media (max-width: 900px) {
+            body.page-index .home-stage-radar,
+            body.page-index .home-panorama {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Final organization pass */
+        body.page-index .home-canvas {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        body.page-index .home-stage,
+        body.page-index .home-panorama,
+        body.page-index .home-search-panel,
+        body.page-index .home-band {
+            padding: 0.85rem 0.9rem;
+            border-radius: 18px;
+            box-shadow: none;
+        }
+
+        body.page-index .home-stage {
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 0.85rem;
+        }
+
+        body.page-index .home-stage-title {
+            max-width: 14ch;
+            font-size: clamp(1.8rem, 3vw, 2.9rem);
+        }
+
+        body.page-index .home-stage-summary,
+        body.page-index .home-search-dock-copy,
+        body.page-index .home-signal-copy,
+        body.page-index .home-band-summary {
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        body.page-index .home-stage-actions {
+            gap: 0.65rem;
+            margin-top: 1rem;
+        }
+
+        body.page-index .home-stage-radar {
+            gap: 0.75rem;
+            padding-left: 0.85rem;
+        }
+
+        body.page-index .home-stat-ribbon {
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+        }
+
+        body.page-index .home-stat-number {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+        }
+
+        body.page-index .home-signal {
+            padding: 0.75rem 0.8rem;
+            border-radius: 14px;
+        }
+
+        body.page-index .home-panorama {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+
+        body.page-index .home-panorama-link {
+            padding: 0.8rem 0.85rem;
+            border-radius: 14px;
+        }
+
+        body.page-index .home-search-panel {
+            gap: 0.75rem;
+        }
+
+        body.page-index .home-search-head {
+            padding-bottom: 0.65rem;
+        }
+
+        body.page-index .home-band {
+            grid-template-columns: minmax(220px, 0.38fr) minmax(0, 1fr);
+            gap: 0.85rem;
+        }
+
+        body.page-index .home-band-copy {
+            padding-right: 0.8rem;
+        }
+
+        body.page-index .home-band:nth-child(2n) .home-band-copy {
+            padding-left: 0.8rem;
+        }
+
+        body.page-index .home-band-title {
+            font-size: 1.35rem;
+        }
+
+        body.page-index .home-release-stack {
+            gap: 0.65rem;
+        }
+
+        @media (max-width: 1100px) {
+            body.page-index .home-stage,
+            body.page-index .home-panorama,
+            body.page-index .home-band,
+            body.page-index .home-band:nth-child(2n) {
+                grid-template-columns: 1fr;
+            }
+
+            body.page-index .home-stage-radar,
+            body.page-index .home-band-copy,
+            body.page-index .home-band:nth-child(2n) .home-band-copy {
+                padding-left: 0;
+                padding-right: 0;
+                border-left: 0;
+                border-right: 0;
+            }
+
+            body.page-index .home-route,
+            body.page-index .home-stage-radar,
+            body.page-index .home-band:nth-child(2n) .home-release-stack {
+                order: 0;
+            }
+        }
+
+        @media (max-width: 760px) {
+            body.page-index .home-panorama {
+                grid-template-columns: 1fr;
+            }
+
+            body.page-index .home-stage,
+            body.page-index .home-search-panel,
+            body.page-index .home-band {
+                padding: 0.8rem 0.85rem;
+            }
+
+            body.page-index .home-stage-title {
+                font-size: 1.65rem;
+            }
+        }
     </style>
 </head>
 <body class="page-index">
@@ -1155,6 +1491,21 @@
                     <div class="pt-10 px-5 pb-4 border-b border-white/5">
                         <h4 id="menu-username" class="text-lg font-black lowercase">guest</h4>
                         <p id="menu-email" class="text-xs text-gray-400">Login Required</p>
+                    </div>
+                    <div class="px-4 py-4 border-b border-white/5 space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span id="menu-account-mode-pill" class="chip border-white/15 text-white/80">Consumer Mode</span>
+                            <span id="menu-account-discord-pill" class="chip border-white/15 text-gray-400">Discord not linked</span>
+                        </div>
+                        <p id="menu-account-copy" class="text-xs text-gray-400 leading-relaxed">Pick the account mode that fits what you are doing and keep your Discord identity linked to Loom.</p>
+                        <button id="menu-account-toggle" class="menu-item justify-center rounded-2xl border border-white/10 bg-white/[0.03]" type="button">
+                            <i class="fas fa-wand-magic-sparkles text-pink-400"></i>
+                            <span>Switch To Creator</span>
+                        </button>
+                        <button id="menu-account-manage" class="menu-item justify-center rounded-2xl border border-white/10 bg-white/[0.03]" type="button">
+                            <i class="fa-brands fa-discord text-white/70"></i>
+                            <span>Manage Account</span>
+                        </button>
                     </div>
                     <div>
                         <a class="block px-4 py-3 hover:bg-white/5" href="profile.html"><i class="fas fa-user-edit text-blue-400 mr-2"></i>Edit Profile</a>
@@ -1429,6 +1780,7 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             collection,
+            deleteField,
             doc,
             getFirestore,
             getDoc,
@@ -1478,6 +1830,11 @@
         const menuAvatar = document.getElementById("menu-avatar");
         const menuUsername = document.getElementById("menu-username");
         const menuEmail = document.getElementById("menu-email");
+        const menuAccountModePill = document.getElementById("menu-account-mode-pill");
+        const menuAccountDiscordPill = document.getElementById("menu-account-discord-pill");
+        const menuAccountCopy = document.getElementById("menu-account-copy");
+        const menuAccountToggle = document.getElementById("menu-account-toggle");
+        const menuAccountManage = document.getElementById("menu-account-manage");
         const reviewLink = document.getElementById("review-link");
         const logoutBtn = document.getElementById("logout-btn");
         const notifTrigger = document.getElementById("notif-trigger");
@@ -1500,12 +1857,14 @@
         let authMode = "signin";
         let activeUser = null;
         let activeProfile = null;
+        let activePrivateAccount = normalizePrivateAccount();
         let assets = [];
         let users = [];
         let notifUnsub = null;
         let presenceTimer = null;
         let weeklyFreeAssetIds = new Set();
         const mediaCache = new Map();
+        const USER_PRIVATE_COLLECTION = "userPrivate";
         const pageParams = new URLSearchParams(window.location.search);
 
         function safeRedirectPath(rawValue = "") {
@@ -1573,6 +1932,207 @@
             } catch (_) {
                 return false;
             }
+        }
+
+        const WEBSITE_ROLE_DEFINITIONS = [
+            { key: "marketplace_manager", label: "Marketplace Manager", badgeClass: "chip border-fuchsia-500/35 text-fuchsia-200" },
+            { key: "asset_verifier", label: "Asset Verifier", badgeClass: "chip border-emerald-500/35 text-emerald-200" },
+            { key: "moderator", label: "Moderator", badgeClass: "chip border-rose-500/35 text-rose-200" },
+            { key: "support_agent", label: "Support Agent", badgeClass: "chip border-sky-500/35 text-sky-200" },
+            { key: "verified_creator", label: "Verified Creator", badgeClass: "chip border-amber-500/35 text-amber-200" }
+        ];
+        const WEBSITE_ROLE_MAP = new Map(WEBSITE_ROLE_DEFINITIONS.map((item) => [item.key, item]));
+
+        function normalizeWebsiteRoleKey(rawValue = "") {
+            const normalized = String(rawValue || "")
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, "and")
+                .replace(/[\s-]+/g, "_");
+            const compact = normalized.replace(/[^a-z0-9_]/g, "");
+            const aliases = {
+                marketplacemanager: "marketplace_manager",
+                marketplace_manager: "marketplace_manager",
+                assetverifier: "asset_verifier",
+                asset_verifier: "asset_verifier",
+                moderator: "moderator",
+                supportagent: "support_agent",
+                support_agent: "support_agent",
+                verifiedcreator: "verified_creator",
+                verified_creator: "verified_creator"
+            };
+            const key = aliases[normalized] || aliases[compact] || normalized;
+            return WEBSITE_ROLE_MAP.has(key) ? key : "";
+        }
+
+        function normalizeWebsiteRoles(rawValue = []) {
+            const source = Array.isArray(rawValue)
+                ? rawValue
+                : typeof rawValue === "string" && rawValue.trim()
+                    ? rawValue.split(/[,\n|]/)
+                    : [];
+            const roles = [];
+            source.forEach((item) => {
+                const key = normalizeWebsiteRoleKey(item);
+                if (key && !roles.includes(key)) {
+                    roles.push(key);
+                }
+            });
+            return roles;
+        }
+
+        function collectWebsiteRoles(raw = {}) {
+            const rawRoles = Array.isArray(raw.siteRoles)
+                ? raw.siteRoles
+                : Array.isArray(raw.websiteRoles)
+                    ? raw.websiteRoles
+                    : Array.isArray(raw.staffRoles)
+                        ? raw.staffRoles
+                        : [];
+            const legacyRole = normalizeWebsiteRoleKey(raw.role);
+            return normalizeWebsiteRoles(legacyRole ? [...rawRoles, legacyRole] : rawRoles);
+        }
+
+        function websiteRoleLabel(roleKey = "") {
+            return WEBSITE_ROLE_MAP.get(roleKey)?.label || "";
+        }
+
+        function primaryUserRoleLabel(user = null) {
+            const roleKeys = normalizeWebsiteRoles(user?.siteRoles || []);
+            if (roleKeys.length) return websiteRoleLabel(roleKeys[0]);
+            return user?.accountMode === "creator" ? "Creator" : "Consumer";
+        }
+
+        function renderWebsiteRoleChips(roleKeys = []) {
+            return normalizeWebsiteRoles(roleKeys)
+                .map((roleKey) => {
+                    const meta = WEBSITE_ROLE_MAP.get(roleKey);
+                    if (!meta) return "";
+                    return `<span class="${meta.badgeClass}">${escapeHtml(meta.label)}</span>`;
+                })
+                .filter(Boolean)
+                .join("");
+        }
+
+        function normalizeAccountMode(rawMode = "", rawRole = "", fallbackCreator = false) {
+            const mode = String(rawMode || "").trim().toLowerCase();
+            if (mode === "creator" || mode === "consumer") return mode;
+            const role = String(rawRole || "").trim().toLowerCase();
+            if (role === "creator") return "creator";
+            if (normalizeWebsiteRoleKey(role) === "verified_creator") return "creator";
+            return fallbackCreator ? "creator" : "consumer";
+        }
+
+        function normalizeDiscordAccount(rawValue = {}) {
+            const handle = String(rawValue?.handle || rawValue?.username || "")
+                .trim()
+                .replace(/^@+/, "")
+                .slice(0, 48);
+            const urlCandidate = String(rawValue?.url || rawValue?.profileUrl || "").trim();
+            return {
+                handle,
+                url: validHttpUrl(urlCandidate) ? urlCandidate : "",
+                linkedAt: rawValue?.linkedAt || null,
+                source: typeof rawValue?.source === "string" ? rawValue.source : "manual"
+            };
+        }
+
+        function normalizePrivateAccount(rawValue = {}) {
+            return {
+                linkedAccounts: {
+                    discord: normalizeDiscordAccount(rawValue?.linkedAccounts?.discord || rawValue?.connectedAccounts?.discord || rawValue?.discord || {})
+                }
+            };
+        }
+
+        function withPrivateAccount(profile = null, privateAccount = null) {
+            if (!profile) return null;
+            return {
+                ...profile,
+                linkedAccounts: normalizePrivateAccount(privateAccount || {}).linkedAccounts
+            };
+        }
+
+        function hasLegacyPrivateAccountFields(raw = {}) {
+            const linked = raw?.linkedAccounts;
+            const connected = raw?.connectedAccounts;
+            return (typeof linked === "object" && linked !== null) || (typeof connected === "object" && connected !== null);
+        }
+
+        async function ensurePrivateAccount(userId, legacyDiscord = {}) {
+            const privateRef = doc(db, USER_PRIVATE_COLLECTION, userId);
+            const privateSnap = await getDoc(privateRef);
+            const normalizedLegacy = normalizeDiscordAccount(legacyDiscord);
+
+            if (!privateSnap.exists()) {
+                const basePrivate = {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.handle || normalizedLegacy.url
+                                ? normalizedLegacy.linkedAt || serverTimestamp()
+                                : null
+                        }
+                    },
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                await setDoc(privateRef, basePrivate, { merge: true });
+                return normalizePrivateAccount(basePrivate);
+            }
+
+            const rawPrivate = privateSnap.data() || {};
+            const normalizedPrivate = normalizePrivateAccount(rawPrivate);
+            const patch = {};
+            if (typeof rawPrivate.linkedAccounts !== "object" || rawPrivate.linkedAccounts === null || typeof rawPrivate.linkedAccounts.discord !== "object" || rawPrivate.linkedAccounts.discord === null) {
+                patch.linkedAccounts = normalizedPrivate.linkedAccounts;
+            }
+            if (
+                !normalizedPrivate.linkedAccounts.discord.handle
+                && !normalizedPrivate.linkedAccounts.discord.url
+                && (normalizedLegacy.handle || normalizedLegacy.url)
+            ) {
+                patch.linkedAccounts = {
+                    discord: {
+                        ...normalizedLegacy,
+                        linkedAt: normalizedLegacy.linkedAt || serverTimestamp()
+                    }
+                };
+            }
+            if (Object.keys(patch).length) {
+                patch.updatedAt = serverTimestamp();
+                await setDoc(privateRef, patch, { merge: true });
+                return normalizePrivateAccount({ ...rawPrivate, ...patch });
+            }
+
+            return normalizedPrivate;
+        }
+
+        async function clearLegacyPrivateAccountFields(userId) {
+            await setDoc(doc(db, "users", userId), {
+                linkedAccounts: deleteField(),
+                connectedAccounts: deleteField()
+            }, { merge: true });
+        }
+
+        function accountModeLabel(mode = "consumer") {
+            return mode === "creator" ? "Creator Mode" : "Consumer Mode";
+        }
+
+        function accountModeDescription(mode = "consumer") {
+            return mode === "creator"
+                ? "Creator mode unlocks publishing, release setup, and creator-facing shortcuts."
+                : "Consumer mode keeps the account focused on browsing, installs, follows, and discovery.";
+        }
+
+        function discordAccountSummary(discord = {}) {
+            if (discord?.handle) return `Discord linked as @${discord.handle}`;
+            if (discord?.url) return "Discord link saved";
+            return "Discord not linked";
+        }
+
+        function nextAccountMode(mode = "consumer") {
+            return mode === "creator" ? "consumer" : "creator";
         }
 
         async function getMediaUrl(mediaId) {
@@ -1704,6 +2264,12 @@
 
         function normalizeUser(id, raw = {}) {
             const username = sanitizeUsername(raw.username || "") || "user";
+            const siteRoles = collectWebsiteRoles(raw);
+            const accountMode = normalizeAccountMode(
+                raw.accountMode,
+                raw.role,
+                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || raw.canCurate)
+            );
             return {
                 id,
                 username,
@@ -1713,7 +2279,9 @@
                 bannerUrl: validHttpUrl(raw.bannerUrl || "") || /^data:image\//i.test(String(raw.bannerUrl || "")) ? raw.bannerUrl : "",
                 avatarMediaId: typeof raw.avatarMediaId === "string" ? raw.avatarMediaId : "",
                 bannerMediaId: typeof raw.bannerMediaId === "string" ? raw.bannerMediaId : "",
-                role: typeof raw.role === "string" && raw.role.trim() ? raw.role.trim() : "Consumer",
+                role: accountMode === "creator" ? "Creator" : "Consumer",
+                accountMode,
+                siteRoles,
                 badges: Array.isArray(raw.badges)
                     ? raw.badges
                         .filter((item) => typeof item === "string")
@@ -1726,7 +2294,9 @@
                 canCurate: Boolean(raw.canCurate),
                 followers: Number.isFinite(raw.followers) ? raw.followers : Number(raw.followers || 0),
                 following: Number.isFinite(raw.following) ? raw.following : Number(raw.following || 0),
-                searchText: `${username} ${raw.bio || ""}`.toLowerCase()
+                linkedAccounts: normalizePrivateAccount().linkedAccounts,
+                creatorActivatedAt: raw.creatorActivatedAt || null,
+                searchText: `${username} ${raw.bio || ""} ${accountMode} ${siteRoles.map((roleKey) => websiteRoleLabel(roleKey)).join(" ")}`.toLowerCase()
             };
         }
 
@@ -1813,6 +2383,7 @@
             const avatarMediaId = user.avatarMediaId || "";
             const stats = creatorStats(user.id);
             const badges = [
+                renderWebsiteRoleChips(user.siteRoles || []),
                 user.isKnownCreator ? `<span class="chip border-blue-500/40 text-blue-300">Known Creator</span>` : "",
                 user.isFeaturedCreator ? `<span class="chip border-yellow-500/40 text-yellow-300">Featured</span>` : ""
             ].filter(Boolean).join("");
@@ -1826,7 +2397,7 @@
                         <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatar)}" data-media-id="${escapeHtml(avatarMediaId)}" alt="Creator avatar">
                         <div class="min-w-0">
                             <h4 class="text-sm font-black lowercase truncate">${escapeHtml(user.username)}</h4>
-                            <p class="text-[10px] uppercase tracking-[0.13em] text-gray-500 font-bold">${escapeHtml(user.role || "Creator")}</p>
+                            <p class="text-[10px] uppercase tracking-[0.13em] text-gray-500 font-bold">${escapeHtml(primaryUserRoleLabel(user))}</p>
                         </div>
                     </div>
                     <p class="text-xs text-gray-300 mt-3 min-h-[36px]">${escapeHtml((user.bio || "No bio set.").slice(0, 86))}</p>
@@ -1992,6 +2563,51 @@
             setMenuBanner("");
         }
 
+        function renderAccountMenu(profile = null) {
+            const normalized = profile ? normalizeUser(profile.id || activeUser?.uid || "", profile) : null;
+            const mode = normalized?.accountMode || "consumer";
+            const discord = activeUser
+                ? normalizePrivateAccount(activePrivateAccount || {}).linkedAccounts.discord
+                : normalizeDiscordAccount();
+            const hasDiscord = Boolean(discord.handle || discord.url);
+            const modeText = accountModeLabel(mode);
+            const guestState = !activeUser;
+
+            if (menuAccountModePill) {
+                menuAccountModePill.innerText = guestState ? "Guest Account" : modeText;
+                menuAccountModePill.className = !guestState && mode === "creator"
+                    ? "chip border-pink-500/30 text-pink-300"
+                    : "chip border-white/15 text-white/80";
+            }
+            if (menuAccountDiscordPill) {
+                menuAccountDiscordPill.innerText = guestState ? "Sign in required" : discordAccountSummary(discord);
+                menuAccountDiscordPill.className = hasDiscord
+                    ? "chip border-blue-500/30 text-blue-300"
+                    : "chip border-white/15 text-gray-400";
+            }
+            if (menuAccountCopy) {
+                menuAccountCopy.innerText = activeUser
+                    ? `${accountModeDescription(mode)} ${hasDiscord ? "Discord is already linked on this account." : "Add your Discord details in account settings when you are ready."}`
+                    : "Sign in to save your Discord handle and switch between consumer and creator mode.";
+            }
+            if (menuAccountToggle) {
+                if (!activeUser) {
+                    menuAccountToggle.innerHTML = `<i class="fas fa-right-to-bracket text-pink-400"></i><span>Sign In To Start</span>`;
+                } else {
+                    const toggleText = mode === "creator" ? "Switch To Consumer" : "Switch To Creator";
+                    const toggleIcon = mode === "creator"
+                        ? "fas fa-arrow-rotate-left text-blue-300"
+                        : "fas fa-wand-magic-sparkles text-pink-400";
+                    menuAccountToggle.innerHTML = `<i class="${toggleIcon}"></i><span>${toggleText}</span>`;
+                }
+            }
+            if (menuAccountManage) {
+                menuAccountManage.innerHTML = activeUser
+                    ? `<i class="fa-brands fa-discord text-white/70"></i><span>${hasDiscord ? "Update Discord + Mode" : "Link Discord + Mode"}</span>`
+                    : `<i class="fas fa-user text-white/70"></i><span>Open Account Setup</span>`;
+            }
+        }
+
         function renderGuestNav() {
             navUserName.innerText = "Connect";
             navAvatar.src = guestAvatar;
@@ -2001,6 +2617,7 @@
             setMenuBanner(guestBanner);
             reviewLink.classList.add("hidden");
             logoutBtn.classList.add("hidden");
+            renderAccountMenu(null);
         }
 
         function renderNotifications(notifications = []) {
@@ -2099,6 +2716,29 @@
             await applyMenuBanner(profile);
             reviewLink.classList.toggle("hidden", !profile?.canCurate);
             logoutBtn.classList.remove("hidden");
+            renderAccountMenu(profile);
+        }
+
+        async function updateUserAccountMode(nextModeInput = "") {
+            if (!activeUser) {
+                openAuthModal("signin");
+                return;
+            }
+            const nextMode = nextModeInput === "creator" ? "creator" : "consumer";
+            const profileRef = doc(db, "users", activeUser.uid);
+            const updates = {
+                accountMode: nextMode,
+                role: nextMode === "creator" ? "Creator" : "Consumer",
+                updatedAt: serverTimestamp(),
+                ...(nextMode === "creator" && !activeProfile?.creatorActivatedAt ? { creatorActivatedAt: serverTimestamp() } : {})
+            };
+            await setDoc(profileRef, updates, { merge: true });
+            activeProfile = withPrivateAccount(normalizeUser(activeUser.uid, {
+                ...(activeProfile || {}),
+                ...updates,
+                creatorActivatedAt: activeProfile?.creatorActivatedAt || (nextMode === "creator" ? Date.now() : null)
+            }), activePrivateAccount);
+            await renderUserNav(activeUser, activeProfile);
         }
 
         function openAuthModal(mode = "signin") {
@@ -2198,6 +2838,7 @@
                     usernameLower: username,
                     bio: "",
                     role: "Consumer",
+                    accountMode: "consumer",
                     avatarUrl: "",
                     bannerUrl: "",
                     avatarMediaId: "",
@@ -2205,6 +2846,7 @@
                     followers: 0,
                     following: 0,
                     socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                    siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
                     canCurate: false,
@@ -2212,7 +2854,8 @@
                     updatedAt: serverTimestamp()
                 };
                 await setDoc(profileRef, profileData, { merge: true });
-                return normalizeUser(user.uid, profileData);
+                const privateAccount = await ensurePrivateAccount(user.uid);
+                return withPrivateAccount(normalizeUser(user.uid, profileData), privateAccount);
             }
 
             const raw = profileSnap.data();
@@ -2222,6 +2865,7 @@
             if (!raw.usernameLower) patch.usernameLower = normalized.usernameLower;
             if (typeof raw.bio !== "string") patch.bio = normalized.bio;
             if (typeof raw.role !== "string") patch.role = normalized.role;
+            if (typeof raw.accountMode !== "string") patch.accountMode = normalized.accountMode;
             if (typeof raw.avatarUrl !== "string") patch.avatarUrl = "";
             if (typeof raw.bannerUrl !== "string") patch.bannerUrl = "";
             if (typeof raw.avatarMediaId !== "string") patch.avatarMediaId = "";
@@ -2229,15 +2873,21 @@
             if (typeof raw.followers !== "number") patch.followers = 0;
             if (typeof raw.following !== "number") patch.following = 0;
             if (typeof raw.socials !== "object" || raw.socials === null) patch.socials = { website: "", x: "", github: "", youtube: "", discord: "" };
+            if (!Array.isArray(raw.siteRoles)) patch.siteRoles = normalized.siteRoles;
             if (typeof raw.isKnownCreator !== "boolean") patch.isKnownCreator = false;
             if (typeof raw.isFeaturedCreator !== "boolean") patch.isFeaturedCreator = false;
             if (typeof raw.canCurate !== "boolean") patch.canCurate = false;
+            let publicProfile = normalized;
             if (Object.keys(patch).length) {
                 patch.updatedAt = serverTimestamp();
                 await setDoc(profileRef, patch, { merge: true });
-                return normalizeUser(user.uid, { ...raw, ...patch });
+                publicProfile = normalizeUser(user.uid, { ...raw, ...patch });
             }
-            return normalized;
+            const privateAccount = await ensurePrivateAccount(user.uid, raw.linkedAccounts?.discord || raw.connectedAccounts?.discord || {});
+            if (hasLegacyPrivateAccountFields(raw)) {
+                await clearLegacyPrivateAccountFields(user.uid);
+            }
+            return withPrivateAccount(publicProfile, privateAccount);
         }
 
         async function submitAuth() {
@@ -2396,6 +3046,28 @@
 
         searchInput.addEventListener("input", renderSearchResults);
 
+        menuAccountToggle.addEventListener("click", () => {
+            if (!activeUser) {
+                closeAllDropdowns();
+                openAuthModal("signin");
+                return;
+            }
+            const currentMode = normalizeAccountMode(activeProfile?.accountMode, activeProfile?.role, false);
+            updateUserAccountMode(nextAccountMode(currentMode)).catch((err) => {
+                console.error("Account mode update failed:", err);
+                alert("Unable to switch account mode right now.");
+            });
+        });
+
+        menuAccountManage.addEventListener("click", () => {
+            closeAllDropdowns();
+            if (!activeUser) {
+                openAuthModal("signin");
+                return;
+            }
+            window.location.href = "profile.html?open=account";
+        });
+
         logoutBtn.addEventListener("click", async () => {
             try {
                 await signOut(auth);
@@ -2434,6 +3106,7 @@
 
             if (!user) {
                 activeProfile = null;
+                activePrivateAccount = normalizePrivateAccount();
                 renderGuestNav();
                 stopNotifications();
                 stopPresence();
@@ -2442,12 +3115,14 @@
 
             try {
                 activeProfile = await ensureUserProfile(user);
+                activePrivateAccount = normalizePrivateAccount(activeProfile || {});
                 await renderUserNav(user, activeProfile);
                 startNotifications(user.uid);
                 startPresence(user.uid);
             } catch (err) {
                 console.error("Profile sync failed:", err);
                 activeProfile = null;
+                activePrivateAccount = normalizePrivateAccount();
                 await renderUserNav(user, null);
                 stopPresence();
             }

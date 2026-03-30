@@ -158,6 +158,26 @@
       { href: "support.html", icon: "fas fa-life-ring", label: "Support", match: ["support.html", "about.html", "guidelines.html", "privacy.html", "terms.html"] },
     ];
 
+    const officialSocialGroups = [
+      {
+        title: "Loom",
+        label: "Loom socials",
+        links: [
+          { href: "https://www.youtube.com/@LoomDevOfficial", icon: "fa-brands fa-youtube", accent: "text-red-300", label: "YouTube" },
+          { href: "https://discord.gg/sPPNTrnZgW", icon: "fa-brands fa-discord", accent: "text-blue-300", label: "Discord Server" },
+        ],
+      },
+      {
+        title: "Borborizo Dev",
+        label: "Borborizo Development socials",
+        links: [
+          { href: "https://officialvouie.github.io/BorborizoWebsite/", icon: "fas fa-globe", accent: "text-emerald-300", label: "Official Website" },
+          { href: "https://www.youtube.com/@BorborizoDevelopmentGames", icon: "fa-brands fa-youtube", accent: "text-red-300", label: "YouTube" },
+          { href: "https://discord.gg/gmb4dnVkRX", icon: "fa-brands fa-discord", accent: "text-blue-300", label: "Discord Server" },
+        ],
+      },
+    ];
+
     const onReady = (fn) => {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", fn, { once: true });
@@ -170,7 +190,6 @@
       const header = document.querySelector(".shell-header");
       const main = document.querySelector("main");
       if (!header || !main || document.querySelector(".site-frame")) return;
-      const meta = pageMeta[pathName] || pageMeta.default;
       const pageClass = `page-${String(pathName).replace(/\.html$/i, "").replace(/[^a-z0-9_-]/gi, "-")}`;
 
       const siblings = [];
@@ -192,24 +211,6 @@
       header.parentNode.insertBefore(frame, header);
       frame.append(sidebar, mainColumn);
       sidebar.appendChild(header);
-
-      const sidebarMeta = document.createElement("section");
-      sidebarMeta.className = "shell-sidebar-meta";
-      sidebarMeta.innerHTML = `
-        <div class="shell-sidebar-kicker">Current Workspace</div>
-        <div class="shell-sidebar-path">${meta.path}</div>
-        <p class="shell-sidebar-summary">${meta.summary}</p>
-      `;
-
-      const shellNav = header.querySelector(".shell-nav");
-      const shellActions = header.querySelector(".shell-actions");
-      if (shellActions) {
-        header.insertBefore(sidebarMeta, shellActions);
-      } else if (shellNav) {
-        shellNav.insertAdjacentElement("afterend", sidebarMeta);
-      } else {
-        header.appendChild(sidebarMeta);
-      }
 
       for (const node of siblings) {
         if (node.classList && node.classList.contains("mobile-dock")) continue;
@@ -323,6 +324,100 @@
       }
     };
 
+    const createFooterSocialSection = (group) => {
+      const section = document.createElement("section");
+      section.innerHTML = `
+        <div class="text-[10px] uppercase tracking-[0.22em] font-black text-white/55">${group.title}</div>
+        <nav class="mt-4 flex flex-col gap-3 text-sm" aria-label="${group.label}">
+          ${group.links
+            .map(
+              (link) => `
+                <a class="text-white/70 hover:text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-300/60 focus-visible:outline-offset-2 rounded-lg" href="${link.href}" target="_blank" rel="noopener">
+                  <i class="${link.icon} ${link.accent} mr-2"></i>${link.label}
+                </a>
+              `
+            )
+            .join("")}
+        </nav>
+      `;
+      return section;
+    };
+
+    const createOfficialLinksSurface = () => {
+      const section = document.createElement("section");
+      section.className = "site-wrap content-panel surface official-links-surface";
+      section.innerHTML = `
+        <div class="official-links-head">
+          <div>
+            <div class="official-links-kicker">Official Links</div>
+            <h2 class="official-links-title">Loom And Borborizo Development</h2>
+            <p class="official-links-copy">Use the official YouTube, Discord, and website links from one compact strip instead of hunting through separate pages.</p>
+          </div>
+        </div>
+        <div class="official-links-grid"></div>
+      `;
+      const grid = section.querySelector(".official-links-grid");
+      officialSocialGroups.forEach((group) => {
+        const card = document.createElement("article");
+        card.className = "official-link-group";
+        card.innerHTML = `
+          <div class="official-link-label">${group.title}</div>
+          <div class="official-link-list">
+            ${group.links
+              .map(
+                (link) => `
+                  <a class="official-link" href="${link.href}" target="_blank" rel="noopener">
+                    <i class="${link.icon} ${link.accent}"></i>
+                    <span>${link.label}</span>
+                  </a>
+                `
+              )
+              .join("")}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      return section;
+    };
+
+    const injectOfficialSocials = () => {
+      const footerGrid = document.querySelector("#site-footer .pb-12 > div");
+      if (footerGrid) {
+        if (!footerGrid.querySelector('[aria-label="Loom socials"]')) {
+          footerGrid.classList.remove("gap-10", "lg:grid-cols-7");
+          footerGrid.classList.add("gap-8", "lg:grid-cols-8");
+
+          const communitySection = Array.from(footerGrid.querySelectorAll("section")).find((section) => {
+            const label = section.querySelector("div");
+            return label && label.textContent.trim() === "Community";
+          });
+
+          const newSections = officialSocialGroups.map(createFooterSocialSection);
+          if (communitySection) {
+            communitySection.replaceWith(...newSections);
+          } else {
+            newSections.forEach((section) => footerGrid.appendChild(section));
+          }
+        }
+        return;
+      }
+
+      if (document.querySelector(".official-links-surface")) return;
+
+      const main = document.querySelector("main");
+      const mainColumn = document.querySelector(".site-main-column");
+      const target = mainColumn || main;
+      if (!target) return;
+
+      const surface = createOfficialLinksSurface();
+      const footer = target.querySelector("#site-footer");
+      if (footer) {
+        target.insertBefore(surface, footer);
+      } else {
+        target.appendChild(surface);
+      }
+    };
+
     const injectMobileDock = () => {
       if (document.querySelector(".mobile-dock")) return;
       const dock = document.createElement("nav");
@@ -349,8 +444,8 @@
       buildSiteFrame();
       cleanupGlobalLinks();
       simplifyHeaderActions();
-      injectPageContext();
       simplifyShortcutSections();
+      injectOfficialSocials();
       injectMobileDock();
     };
 

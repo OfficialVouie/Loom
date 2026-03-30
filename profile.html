@@ -40,9 +40,43 @@
                     <input id="edit-social-youtube" class="overlay-field" placeholder="YouTube URL">
                     <input id="edit-social-discord" class="overlay-field sm:col-span-2" placeholder="Discord URL">
                 </div>
+                <div class="rounded-[22px] border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Account Mode</div>
+                        <p class="mt-2 text-xs text-white/65 leading-relaxed">Consumer mode is for browsing and following. Creator mode unlocks publishing and creator-facing account shortcuts.</p>
+                    </div>
+                    <select id="edit-account-mode" class="overlay-field">
+                        <option value="consumer">Consumer Mode</option>
+                        <option value="creator">Creator Mode</option>
+                    </select>
+                </div>
+                <div class="rounded-[22px] border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Linked Discord</div>
+                            <p class="mt-2 text-xs text-white/65 leading-relaxed">Save your Discord identity to your Loom account so you can keep community links and creator setup in one place.</p>
+                        </div>
+                        <span id="edit-discord-status" class="chip">Not linked</span>
+                    </div>
+                    <input id="edit-discord-handle" class="overlay-field" placeholder="Discord handle or username">
+                    <input id="edit-discord-profile-url" class="overlay-field" placeholder="Discord profile or server URL (optional)">
+                </div>
                 <div id="edit-curation-row" class="grid grid-cols-1 sm:grid-cols-2 gap-3 hidden">
                     <label class="text-xs uppercase tracking-widest text-gray-400 flex items-center gap-2"><input id="edit-known-creator" type="checkbox"> Known Creator</label>
                     <label class="text-xs uppercase tracking-widest text-gray-400 flex items-center gap-2"><input id="edit-featured-creator" type="checkbox"> Featured Creator</label>
+                </div>
+                <div id="edit-site-role-panel" class="rounded-[22px] border border-white/10 bg-white/[0.03] p-4 space-y-3 hidden">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-widest text-gray-400 font-black">Website Roles</div>
+                        <p class="mt-2 text-xs text-white/65 leading-relaxed">Assign official Loom role labels. These are staff-controlled and separate from consumer or creator mode.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="marketplace_manager" type="checkbox"> Marketplace Manager</label>
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="asset_verifier" type="checkbox"> Asset Verifier</label>
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="moderator" type="checkbox"> Moderator</label>
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2"><input data-site-role="support_agent" type="checkbox"> Support Agent</label>
+                        <label class="text-xs uppercase tracking-widest text-gray-300 flex items-center gap-2 sm:col-span-2"><input data-site-role="verified_creator" type="checkbox"> Verified Creator</label>
+                    </div>
                 </div>
                 <p id="edit-curation-note" class="text-[10px] uppercase tracking-widest text-gray-500">Creator spotlight flags are database-controlled (`users/{uid}.canCurate`).</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -104,6 +138,21 @@
                         <img id="dropdown-avatar" src="https://api.dicebear.com/7.x/identicon/svg?seed=guest" class="w-16 h-16 rounded-full border border-white/10 mx-auto mb-3" alt="Dropdown avatar">
                         <div id="dropdown-name" class="font-black lowercase">guest</div>
                     </div>
+                    <div class="px-4 py-4 border-b border-white/5 space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span id="account-mode-pill" class="chip border-white/15 text-white/80">Consumer Mode</span>
+                            <span id="account-discord-pill" class="chip border-white/15 text-gray-400">Discord not linked</span>
+                        </div>
+                        <p id="account-menu-copy" class="text-xs text-gray-400 leading-relaxed">Switch into creator mode when you're ready to publish and keep your Discord account details attached to Loom.</p>
+                        <button id="account-mode-toggle" class="menu-item justify-center rounded-2xl border border-white/10 bg-white/[0.03]" type="button">
+                            <i class="fas fa-wand-magic-sparkles text-pink-400"></i>
+                            <span>Switch To Creator</span>
+                        </button>
+                        <button id="account-settings-btn" class="menu-item justify-center rounded-2xl border border-white/10 bg-white/[0.03]" type="button">
+                            <i class="fa-brands fa-discord text-white/70"></i>
+                            <span>Manage Account</span>
+                        </button>
+                    </div>
                     <a id="my-profile-link" class="menu-item" href="profile.html"><i class="fas fa-user text-pink-400"></i><span>My Profile</span></a>
                     <a class="menu-item" href="friends.html"><i class="fas fa-user-friends text-pink-400"></i><span>Friends</span></a>
                     <a id="review-link" class="menu-item hidden" href="review.html"><i class="fas fa-shield-halved text-yellow-300"></i><span>Review Queue</span></a>
@@ -158,7 +207,7 @@
                         <p class="profile-panel-copy">The controls here switch depending on whether you are viewing your own page or someone else's.</p>
                         <div id="self-actions" class="hidden profile-actions">
                             <button id="open-edit" class="profile-action-primary" type="button">Edit Profile</button>
-                            <a href="upload.html" class="profile-action-secondary">Upload Asset</a>
+                            <button id="self-mode-action" class="profile-action-secondary" type="button">Switch To Creator</button>
                         </div>
                         <div id="other-actions" class="hidden profile-actions">
                             <button id="follow-btn" class="profile-action-primary" type="button">Follow User</button>
@@ -206,6 +255,22 @@
                 </section>
 
                 <aside class="profile-column profile-sticky">
+                    <article id="own-account-panel" class="profile-panel hidden">
+                        <div class="profile-panel-title">Account Setup</div>
+                        <p id="own-account-copy" class="profile-panel-copy">Manage your Loom role mode and keep your Discord account attached to this profile.</p>
+                        <div class="mt-4 space-y-3">
+                            <div class="rounded-[20px] border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <span id="own-account-mode-pill" class="chip">Consumer Mode</span>
+                                    <span id="own-account-discord-pill" class="chip border-white/15 text-gray-400">Discord not linked</span>
+                                </div>
+                                <p id="own-account-discord-copy" class="text-xs text-gray-400 leading-relaxed">Add your Discord handle and optional link so creator setup and community identity live together.</p>
+                            </div>
+                            <button id="own-account-toggle" class="profile-action-primary w-full" type="button">Switch To Creator</button>
+                            <button id="own-account-settings" class="profile-action-secondary w-full" type="button">Manage Discord + Mode</button>
+                        </div>
+                    </article>
+
                     <article class="profile-panel">
                         <div class="profile-panel-title">Workspace Paths</div>
                         <p class="profile-panel-copy">Jump into the next creator task without digging through extra buttons.</p>
@@ -339,6 +404,7 @@
             addDoc,
             collection,
             deleteDoc,
+            deleteField,
             doc,
             getDoc,
             getDocs,
@@ -365,12 +431,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const targetId = new URLSearchParams(window.location.search).get("id");
+        const pageParams = new URLSearchParams(window.location.search);
+        const pendingOpenPanel = pageParams.get("open");
         const guestAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=guest";
         const MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024;
         const MAX_MEDIA_DATAURL_CHARS = 900000;
+        const USER_PRIVATE_COLLECTION = "userPrivate";
 
         const accountMenu = document.getElementById("account-menu");
         const profileTrigger = document.getElementById("profile-trigger");
+        const accountModePill = document.getElementById("account-mode-pill");
+        const accountDiscordPill = document.getElementById("account-discord-pill");
+        const accountMenuCopy = document.getElementById("account-menu-copy");
+        const accountModeToggle = document.getElementById("account-mode-toggle");
+        const accountSettingsBtn = document.getElementById("account-settings-btn");
         const roleContent = document.getElementById("role-content");
         const tabRepository = document.getElementById("tab-repository");
         const tabNetwork = document.getElementById("tab-network");
@@ -382,17 +456,31 @@
         const resetAvatarBtn = document.getElementById("reset-avatar-btn");
         const resetBannerBtn = document.getElementById("reset-banner-btn");
         const curationRow = document.getElementById("edit-curation-row");
+        const siteRolePanel = document.getElementById("edit-site-role-panel");
+        const editSiteRoleInputs = Array.from(document.querySelectorAll("[data-site-role]"));
         const curationNote = document.getElementById("edit-curation-note");
         const saveProfileBtn = document.getElementById("save-profile");
+        const ownAccountPanel = document.getElementById("own-account-panel");
+        const ownAccountCopy = document.getElementById("own-account-copy");
+        const ownAccountModePill = document.getElementById("own-account-mode-pill");
+        const ownAccountDiscordPill = document.getElementById("own-account-discord-pill");
+        const ownAccountDiscordCopy = document.getElementById("own-account-discord-copy");
+        const ownAccountToggle = document.getElementById("own-account-toggle");
+        const ownAccountSettings = document.getElementById("own-account-settings");
         const myProfileLink = document.getElementById("my-profile-link");
         const followBtn = document.getElementById("follow-btn");
         const friendBtn = document.getElementById("friend-btn");
+        const selfModeAction = document.getElementById("self-mode-action");
         const notifTrigger = document.getElementById("notif-trigger");
         const notifMenu = document.getElementById("notif-menu");
         const notifCount = document.getElementById("notif-count");
         const notifList = document.getElementById("notif-list");
         const notifEmpty = document.getElementById("notif-empty");
         const notifMarkRead = document.getElementById("notif-mark-read");
+        const editAccountMode = document.getElementById("edit-account-mode");
+        const editDiscordHandle = document.getElementById("edit-discord-handle");
+        const editDiscordProfileUrl = document.getElementById("edit-discord-profile-url");
+        const editDiscordStatus = document.getElementById("edit-discord-status");
 
         let activeProfileUid = null;
         let signedInUser = null;
@@ -405,6 +493,7 @@
         let friendState = { status: "none", docId: null, fromId: "", toId: "" };
         let resetAvatarRequested = false;
         let resetBannerRequested = false;
+        let didAutoOpenAccountPanel = false;
         const mediaCache = new Map();
 
         function escapeHtml(value = "") {
@@ -456,6 +545,243 @@
             return /^https?:\/\//i.test(value) || /^data:image\//i.test(value);
         }
 
+        function validHttpUrl(url = "") {
+            return /^https?:\/\//i.test(String(url || "").trim());
+        }
+
+        const WEBSITE_ROLE_DEFINITIONS = [
+            { key: "marketplace_manager", label: "Marketplace Manager", badgeClass: "border-fuchsia-500/35 text-fuchsia-200" },
+            { key: "asset_verifier", label: "Asset Verifier", badgeClass: "border-emerald-500/35 text-emerald-200" },
+            { key: "moderator", label: "Moderator", badgeClass: "border-rose-500/35 text-rose-200" },
+            { key: "support_agent", label: "Support Agent", badgeClass: "border-sky-500/35 text-sky-200" },
+            { key: "verified_creator", label: "Verified Creator", badgeClass: "border-amber-500/35 text-amber-200" }
+        ];
+        const WEBSITE_ROLE_MAP = new Map(WEBSITE_ROLE_DEFINITIONS.map((item) => [item.key, item]));
+
+        function normalizeWebsiteRoleKey(rawValue = "") {
+            const normalized = String(rawValue || "")
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, "and")
+                .replace(/[\s-]+/g, "_");
+            const compact = normalized.replace(/[^a-z0-9_]/g, "");
+            const aliases = {
+                marketplacemanager: "marketplace_manager",
+                marketplace_manager: "marketplace_manager",
+                assetverifier: "asset_verifier",
+                asset_verifier: "asset_verifier",
+                moderator: "moderator",
+                supportagent: "support_agent",
+                support_agent: "support_agent",
+                verifiedcreator: "verified_creator",
+                verified_creator: "verified_creator"
+            };
+            const key = aliases[normalized] || aliases[compact] || normalized;
+            return WEBSITE_ROLE_MAP.has(key) ? key : "";
+        }
+
+        function normalizeWebsiteRoles(rawValue = []) {
+            const source = Array.isArray(rawValue)
+                ? rawValue
+                : typeof rawValue === "string" && rawValue.trim()
+                    ? rawValue.split(/[,\n|]/)
+                    : [];
+            const roles = [];
+            source.forEach((item) => {
+                const key = normalizeWebsiteRoleKey(item);
+                if (key && !roles.includes(key)) {
+                    roles.push(key);
+                }
+            });
+            return roles;
+        }
+
+        function collectWebsiteRoles(rawData = {}) {
+            const rawRoles = Array.isArray(rawData.siteRoles)
+                ? rawData.siteRoles
+                : Array.isArray(rawData.websiteRoles)
+                    ? rawData.websiteRoles
+                    : Array.isArray(rawData.staffRoles)
+                        ? rawData.staffRoles
+                        : [];
+            const legacyRole = normalizeWebsiteRoleKey(rawData.role);
+            return normalizeWebsiteRoles(legacyRole ? [...rawRoles, legacyRole] : rawRoles);
+        }
+
+        function websiteRoleLabel(roleKey = "") {
+            return WEBSITE_ROLE_MAP.get(roleKey)?.label || "";
+        }
+
+        function websiteRoleBadgeClass(roleKey = "") {
+            return WEBSITE_ROLE_MAP.get(roleKey)?.badgeClass || "border-white/15 text-white/80";
+        }
+
+        function primaryProfileRoleLabel(profile = null) {
+            const roleKeys = normalizeWebsiteRoles(profile?.siteRoles || []);
+            if (roleKeys.length) return websiteRoleLabel(roleKeys[0]);
+            return profile?.accountMode === "creator" ? "Creator" : "Consumer";
+        }
+
+        function collectBadgeTokens(siteRoles = [], badges = []) {
+            const roleTokens = normalizeWebsiteRoles(siteRoles).map((roleKey) => ({
+                label: websiteRoleLabel(roleKey),
+                className: websiteRoleBadgeClass(roleKey)
+            }));
+            const seen = new Set(roleTokens.map((item) => item.label.toLowerCase()));
+            const customTokens = (Array.isArray(badges) ? badges : [])
+                .filter((item) => typeof item === "string")
+                .map((item) => item.trim())
+                .filter((item) => item && !seen.has(item.toLowerCase()))
+                .slice(0, 10)
+                .map((item) => ({
+                    label: item,
+                    className: "border-white/15 text-white/80"
+                }));
+            return [...roleTokens, ...customTokens];
+        }
+
+        function renderBadgeMarkup(siteRoles = [], badges = []) {
+            return collectBadgeTokens(siteRoles, badges)
+                .map((badge) => `<span class="text-[10px] px-3 py-1 rounded-full border font-black uppercase tracking-widest ${badge.className}">${escapeHtml(badge.label)}</span>`)
+                .join("");
+        }
+
+        function applySiteRoleInputs(roleKeys = []) {
+            const selected = new Set(normalizeWebsiteRoles(roleKeys));
+            editSiteRoleInputs.forEach((input) => {
+                input.checked = selected.has(String(input.dataset.siteRole || ""));
+            });
+        }
+
+        function readSelectedSiteRoles() {
+            return normalizeWebsiteRoles(
+                editSiteRoleInputs
+                    .filter((input) => input.checked)
+                    .map((input) => input.dataset.siteRole || "")
+            );
+        }
+
+        function normalizeAccountMode(rawMode = "", rawRole = "", fallbackCreator = false) {
+            const mode = String(rawMode || "").trim().toLowerCase();
+            if (mode === "creator" || mode === "consumer") return mode;
+            const role = String(rawRole || "").trim().toLowerCase();
+            if (role === "creator") return "creator";
+            if (normalizeWebsiteRoleKey(role) === "verified_creator") return "creator";
+            return fallbackCreator ? "creator" : "consumer";
+        }
+
+        function normalizeDiscordAccount(rawValue = {}) {
+            const handle = String(rawValue?.handle || rawValue?.username || "")
+                .trim()
+                .replace(/^@+/, "")
+                .slice(0, 48);
+            const urlCandidate = String(rawValue?.url || rawValue?.profileUrl || "").trim();
+            return {
+                handle,
+                url: validHttpUrl(urlCandidate) ? urlCandidate : "",
+                linkedAt: rawValue?.linkedAt || null,
+                source: typeof rawValue?.source === "string" ? rawValue.source : "manual"
+            };
+        }
+
+        function normalizePrivateAccount(rawValue = {}) {
+            return {
+                linkedAccounts: {
+                    discord: normalizeDiscordAccount(rawValue?.linkedAccounts?.discord || rawValue?.connectedAccounts?.discord || rawValue?.discord || {})
+                }
+            };
+        }
+
+        function withPrivateAccount(profile = null, privateAccount = null) {
+            if (!profile) return null;
+            return {
+                ...profile,
+                linkedAccounts: normalizePrivateAccount(privateAccount || {}).linkedAccounts
+            };
+        }
+
+        function hasLegacyPrivateAccountFields(raw = {}) {
+            const linked = raw?.linkedAccounts;
+            const connected = raw?.connectedAccounts;
+            return (typeof linked === "object" && linked !== null) || (typeof connected === "object" && connected !== null);
+        }
+
+        async function ensurePrivateAccount(userId, legacyDiscord = {}) {
+            const privateRef = doc(db, USER_PRIVATE_COLLECTION, userId);
+            const privateSnap = await getDoc(privateRef);
+            const normalizedLegacy = normalizeDiscordAccount(legacyDiscord);
+
+            if (!privateSnap.exists()) {
+                const basePrivate = {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.handle || normalizedLegacy.url
+                                ? normalizedLegacy.linkedAt || serverTimestamp()
+                                : null
+                        }
+                    },
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                await setDoc(privateRef, basePrivate, { merge: true });
+                return normalizePrivateAccount(basePrivate);
+            }
+
+            const rawPrivate = privateSnap.data() || {};
+            const normalizedPrivate = normalizePrivateAccount(rawPrivate);
+            const patch = {};
+            if (typeof rawPrivate.linkedAccounts !== "object" || rawPrivate.linkedAccounts === null || typeof rawPrivate.linkedAccounts.discord !== "object" || rawPrivate.linkedAccounts.discord === null) {
+                patch.linkedAccounts = normalizedPrivate.linkedAccounts;
+            }
+            if (
+                !normalizedPrivate.linkedAccounts.discord.handle
+                && !normalizedPrivate.linkedAccounts.discord.url
+                && (normalizedLegacy.handle || normalizedLegacy.url)
+            ) {
+                patch.linkedAccounts = {
+                    discord: {
+                        ...normalizedLegacy,
+                        linkedAt: normalizedLegacy.linkedAt || serverTimestamp()
+                    }
+                };
+            }
+            if (Object.keys(patch).length) {
+                patch.updatedAt = serverTimestamp();
+                await setDoc(privateRef, patch, { merge: true });
+                return normalizePrivateAccount({ ...rawPrivate, ...patch });
+            }
+
+            return normalizedPrivate;
+        }
+
+        async function clearLegacyPrivateAccountFields(userId) {
+            await setDoc(doc(db, "users", userId), {
+                linkedAccounts: deleteField(),
+                connectedAccounts: deleteField()
+            }, { merge: true });
+        }
+
+        function accountModeLabel(mode = "consumer") {
+            return mode === "creator" ? "Creator Mode" : "Consumer Mode";
+        }
+
+        function accountModeDescription(mode = "consumer") {
+            return mode === "creator"
+                ? "Creator mode unlocks publish flows, creator shortcuts, and release setup."
+                : "Consumer mode keeps the account focused on browsing, installs, follows, and community discovery.";
+        }
+
+        function discordAccountSummary(discord = {}) {
+            if (discord?.handle) return `Discord linked as @${discord.handle}`;
+            if (discord?.url) return "Discord link saved";
+            return "Discord not linked";
+        }
+
+        function nextAccountMode(mode = "consumer") {
+            return mode === "creator" ? "consumer" : "creator";
+        }
+
         function toMillis(value) {
             if (!value) return 0;
             if (typeof value.toMillis === "function") return value.toMillis();
@@ -479,11 +805,19 @@
         function normalizeProfile(rawData = {}, fallbackEmail = "") {
             const fallbackUsername = usernameFromEmail(fallbackEmail);
             const username = sanitizeUsername(rawData.username) || fallbackUsername;
+            const siteRoles = collectWebsiteRoles(rawData);
+            const accountMode = normalizeAccountMode(
+                rawData.accountMode,
+                rawData.role,
+                Boolean(rawData.isKnownCreator || rawData.isFeaturedCreator || rawData.canCurate)
+            );
             return {
                 username,
                 usernameLower: sanitizeUsername(rawData.usernameLower || username) || username,
                 bio: typeof rawData.bio === "string" ? rawData.bio : "",
-                role: typeof rawData.role === "string" && rawData.role.trim() ? rawData.role : "Consumer",
+                role: accountMode === "creator" ? "Creator" : "Consumer",
+                accountMode,
+                siteRoles,
                 badges: Array.isArray(rawData.badges)
                     ? rawData.badges
                         .filter((item) => typeof item === "string")
@@ -504,6 +838,10 @@
                     youtube: typeof rawData.socials?.youtube === "string" ? rawData.socials.youtube : "",
                     discord: typeof rawData.socials?.discord === "string" ? rawData.socials.discord : ""
                 },
+                linkedAccounts: {
+                    discord: normalizeDiscordAccount(rawData.linkedAccounts?.discord || rawData.connectedAccounts?.discord || {})
+                },
+                creatorActivatedAt: rawData.creatorActivatedAt || null,
                 isKnownCreator: Boolean(rawData.isKnownCreator),
                 isFeaturedCreator: Boolean(rawData.isFeaturedCreator),
                 canCurate: Boolean(rawData.canCurate)
@@ -534,9 +872,142 @@
         function syncCurationAccess(profile = null) {
             const allowed = Boolean(profile?.canCurate);
             curationRow.classList.toggle("hidden", !allowed);
+            siteRolePanel?.classList.toggle("hidden", !allowed);
             curationNote.innerText = allowed
-                ? "Curator access enabled. You can edit creator spotlight flags."
+                ? "Curator access enabled. You can edit creator spotlight flags and official website roles."
                 : "Creator spotlight flags are database-controlled. Set users/{uid}.canCurate to true.";
+        }
+
+        function refreshDiscordEditStatus() {
+            const discord = normalizeDiscordAccount({
+                handle: editDiscordHandle?.value || "",
+                url: editDiscordProfileUrl?.value || ""
+            });
+            if (!editDiscordStatus) return;
+            editDiscordStatus.innerText = discordAccountSummary(discord);
+            editDiscordStatus.className = discord.handle || discord.url
+                ? "chip border-blue-500/30 text-blue-300"
+                : "chip border-white/15 text-gray-400";
+        }
+
+        function renderAccountState(profile = null) {
+            const normalized = profile ? normalizeProfile(profile, signedInUser?.email || "") : null;
+            const mode = normalized?.accountMode || "consumer";
+            const discord = normalized?.linkedAccounts?.discord || normalizeDiscordAccount();
+            const hasDiscord = Boolean(discord.handle || discord.url);
+            const modeText = accountModeLabel(mode);
+            const guestState = !signedInUser;
+            const toggleText = guestState ? "Sign In To Start" : mode === "creator" ? "Switch To Consumer" : "Switch To Creator";
+            const toggleIcon = guestState
+                ? "fas fa-right-to-bracket text-pink-400"
+                : mode === "creator"
+                    ? "fas fa-arrow-rotate-left text-blue-300"
+                    : "fas fa-wand-magic-sparkles text-pink-400";
+            const discordText = discordAccountSummary(discord);
+
+            if (accountModePill) {
+                accountModePill.innerText = guestState ? "Guest Account" : modeText;
+                accountModePill.className = !guestState && mode === "creator"
+                    ? "chip border-pink-500/30 text-pink-300"
+                    : "chip border-white/15 text-white/80";
+            }
+            if (accountDiscordPill) {
+                accountDiscordPill.innerText = guestState ? "Sign in required" : discordText;
+                accountDiscordPill.className = hasDiscord
+                    ? "chip border-blue-500/30 text-blue-300"
+                    : "chip border-white/15 text-gray-400";
+            }
+            if (accountMenuCopy) {
+                accountMenuCopy.innerText = guestState
+                    ? "Sign in to link your Discord account and choose whether Loom should behave like a consumer account or a creator workspace."
+                    : hasDiscord
+                        ? `${accountModeDescription(mode)} ${discord.url ? "Discord link saved to your account." : "Discord handle saved to your account."}`
+                        : `${accountModeDescription(mode)} Add Discord details when you want your account setup in one place.`;
+            }
+            if (accountModeToggle) {
+                accountModeToggle.innerHTML = `<i class="${toggleIcon}"></i><span>${toggleText}</span>`;
+            }
+
+            if (ownAccountPanel) {
+                ownAccountPanel.classList.toggle("hidden", !viewingOwnProfile);
+            }
+            if (ownAccountCopy) {
+                ownAccountCopy.innerText = `${accountModeDescription(mode)} ${hasDiscord ? "Discord is linked on this account." : "Discord is not linked yet."}`;
+            }
+            if (ownAccountModePill) {
+                ownAccountModePill.innerText = modeText;
+                ownAccountModePill.className = mode === "creator"
+                    ? "chip border-pink-500/30 text-pink-300"
+                    : "chip border-white/15 text-white/80";
+            }
+            if (ownAccountDiscordPill) {
+                ownAccountDiscordPill.innerText = discordText;
+                ownAccountDiscordPill.className = hasDiscord
+                    ? "chip border-blue-500/30 text-blue-300"
+                    : "chip border-white/15 text-gray-400";
+            }
+            if (ownAccountDiscordCopy) {
+                ownAccountDiscordCopy.innerText = hasDiscord
+                    ? `Linked Discord details are saved${discord.handle ? ` for @${discord.handle}` : ""}. Use account settings to update or remove them.`
+                    : "Add your Discord handle and optional link so creator setup and community identity live together.";
+            }
+            if (ownAccountToggle) {
+                ownAccountToggle.innerText = toggleText;
+            }
+            if (ownAccountSettings) {
+                ownAccountSettings.innerText = hasDiscord ? "Update Discord + Mode" : "Link Discord + Mode";
+            }
+            if (selfModeAction) {
+                selfModeAction.innerText = mode === "creator" ? "Upload Asset" : "Switch To Creator";
+            }
+        }
+
+        function maybeOpenPendingAccountPanel() {
+            if (didAutoOpenAccountPanel || !viewingOwnProfile) return;
+            if (pendingOpenPanel !== "account" && pendingOpenPanel !== "edit") return;
+            didAutoOpenAccountPanel = true;
+            openEditOverlay();
+            if (pendingOpenPanel === "account") {
+                window.setTimeout(() => {
+                    try { editAccountMode.focus(); } catch {}
+                }, 20);
+            }
+            const nextUrl = new URL(window.location.href);
+            nextUrl.searchParams.delete("open");
+            history.replaceState({}, "", nextUrl);
+        }
+
+        async function updateOwnAccountMode(nextModeInput = "") {
+            if (!signedInUser) {
+                window.location.href = "index.html?auth=signin&redirect=/profile.html?open=account";
+                return;
+            }
+            const nextMode = nextModeInput === "creator" ? "creator" : "consumer";
+            const profileRef = doc(db, "users", signedInUser.uid);
+            const remoteUpdates = {
+                accountMode: nextMode,
+                role: nextMode === "creator" ? "Creator" : "Consumer",
+                updatedAt: serverTimestamp(),
+                ...(nextMode === "creator" && !signedInProfile?.creatorActivatedAt ? { creatorActivatedAt: serverTimestamp() } : {})
+            };
+            await setDoc(profileRef, remoteUpdates, { merge: true });
+
+            const localProfile = normalizeProfile(
+                {
+                    ...(signedInProfile || {}),
+                    ...remoteUpdates,
+                    creatorActivatedAt: signedInProfile?.creatorActivatedAt || (nextMode === "creator" ? Date.now() : null)
+                },
+                signedInUser.email || ""
+            );
+            signedInProfile = localProfile;
+            if (viewingOwnProfile) {
+                viewedProfile = localProfile;
+            }
+            await renderTopNav(localProfile, signedInUser.uid, signedInUser.email || "");
+            if (viewingOwnProfile) {
+                await renderViewedProfile(activeProfileUid, localProfile);
+            }
         }
 
         function readFileAsDataUrl(file) {
@@ -789,6 +1260,7 @@
             myProfileLink.href = "profile.html";
             await applyAvatarImage(document.getElementById("nav-avatar"), profile, uid);
             await applyAvatarImage(document.getElementById("dropdown-avatar"), profile, uid);
+            renderAccountState(profile);
         }
 
         function renderGuestTopNav() {
@@ -799,6 +1271,7 @@
             document.getElementById("logout-btn").classList.add("hidden");
             document.getElementById("review-link").classList.add("hidden");
             myProfileLink.href = "index.html";
+            renderAccountState(null);
         }
 
         async function isUsernameTaken(username, ignoreUid = "") {
@@ -837,6 +1310,7 @@
                     usernameLower: username,
                     bio: "New Loom user.",
                     role: "Consumer",
+                    accountMode: "consumer",
                     avatarUrl: "",
                     bannerUrl: "",
                     avatarMediaId: "",
@@ -844,6 +1318,7 @@
                     followers: 0,
                     following: 0,
                     socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                    siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
                     canCurate: false,
@@ -851,7 +1326,8 @@
                     updatedAt: serverTimestamp()
                 };
                 await setDoc(userRef, profileData, { merge: true });
-                return profileData;
+                const privateAccount = await ensurePrivateAccount(uid);
+                return withPrivateAccount(profileData, privateAccount);
             }
 
             const raw = snap.data();
@@ -861,6 +1337,7 @@
             if (!raw.usernameLower) patch.usernameLower = normalized.usernameLower;
             if (typeof raw.bio !== "string") patch.bio = normalized.bio;
             if (typeof raw.role !== "string") patch.role = normalized.role;
+            if (typeof raw.accountMode !== "string") patch.accountMode = normalized.accountMode;
             if (typeof raw.avatarUrl !== "string") patch.avatarUrl = "";
             if (typeof raw.bannerUrl !== "string") patch.bannerUrl = "";
             if (typeof raw.avatarMediaId !== "string") patch.avatarMediaId = "";
@@ -868,15 +1345,21 @@
             if (typeof raw.followers !== "number") patch.followers = 0;
             if (typeof raw.following !== "number") patch.following = 0;
             if (typeof raw.socials !== "object" || raw.socials === null) patch.socials = normalized.socials;
+            if (!Array.isArray(raw.siteRoles)) patch.siteRoles = normalized.siteRoles;
             if (typeof raw.isKnownCreator !== "boolean") patch.isKnownCreator = false;
             if (typeof raw.isFeaturedCreator !== "boolean") patch.isFeaturedCreator = false;
             if (typeof raw.canCurate !== "boolean") patch.canCurate = false;
+            let publicProfile = normalized;
             if (Object.keys(patch).length) {
                 patch.updatedAt = serverTimestamp();
                 await setDoc(userRef, patch, { merge: true });
-                return { ...normalized, ...patch };
+                publicProfile = { ...normalized, ...patch };
             }
-            return normalized;
+            const privateAccount = await ensurePrivateAccount(uid, raw.linkedAccounts?.discord || raw.connectedAccounts?.discord || {});
+            if (hasLegacyPrivateAccountFields(raw)) {
+                await clearLegacyPrivateAccountFields(uid);
+            }
+            return withPrivateAccount(publicProfile, privateAccount);
         }
 
         function openEditOverlay() {
@@ -921,39 +1404,46 @@
         }
 
         async function renderViewedProfile(uid, profileData) {
-            viewedProfile = profileData;
-            document.getElementById("prof-name").innerText = profileData.username || "unknown";
-            document.title = `Loom | ${profileData.username || "Profile"}`;
-            document.getElementById("prof-bio").innerText = profileData.bio || "No bio set.";
-            document.getElementById("role-pill").innerText = `${(profileData.role || "Consumer").toUpperCase()} UNIT`;
-            document.getElementById("known-pill").classList.toggle("hidden", !profileData.isKnownCreator);
-            document.getElementById("featured-pill").classList.toggle("hidden", !profileData.isFeaturedCreator);
+            const normalized = normalizeProfile(profileData, viewingOwnProfile ? signedInUser?.email || "" : "");
+            viewedProfile = normalized;
+            document.getElementById("prof-name").innerText = normalized.username || "unknown";
+            document.title = `Loom | ${normalized.username || "Profile"}`;
+            document.getElementById("prof-bio").innerText = normalized.bio || "No bio set.";
+            document.getElementById("role-pill").innerText = normalized.accountMode === "creator" ? "CREATOR MODE" : "CONSUMER MODE";
+            document.getElementById("role-pill").className = normalized.accountMode === "creator"
+                ? "inline-block text-[10px] px-3 py-1 rounded-full border border-pink-500/30 text-pink-400 font-black uppercase tracking-widest"
+                : "inline-block text-[10px] px-3 py-1 rounded-full border border-white/15 text-white/75 font-black uppercase tracking-widest";
+            document.getElementById("known-pill").classList.toggle("hidden", !normalized.isKnownCreator);
+            document.getElementById("featured-pill").classList.toggle("hidden", !normalized.isFeaturedCreator);
             const badgeRow = document.getElementById("badge-row");
             if (badgeRow) {
-                const badges = Array.isArray(profileData.badges) ? profileData.badges : [];
-                badgeRow.innerHTML = badges
-                    .slice(0, 10)
-                    .map((badge) => `<span class="text-[10px] px-3 py-1 rounded-full border border-white/15 text-white/80 font-black uppercase tracking-widest">${escapeHtml(badge)}</span>`)
-                    .join("");
-                badgeRow.classList.toggle("hidden", badges.length === 0);
+                const badgeMarkup = renderBadgeMarkup(normalized.siteRoles, normalized.badges);
+                badgeRow.innerHTML = badgeMarkup;
+                badgeRow.classList.toggle("hidden", !badgeMarkup);
             }
-            await applyAvatarImage(document.getElementById("main-avatar"), profileData, uid);
-            await applyBanner(profileData);
+            await applyAvatarImage(document.getElementById("main-avatar"), normalized, uid);
+            await applyBanner(normalized);
             await refreshFollowCounts(uid);
-            renderProfileSocials(profileData.socials || {});
+            renderProfileSocials(normalized.socials || {});
 
-            document.getElementById("edit-name").value = profileData.username || "";
-            document.getElementById("edit-bio").value = profileData.bio || "";
-            document.getElementById("edit-avatar-url").value = profileData.avatarUrl || "";
-            document.getElementById("edit-banner-url").value = profileData.bannerUrl || "";
-            document.getElementById("edit-social-website").value = profileData.socials?.website || "";
-            document.getElementById("edit-social-x").value = profileData.socials?.x || "";
-            document.getElementById("edit-social-github").value = profileData.socials?.github || "";
-            document.getElementById("edit-social-youtube").value = profileData.socials?.youtube || "";
-            document.getElementById("edit-social-discord").value = profileData.socials?.discord || "";
-            document.getElementById("edit-known-creator").checked = Boolean(profileData.isKnownCreator);
-            document.getElementById("edit-featured-creator").checked = Boolean(profileData.isFeaturedCreator);
-            await refreshOverlayPreviews(profileData);
+            document.getElementById("edit-name").value = normalized.username || "";
+            document.getElementById("edit-bio").value = normalized.bio || "";
+            document.getElementById("edit-avatar-url").value = normalized.avatarUrl || "";
+            document.getElementById("edit-banner-url").value = normalized.bannerUrl || "";
+            document.getElementById("edit-social-website").value = normalized.socials?.website || "";
+            document.getElementById("edit-social-x").value = normalized.socials?.x || "";
+            document.getElementById("edit-social-github").value = normalized.socials?.github || "";
+            document.getElementById("edit-social-youtube").value = normalized.socials?.youtube || "";
+            document.getElementById("edit-social-discord").value = normalized.socials?.discord || "";
+            editAccountMode.value = normalized.accountMode || "consumer";
+            editDiscordHandle.value = normalized.linkedAccounts?.discord?.handle || "";
+            editDiscordProfileUrl.value = normalized.linkedAccounts?.discord?.url || "";
+            document.getElementById("edit-known-creator").checked = Boolean(normalized.isKnownCreator);
+            document.getElementById("edit-featured-creator").checked = Boolean(normalized.isFeaturedCreator);
+            applySiteRoleInputs(normalized.siteRoles || []);
+            refreshDiscordEditStatus();
+            await refreshOverlayPreviews(normalized);
+            renderAccountState(viewingOwnProfile ? normalized : signedInProfile);
             syncCurationAccess(viewingOwnProfile ? signedInProfile : null);
         }
 
@@ -1157,13 +1647,18 @@
 
         function renderMiniProfile(user, actionHtml = "") {
             const avatarFallback = avatarForProfile(user.id, user);
-            const badge = user.isFeaturedCreator ? `<span class="chip border-yellow-500/40 text-yellow-300">Featured</span>` : "";
+            const roleKeys = normalizeWebsiteRoles(user.siteRoles || []);
+            const extraRoleMarkup = renderBadgeMarkup(roleKeys.slice(1), []);
+            const badge = [
+                extraRoleMarkup,
+                user.isFeaturedCreator ? `<span class="chip border-yellow-500/40 text-yellow-300">Featured</span>` : ""
+            ].filter(Boolean).join("");
             return `
                 <div class="glass rounded-[20px] p-4 flex items-center gap-3">
                     <img class="w-12 h-12 rounded-full border border-white/10 object-cover" src="${escapeHtml(avatarFallback)}" data-media-id="${escapeHtml(user.avatarMediaId || "")}" alt="Avatar">
                     <div class="flex-1 min-w-0">
                         <a class="font-black lowercase truncate block" href="profile.html?id=${encodeURIComponent(user.id)}">${escapeHtml(user.username)}</a>
-                        <div class="text-[10px] uppercase tracking-[0.2em] text-gray-500">${escapeHtml(user.role || "Creator")}</div>
+                        <div class="text-[10px] uppercase tracking-[0.2em] text-gray-500">${escapeHtml(primaryProfileRoleLabel(user))}</div>
                         <div class="mt-2">${badge}</div>
                     </div>
                     ${actionHtml}
@@ -1382,6 +1877,14 @@
                 youtube: document.getElementById("edit-social-youtube").value.trim(),
                 discord: document.getElementById("edit-social-discord").value.trim()
             };
+            const nextMode = normalizeAccountMode(editAccountMode.value, viewedProfile?.role, false);
+            const discordAccount = normalizeDiscordAccount({
+                handle: editDiscordHandle?.value || "",
+                url: editDiscordProfileUrl?.value || ""
+            });
+            const siteRoles = Boolean(signedInProfile?.canCurate)
+                ? readSelectedSiteRoles()
+                : normalizeWebsiteRoles(viewedProfile?.siteRoles || []);
             const isKnownCreator = Boolean(signedInProfile?.canCurate) ? document.getElementById("edit-known-creator").checked : Boolean(viewedProfile?.isKnownCreator);
             const isFeaturedCreator = Boolean(signedInProfile?.canCurate) ? document.getElementById("edit-featured-creator").checked : Boolean(viewedProfile?.isFeaturedCreator);
             const avatarFile = document.getElementById("edit-avatar-file").files[0];
@@ -1398,6 +1901,10 @@
                     alert("That username is already in use.");
                     return;
                 }
+            }
+            if (editDiscordProfileUrl?.value.trim() && !validHttpUrl(editDiscordProfileUrl.value)) {
+                alert("Discord profile URL must be a valid http/https URL.");
+                return;
             }
 
             try {
@@ -1439,6 +1946,9 @@
                     username: requestedUsername,
                     usernameLower: requestedUsername,
                     bio: newBio,
+                    role: nextMode === "creator" ? "Creator" : "Consumer",
+                    accountMode: nextMode,
+                    siteRoles,
                     avatarUrl: validMediaUrl(avatarUrl) ? avatarUrl : "",
                     bannerUrl: validMediaUrl(bannerUrl) ? bannerUrl : "",
                     avatarMediaId,
@@ -1446,10 +1956,25 @@
                     socials,
                     isKnownCreator,
                     isFeaturedCreator,
+                    ...(nextMode === "creator" && !viewedProfile?.creatorActivatedAt ? { creatorActivatedAt: serverTimestamp() } : {}),
+                    updatedAt: serverTimestamp()
+                };
+
+                const privateAccountUpdates = {
+                    linkedAccounts: {
+                        discord: {
+                            ...discordAccount,
+                            linkedAt: discordAccount.handle || discordAccount.url
+                                ? viewedProfile?.linkedAccounts?.discord?.linkedAt || serverTimestamp()
+                                : null
+                        }
+                    },
                     updatedAt: serverTimestamp()
                 };
 
                 await setDoc(doc(db, "users", activeProfileUid), updates, { merge: true });
+                await setDoc(doc(db, USER_PRIVATE_COLLECTION, activeProfileUid), privateAccountUpdates, { merge: true });
+                await clearLegacyPrivateAccountFields(activeProfileUid);
                 const ownedAssetsSnap = await getDocs(query(collection(db, "assets"), where("creatorId", "==", activeProfileUid)));
                 await Promise.all(
                     ownedAssetsSnap.docs.map((assetDoc) =>
@@ -1457,11 +1982,25 @@
                     )
                 );
 
-                viewedProfile = { ...(viewedProfile || {}), ...updates };
-                signedInProfile = { ...(signedInProfile || {}), ...updates };
+                viewedProfile = withPrivateAccount(normalizeProfile(
+                    {
+                        ...(viewedProfile || {}),
+                        ...updates,
+                        creatorActivatedAt: viewedProfile?.creatorActivatedAt || (nextMode === "creator" ? Date.now() : null)
+                    },
+                    signedInUser.email || ""
+                ), privateAccountUpdates);
+                signedInProfile = withPrivateAccount(normalizeProfile(
+                    {
+                        ...(signedInProfile || {}),
+                        ...updates,
+                        creatorActivatedAt: signedInProfile?.creatorActivatedAt || (nextMode === "creator" ? Date.now() : null)
+                    },
+                    signedInUser.email || ""
+                ), privateAccountUpdates);
 
-                await renderViewedProfile(activeProfileUid, normalizeProfile(viewedProfile, signedInUser.email || ""));
-                await renderTopNav(normalizeProfile(signedInProfile, signedInUser.email || ""), signedInUser.uid, signedInUser.email || "");
+                await renderViewedProfile(activeProfileUid, viewedProfile);
+                await renderTopNav(signedInProfile, signedInUser.uid, signedInUser.email || "");
 
                 document.getElementById("edit-avatar-file").value = "";
                 document.getElementById("edit-banner-file").value = "";
@@ -1486,6 +2025,7 @@
                 document.getElementById("self-actions").classList.remove("hidden");
                 document.getElementById("other-actions").classList.add("hidden");
                 await loadUserAssets(uid);
+                maybeOpenPendingAccountPanel();
                 return;
             }
 
@@ -1523,6 +2063,9 @@
         }));
         document.getElementById("edit-avatar-file").addEventListener("change", refreshPendingPreview);
         document.getElementById("edit-banner-file").addEventListener("change", refreshPendingPreview);
+        editAccountMode.addEventListener("change", refreshDiscordEditStatus);
+        editDiscordHandle.addEventListener("input", refreshDiscordEditStatus);
+        editDiscordProfileUrl.addEventListener("input", refreshDiscordEditStatus);
         resetAvatarBtn.addEventListener("click", () => {
             resetAvatarRequested = true;
             document.getElementById("edit-avatar-url").value = "";
@@ -1559,6 +2102,56 @@
         friendBtn.addEventListener("click", () => handleFriendAction().catch(() => {
             alert("Unable to update friend status right now.");
         }));
+        selfModeAction.addEventListener("click", () => {
+            if (!signedInUser) {
+                window.location.href = "index.html?auth=signin&redirect=/profile.html?open=account";
+                return;
+            }
+            const currentMode = normalizeAccountMode(signedInProfile?.accountMode, signedInProfile?.role, false);
+            if (currentMode === "creator") {
+                window.location.href = "upload.html";
+                return;
+            }
+            updateOwnAccountMode("creator").catch((err) => {
+                console.error("Mode switch failed:", err);
+                alert("Unable to switch account mode right now.");
+            });
+        });
+        ownAccountToggle.addEventListener("click", () => {
+            const currentMode = normalizeAccountMode(signedInProfile?.accountMode, signedInProfile?.role, false);
+            updateOwnAccountMode(nextAccountMode(currentMode)).catch((err) => {
+                console.error("Mode switch failed:", err);
+                alert("Unable to switch account mode right now.");
+            });
+        });
+        accountModeToggle.addEventListener("click", () => {
+            const currentMode = normalizeAccountMode(signedInProfile?.accountMode, signedInProfile?.role, false);
+            updateOwnAccountMode(nextAccountMode(currentMode)).catch((err) => {
+                console.error("Mode switch failed:", err);
+                alert("Unable to switch account mode right now.");
+            });
+        });
+        ownAccountSettings.addEventListener("click", () => {
+            if (!viewingOwnProfile) return;
+            openEditOverlay();
+            window.setTimeout(() => {
+                try { editAccountMode.focus(); } catch {}
+            }, 20);
+        });
+        accountSettingsBtn.addEventListener("click", () => {
+            if (!signedInUser) {
+                window.location.href = "index.html?auth=signin&redirect=/profile.html?open=account";
+                return;
+            }
+            if (!viewingOwnProfile) {
+                window.location.href = "profile.html?open=account";
+                return;
+            }
+            openEditOverlay();
+            window.setTimeout(() => {
+                try { editAccountMode.focus(); } catch {}
+            }, 20);
+        });
 
         roleContent.addEventListener("click", async (event) => {
             const actionEl = event.target.closest("[data-action]");
@@ -1664,6 +2257,7 @@
                 startPresence(currentUser.uid);
             } else {
                 signedInProfile = null;
+                viewingOwnProfile = false;
                 renderGuestTopNav();
                 syncCurationAccess(null);
                 stopNotifications();

@@ -481,6 +481,7 @@
         import {
             addDoc,
             collection,
+            deleteField,
             doc,
             getDoc,
             getFirestore,
@@ -538,6 +539,7 @@
         const MAX_ASSET_FILE_BYTES = 100 * 1024 * 1024;
         const ASSET_CHUNK_SIZE = 600 * 1024;
         const submitIdleLabel = submitBtn.innerText.trim() || "Publish Asset";
+        const USER_PRIVATE_COLLECTION = "userPrivate";
 
         function setSubmitting(isSubmitting) {
             submitBtn.disabled = isSubmitting;
@@ -560,6 +562,156 @@
             return /^https?:\/\//i.test(String(url || "").trim());
         }
 
+        const WEBSITE_ROLE_KEYS = new Set([
+            "marketplace_manager",
+            "asset_verifier",
+            "moderator",
+            "support_agent",
+            "verified_creator"
+        ]);
+
+        function normalizeWebsiteRoleKey(rawValue = "") {
+            const normalized = String(rawValue || "")
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, "and")
+                .replace(/[\s-]+/g, "_");
+            const compact = normalized.replace(/[^a-z0-9_]/g, "");
+            const aliases = {
+                marketplacemanager: "marketplace_manager",
+                marketplace_manager: "marketplace_manager",
+                assetverifier: "asset_verifier",
+                asset_verifier: "asset_verifier",
+                moderator: "moderator",
+                supportagent: "support_agent",
+                support_agent: "support_agent",
+                verifiedcreator: "verified_creator",
+                verified_creator: "verified_creator"
+            };
+            const key = aliases[normalized] || aliases[compact] || normalized;
+            return WEBSITE_ROLE_KEYS.has(key) ? key : "";
+        }
+
+        function normalizeWebsiteRoles(rawValue = []) {
+            const source = Array.isArray(rawValue)
+                ? rawValue
+                : typeof rawValue === "string" && rawValue.trim()
+                    ? rawValue.split(/[,\n|]/)
+                    : [];
+            const roles = [];
+            source.forEach((item) => {
+                const key = normalizeWebsiteRoleKey(item);
+                if (key && !roles.includes(key)) roles.push(key);
+            });
+            return roles;
+        }
+
+        function collectWebsiteRoles(raw = {}) {
+            const direct = Array.isArray(raw.siteRoles)
+                ? raw.siteRoles
+                : Array.isArray(raw.websiteRoles)
+                    ? raw.websiteRoles
+                    : Array.isArray(raw.staffRoles)
+                        ? raw.staffRoles
+                        : [];
+            const legacyRole = normalizeWebsiteRoleKey(raw.role);
+            return normalizeWebsiteRoles(legacyRole ? [...direct, legacyRole] : direct);
+        }
+
+        function normalizeAccountMode(rawMode = "", rawRole = "", fallbackCreator = false) {
+            const mode = String(rawMode || "").trim().toLowerCase();
+            if (mode === "creator" || mode === "consumer") return mode;
+            const role = String(rawRole || "").trim().toLowerCase();
+            if (role === "creator") return "creator";
+            if (normalizeWebsiteRoleKey(role) === "verified_creator") return "creator";
+            return fallbackCreator ? "creator" : "consumer";
+        }
+
+        function normalizeDiscordAccount(rawValue = {}) {
+            const handle = String(rawValue?.handle || rawValue?.username || "")
+                .trim()
+                .replace(/^@+/, "")
+                .slice(0, 48);
+            const urlCandidate = String(rawValue?.url || rawValue?.profileUrl || "").trim();
+            return {
+                handle,
+                url: validUrl(urlCandidate) ? urlCandidate : "",
+                linkedAt: rawValue?.linkedAt || null,
+                source: typeof rawValue?.source === "string" ? rawValue.source : "manual"
+            };
+        }
+
+        function hasLegacyPrivateAccountFields(raw = {}) {
+            const linked = raw?.linkedAccounts;
+            const connected = raw?.connectedAccounts;
+            return (typeof linked === "object" && linked !== null) || (typeof connected === "object" && connected !== null);
+        }
+
+        async function ensurePrivateAccount(userId, legacyDiscord = {}) {
+            const privateRef = doc(db, USER_PRIVATE_COLLECTION, userId);
+            const privateSnap = await getDoc(privateRef);
+            const normalizedLegacy = normalizeDiscordAccount(legacyDiscord);
+
+            if (!privateSnap.exists()) {
+                await setDoc(privateRef, {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.handle || normalizedLegacy.url
+                                ? normalizedLegacy.linkedAt || serverTimestamp()
+                                : null
+                        }
+                    },
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                return;
+            }
+
+            const rawPrivate = privateSnap.data() || {};
+            const existingDiscord = normalizeDiscordAccount(rawPrivate?.linkedAccounts?.discord || rawPrivate?.connectedAccounts?.discord || rawPrivate?.discord || {});
+            if (
+                !existingDiscord.handle
+                && !existingDiscord.url
+                && (normalizedLegacy.handle || normalizedLegacy.url)
+            ) {
+                await setDoc(privateRef, {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.linkedAt || serverTimestamp()
+                        }
+                    },
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+            }
+        }
+
+        async function clearLegacyPrivateAccountFields(userId) {
+            await setDoc(doc(db, "users", userId), {
+                linkedAccounts: deleteField(),
+                connectedAccounts: deleteField()
+            }, { merge: true });
+        }
+
+        function normalizeCreatorProfile(raw = {}, user = null) {
+            const siteRoles = collectWebsiteRoles(raw);
+            const accountMode = normalizeAccountMode(
+                raw.accountMode,
+                raw.role,
+                Boolean(raw.isKnownCreator || raw.isFeaturedCreator || raw.canCurate)
+            );
+            return {
+                ...raw,
+                username: sanitizeUsername(raw.username, user?.email || ""),
+                role: accountMode === "creator" ? "Creator" : "Consumer",
+                accountMode,
+                siteRoles,
+                canCurate: Boolean(raw.canCurate),
+                creatorActivatedAt: raw.creatorActivatedAt || null
+            };
+        }
+
         function setCurationControls(profile = null) {
             canCurate = Boolean(profile?.canCurate);
             curationControls.classList.toggle("hidden", !canCurate);
@@ -572,15 +724,22 @@
         }
 
         function syncSubmitAvailability() {
-            submitBtn.disabled = !activeUser;
-
             if (!activeUser) {
+                submitBtn.disabled = true;
                 statusEl.innerText = "Sign in from Home before publishing a release.";
                 statusEl.className = "publish-status-note text-red-300";
                 return;
             }
 
-            statusEl.innerText = `Signed in as ${creatorProfile?.username || "creator"}`;
+            const mode = creatorProfile?.accountMode || "consumer";
+            submitBtn.disabled = mode !== "creator";
+            if (mode !== "creator") {
+                statusEl.innerText = `Signed in as ${creatorProfile?.username || "creator"} in Consumer mode. Switch to Creator mode in your profile before publishing.`;
+                statusEl.className = "publish-status-note text-amber-300";
+                return;
+            }
+
+            statusEl.innerText = `Creator mode active for ${creatorProfile?.username || "creator"}`;
             statusEl.className = "publish-status-note text-emerald-300";
         }
 
@@ -916,6 +1075,7 @@
                     usernameLower: username,
                     bio: "",
                     role: "Consumer",
+                    accountMode: "consumer",
                     avatarUrl: "",
                     bannerUrl: "",
                     avatarMediaId: "",
@@ -923,6 +1083,7 @@
                     followers: 0,
                     following: 0,
                     socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                    siteRoles: [],
                     isKnownCreator: false,
                     isFeaturedCreator: false,
                     canCurate: false,
@@ -930,11 +1091,15 @@
                     updatedAt: serverTimestamp()
                 };
                 await setDoc(profileRef, baseProfile, { merge: true });
-                return baseProfile;
+                await ensurePrivateAccount(user.uid);
+                return normalizeCreatorProfile(baseProfile, user);
             }
 
             const data = profileSnap.data();
             const patch = {};
+            if (typeof data.role !== "string") patch.role = "Consumer";
+            if (typeof data.accountMode !== "string") patch.accountMode = normalizeAccountMode(data.accountMode, data.role, Boolean(data.isKnownCreator || data.isFeaturedCreator || data.canCurate));
+            if (!Array.isArray(data.siteRoles)) patch.siteRoles = normalizeCreatorProfile(data, user).siteRoles;
             if (typeof data.canCurate !== "boolean") patch.canCurate = false;
             if (typeof data.avatarMediaId !== "string") patch.avatarMediaId = "";
             if (typeof data.bannerMediaId !== "string") patch.bannerMediaId = "";
@@ -942,11 +1107,11 @@
                 patch.updatedAt = serverTimestamp();
                 await setDoc(profileRef, patch, { merge: true });
             }
-            return {
-                ...data,
-                username: sanitizeUsername(data.username, user.email || ""),
-                canCurate: Boolean(data.canCurate)
-            };
+            await ensurePrivateAccount(user.uid, data.linkedAccounts?.discord || data.connectedAccounts?.discord || {});
+            if (hasLegacyPrivateAccountFields(data)) {
+                await clearLegacyPrivateAccountFields(user.uid);
+            }
+            return normalizeCreatorProfile({ ...data, ...patch }, user);
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -963,9 +1128,9 @@
                 creatorProfile = await ensureUserProfile(user);
             } catch (err) {
                 console.error("Failed to load creator profile:", err);
-                creatorProfile = {
+                creatorProfile = normalizeCreatorProfile({
                     username: sanitizeUsername("", user.email || "")
-                };
+                }, user);
             }
 
             setCurationControls(creatorProfile);
@@ -1130,6 +1295,11 @@
             if (!activeUser) {
                 alert("Please sign in first.");
                 window.location.href = "index.html?auth=signin&redirect=/upload.html";
+                return;
+            }
+            if ((creatorProfile?.accountMode || "consumer") !== "creator") {
+                alert("Switch your account to Creator mode before publishing.");
+                window.location.href = "profile.html?open=account";
                 return;
             }
 

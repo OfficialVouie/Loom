@@ -98,3 +98,136 @@ body.site-frame-ready.workflow-page .surface {
 body.site-frame-ready.workflow-page main {
     gap: 1rem;
 }
+
+/* Simple workflow pass */
+.workflow-page .page-hero,
+.workflow-page .glass,
+.workflow-page .surface {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        rgba(10, 10, 14, 0.76);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(10px);
+}
+
+.workflow-page .page-hero:hover,
+.workflow-page .glass:hover,
+.workflow-page .surface:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+}
+
+.workflow-page .page-shortcuts {
+    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.workflow-page .page-shortcut {
+    border-radius: 20px;
+    padding: 0.95rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.workflow-page .page-shortcut:hover,
+.workflow-page .upload-chip:hover,
+.workflow-page .friend-card:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+body.site-frame-ready.workflow-page .page-hero,
+body.site-frame-ready.workflow-page .glass,
+body.site-frame-ready.workflow-page .surface {
+    border-radius: 24px;
+}
+
+body.site-frame-ready.page-asset main > div.grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+}
+
+body.site-frame-ready.page-asset main > div.grid > aside {
+    position: static !important;
+}
+
+body.site-frame-ready.page-asset .page-hero > .flex {
+    flex-direction: column;
+}
+
+body.site-frame-ready.page-asset .page-hero > .mt-7.grid {
+    grid-template-columns: 1fr !important;
+}
+
+body.site-frame-ready.page-asset .asset-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+}
+
+body.site-frame-ready.page-friends main > section.grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+}
+
+body.site-frame-ready.page-review #queue {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+}
+
+@media (max-width: 900px) {
+    .workflow-page .page-shortcuts {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Section clarity pass */
+body.site-frame-ready.workflow-page .page-shortcuts {
+    display: grid;
+    padding: 0.9rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(180deg, rgba(255, 121, 198, 0.05), transparent 34%),
+        rgba(255, 255, 255, 0.015);
+}
+
+body.site-frame-ready.workflow-page .page-shortcut {
+    border-left: 3px solid rgba(255, 121, 198, 0.22);
+}
+
+body.site-frame-ready.workflow-page main > section:not(.page-hero):not(.page-shortcuts) {
+    border-left: 3px solid rgba(122, 162, 255, 0.18);
+}
+
+/* Final organization pass */
+body.site-frame-ready.workflow-page main {
+    gap: 0.85rem;
+}
+
+body.site-frame-ready.workflow-page .page-hero,
+body.site-frame-ready.workflow-page .glass,
+body.site-frame-ready.workflow-page .surface {
+    border-radius: 18px;
+    box-shadow: none;
+}
+
+body.site-frame-ready.workflow-page .page-shortcuts {
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+body.site-frame-ready.workflow-page .page-shortcut {
+    padding: 0.78rem 0.84rem;
+    border-radius: 14px;
+    border-left: 0;
+    border-top: 2px solid rgba(255, 121, 198, 0.22);
+}
+
+body.site-frame-ready.workflow-page main > section:not(.page-hero):not(.page-shortcuts) {
+    border-left: 0;
+    border-top: 2px solid rgba(122, 162, 255, 0.16);
+}

@@ -330,6 +330,7 @@
             addDoc,
             collection,
             deleteDoc,
+            deleteField,
             doc,
             getDoc,
             getDocs,
@@ -385,6 +386,7 @@
 
         const mediaCache = new Map();
         const profileCache = new Map();
+        const USER_PRIVATE_COLLECTION = "userPrivate";
 
         let currentUser = null;
         let currentProfile = null;
@@ -439,6 +441,73 @@
             return base.slice(0, 18);
         }
 
+        function normalizeDiscordAccount(rawValue = {}) {
+            const handle = String(rawValue?.handle || rawValue?.username || "")
+                .trim()
+                .replace(/^@+/, "")
+                .slice(0, 48);
+            const urlCandidate = String(rawValue?.url || rawValue?.profileUrl || "").trim();
+            return {
+                handle,
+                url: /^https?:\/\//i.test(urlCandidate) ? urlCandidate : "",
+                linkedAt: rawValue?.linkedAt || null,
+                source: typeof rawValue?.source === "string" ? rawValue.source : "manual"
+            };
+        }
+
+        function hasLegacyPrivateAccountFields(raw = {}) {
+            const linked = raw?.linkedAccounts;
+            const connected = raw?.connectedAccounts;
+            return (typeof linked === "object" && linked !== null) || (typeof connected === "object" && connected !== null);
+        }
+
+        async function ensurePrivateAccount(userId, legacyDiscord = {}) {
+            const privateRef = doc(db, USER_PRIVATE_COLLECTION, userId);
+            const privateSnap = await getDoc(privateRef);
+            const normalizedLegacy = normalizeDiscordAccount(legacyDiscord);
+
+            if (!privateSnap.exists()) {
+                await setDoc(privateRef, {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.handle || normalizedLegacy.url
+                                ? normalizedLegacy.linkedAt || serverTimestamp()
+                                : null
+                        }
+                    },
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                return;
+            }
+
+            const rawPrivate = privateSnap.data() || {};
+            const existingDiscord = normalizeDiscordAccount(rawPrivate?.linkedAccounts?.discord || rawPrivate?.connectedAccounts?.discord || rawPrivate?.discord || {});
+            if (
+                !existingDiscord.handle
+                && !existingDiscord.url
+                && (normalizedLegacy.handle || normalizedLegacy.url)
+            ) {
+                await setDoc(privateRef, {
+                    linkedAccounts: {
+                        discord: {
+                            ...normalizedLegacy,
+                            linkedAt: normalizedLegacy.linkedAt || serverTimestamp()
+                        }
+                    },
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+            }
+        }
+
+        async function clearLegacyPrivateAccountFields(userId) {
+            await setDoc(doc(db, "users", userId), {
+                linkedAccounts: deleteField(),
+                connectedAccounts: deleteField()
+            }, { merge: true });
+        }
+
         function toMillis(ts) {
             if (!ts) return 0;
             if (typeof ts.toMillis === "function") return ts.toMillis();
@@ -476,9 +545,16 @@
                 const patch = {};
                 if (!data.username || sanitizeUsername(data.username, user.email || "") !== desiredUsername) patch.username = desiredUsername;
                 if (!data.usernameLower || sanitizeUsername(data.usernameLower, user.email || "") !== desiredLower) patch.usernameLower = desiredLower;
+                if (typeof data.role !== "string") patch.role = "Consumer";
+                if (typeof data.accountMode !== "string") patch.accountMode = String(data.role || "").trim().toLowerCase() === "creator" ? "creator" : "consumer";
+                if (!Array.isArray(data.siteRoles)) patch.siteRoles = [];
                 if (Object.keys(patch).length) {
                     patch.updatedAt = serverTimestamp();
                     try { await updateDoc(profileRef, patch); } catch {}
+                }
+                await ensurePrivateAccount(user.uid, data.linkedAccounts?.discord || data.connectedAccounts?.discord || {});
+                if (hasLegacyPrivateAccountFields(data)) {
+                    try { await clearLegacyPrivateAccountFields(user.uid); } catch {}
                 }
 
                 return { id: snap.id, ...data, ...patch, updatedAt: data.updatedAt };
@@ -490,6 +566,7 @@
                 usernameLower: username,
                 bio: "",
                 role: "Consumer",
+                accountMode: "consumer",
                 avatarUrl: "",
                 bannerUrl: "",
                 avatarMediaId: "",
@@ -497,6 +574,7 @@
                 followers: 0,
                 following: 0,
                 socials: { website: "", x: "", github: "", youtube: "", discord: "" },
+                siteRoles: [],
                 canCurate: false,
                 isKnownCreator: false,
                 isFeaturedCreator: false,
@@ -504,6 +582,7 @@
                 updatedAt: serverTimestamp()
             };
             await setDoc(profileRef, base);
+            await ensurePrivateAccount(user.uid);
             return { id: user.uid, ...base };
         }
 
